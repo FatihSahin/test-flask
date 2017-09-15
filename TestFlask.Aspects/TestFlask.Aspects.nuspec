@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata minClientVersion="2.8">
+    <id>TestFlask.Aspects</id>
+    <version>$version$</version>
+    <title>TestFlask.Aspects</title>
+    <authors>Fatih Sahin</authors>
+    <owners>Fatih Sahin</owners>
+    <developmentDependency>true</developmentDependency>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <!--<projectUrl></projectUrl>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!--<iconUrl></iconUrl>-->
+    <description>TestFlask.Aspects</description>
+    <summary>
+      This package contains test flask interfaces and aspects.
+    </summary>
+    <language>en-US</language>
+    <tags>ILWeaving, Fody, Cecil, TestFlask</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Configuration"  />
+      <frameworkAssembly assemblyName="System.Net.Http"  />
+      <frameworkAssembly assemblyName="System.Web" />
+      <frameworkAssembly assemblyName="System.ServiceModel" />
+      <frameworkAssembly assemblyName="System.ServiceModel.Web" />
+    </frameworkAssemblies>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
+      <dependency id="Newtonsoft.Json" version="10.0.2" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\$Configuration$\TestFlask.Models.dll" target="lib\net452"  />
+    <file src="bin\$Configuration$\MongoDB.Bson.dll" target="lib\net452"  />
+    <file src="*.xdt" target="content" />
+  </files>
+</package>

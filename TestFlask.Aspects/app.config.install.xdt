@@ -1,0 +1,15 @@
+﻿<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
+    <sectionGroup name="testFlaskConfig" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing">
+      <section name="testFlask" type="TestFlask.Aspects.Config.TestFlaskConfigSection, TestFlask.Aspects, PublicKeyToken=null, Version=1.0.0.0" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+    </sectionGroup>
+  </configSections>
+  <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
+  <testFlaskConfig xdt:Transform="InsertIfMissing">
+    <testFlask xdt:Transform="InsertIfMissing">
+      <api url="http://testFlaskApiUrl" xdt:Transform="InsertIfMissing" />
+      <project key="yourTestFlaskProjectName" xdt:Transform="InsertIfMissing" />
+    </testFlask>
+  </testFlaskConfig>
+</configuration>

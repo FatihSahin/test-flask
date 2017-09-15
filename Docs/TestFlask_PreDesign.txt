@@ -1,0 +1,66 @@
+
+
+	TestFlask (A SOAP compatible test scenario suite) - Early design document
+	------------------------------------------------
+	
+	A suite of tools that will support a possible test functionality such as
+	
+	Recording
+	
+		1. Tester will enable a web interface on a web page to create a scenario and begin a testing scenario session (this will call a central mocka api that is hosted for the application to generate a scenario id)
+			
+		2. During the session, tester will hit record button, from that moment each web request will be tampered with a custom http header that contains created scenario id and metadata
+		
+		3. Tester will finalize test session
+		
+	Monitoring Recorded Scenario
+	
+		1. Using a test management application, tester will be able to see all sub steps tree (requests and responses)
+		
+		2. Tester than can create one or more assertion expressions bound to that scenario instance  to determine when a scenarion succeeds or fails
+		
+	Replaying recorded scenario
+	
+		1. Tester will select a recorded scenario instance and hit replay or replay with edit
+			
+		2. If tester wants to edit substeps, he/she can alter sub step behavior (play recorded or call real service)
+		
+		3. Tester will than see that which assertions passes or fails
+		
+	Scenario Groups (Multi-play)
+		
+		1. Tester can run all scenario instances as a group and see outcome
+		
+	Scenario Cloning
+	
+		1. Tester can clone a scenario instance, alter requests or responses and assertion expressions
+		
+		
+	TestFlask (Possible) Components
+	-----------------------------
+	
+	TestFlask.Web.Monitor (A web component for tester/developer to inspect scenarios, operations, requests, responses, also admin interface to manage projects) (angular/asp.net mvc web app)
+	
+	TestFlask.API (A asp.net resp api app that allows clients to create scenarios, record, delete scenarios)
+	
+	TestFlask.Web.Toolbar (typescript nuget package that includes web browser toolbar to create scenario and begin recoring sessions, tamper http header to insert metadata to http headers)
+	
+	TestFlask.Aspects (Record play attributes, player class, scenarioContext header reader)
+			
+	Side Notes
+	------------------------------
+	
+	- May be as generic as possible (not coupled to a particular application domain (PH) and provide idea header support as a pluggable feature on top of SOAP)
+	
+	- Can be developed on gitlab.softtech (after a mature start, it can be a public repo acception PRs)
+		
+	- May or may not support low level method request or response serialization
+	
+	- Will support REST backends (using http headers instead of soap headers)
+	
+	- May support external entry points and standard assertion outputs to plug in to a CI (TFS build step) environment
+		
+	- May have a wiki etc.
+	
+	- May be hosted as a multi-tenant way for each application domain or a single broader hosting to use inside whole company.
+	
