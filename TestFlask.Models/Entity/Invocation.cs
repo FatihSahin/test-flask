@@ -6,9 +6,8 @@ using System.Text;
 
 namespace TestFlask.Models.Entity
 {
-    public class Invocation 
+    public class Invocation
     {
-
         //immutable
         public string ProjectKey { get; set; }
 
@@ -63,14 +62,11 @@ namespace TestFlask.Models.Entity
         public string GetInvocationHashCode()
         {
             string signatureHash = InvocationSignature.GetHashCode().ToString();
-            string requestIdentifierHash = !string.IsNullOrWhiteSpace(RequestIdentifierKey) ? RequestIdentifierKey.GetHashCode().ToString() : string.Empty;
+            string requestIdentifierHash = !string.IsNullOrWhiteSpace(RequestIdentifierKey) ? RequestIdentifierKey.GetHashCode().ToString() : "0";
 
             StringBuilder strBuilder = new StringBuilder(signatureHash);
 
-            if (!string.IsNullOrWhiteSpace(requestIdentifierHash))
-            {
-                strBuilder.Append($"-{requestIdentifierHash}");
-            }
+            strBuilder.Append($"_{requestIdentifierHash}");
 
             return strBuilder.ToString();
         }
@@ -78,13 +74,13 @@ namespace TestFlask.Models.Entity
         public string GetInvocationDeepHashCode()
         {
             string invocationHashCode = GetInvocationHashCode();
-            return $"{StepNo}-{invocationHashCode}-{Depth}";
+            return $"{StepNo}_{invocationHashCode}_{Depth}";
         }
 
         public string GetInvocationInstanceHashCode()
         {
             string invocationDeepHashCode = GetInvocationDeepHashCode();
-            return $"{ScenarioNo}-{invocationDeepHashCode}-{InvocationIndex}";
+            return $"{ScenarioNo}_{invocationDeepHashCode}_{InvocationIndex}";
         }
     }
 }

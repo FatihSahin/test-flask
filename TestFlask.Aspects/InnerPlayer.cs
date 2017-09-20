@@ -229,7 +229,9 @@ namespace TestFlask.Aspects
 
             if (!loadedInvocation.IsFaulted)
             {
-                return (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType));
+                var response = (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType));
+                EndInvocation(response);
+                return response;
             }
             else
             {
