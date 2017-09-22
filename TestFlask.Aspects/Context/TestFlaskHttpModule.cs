@@ -76,7 +76,7 @@ namespace TestFlask.Aspects.Context
             autoStep.ProjectKey = request.Headers[ContextKeys.ProjectKey];
             autoStep.ScenarioNo = long.Parse(request.Headers[ContextKeys.ScenarioNo]);
             
-            var api = new TestFlaskApiClient();
+            var api = new TestFlaskApi();
             var dbStep = api.InsertStep(autoStep);
 
             HttpContext.Current.Items.Add(ContextKeys.StepNo, dbStep.StepNo);

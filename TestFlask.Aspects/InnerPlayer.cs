@@ -26,7 +26,7 @@ namespace TestFlask.Aspects
         private readonly string requestIdentifierKey;
         private readonly IResponseIdentifier<TRes> responseIdentifier;
         private Invocation requestedInvocation;
-        private TestFlaskApiClient api;
+        private TestFlaskApi api;
         private bool mustPersistAssertionResult;
 
         public InnerPlayer(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo, IResponseIdentifier<TRes> pResponseIdentifier)
@@ -35,7 +35,7 @@ namespace TestFlask.Aspects
             requestIdentifierKey = pRequestIdentifierKey;
             requestDisplayInfo = pRequestDisplayInfo;
             responseIdentifier = pResponseIdentifier;
-            api = new TestFlaskApiClient();
+            api = new TestFlaskApi();
         }
 
         public void StartInvocation(params object[] requestArgs)

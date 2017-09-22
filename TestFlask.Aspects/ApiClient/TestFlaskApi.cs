@@ -14,11 +14,11 @@ using TestFlask.Models.Entity;
 namespace TestFlask.Aspects.ApiClient
 {
     //It is called from weaver (do not use DI container here)
-    public class TestFlaskApiClient
+    public class TestFlaskApi
     {
         private readonly TestFlaskConfig config;
 
-        public TestFlaskApiClient()
+        public TestFlaskApi()
         {
             config = TestFlaskConfig.Instance;
         }
