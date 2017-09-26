@@ -15,9 +15,6 @@ namespace TestFlask.API
     {
         protected void Application_Start()
         {
-            // New code
-            
-
             GlobalConfiguration.Configure((config) =>
             {
                 WebApiConfig.Register(config);

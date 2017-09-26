@@ -17,6 +17,7 @@ namespace TestFlask.Data.Repos
         Scenario GetScenarioFlat(long scenarioNo);
         Step InsertStep(Step step);
         Step UpdateStep(Step step);
+        Step UpdateStepShallow(Step step);
         Scenario Update(Scenario scenario);
         void UpdateInvocation(Invocation invocation);
         Invocation GetInvocation(string instanceHashCode);
@@ -67,6 +68,18 @@ namespace TestFlask.Data.Repos
             var updateStep = Builders<Scenario>.Update.Set("Steps.$", step);
 
             Collection.FindOneAndUpdate(scenarioStepFilter, updateStep);
+
+            return step;
+        }
+
+        public Step UpdateStepShallow(Step step)
+        {
+            Collection.FindOneAndUpdate(
+               Builders<Scenario>.Filter.And(
+                    Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, step.ScenarioNo),
+                    Builders<Scenario>.Filter.Eq("Steps.StepNo", step.StepNo)),
+               Builders<Scenario>.Update.Combine(
+                   Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName)));
 
             return step;
         }

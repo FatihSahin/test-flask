@@ -46,6 +46,12 @@ namespace TestFlask.API.Controllers
             return step;
         }
 
+        [Route("api/step/shallow")]
+        public Step PutShallow(Step step)
+        {
+            return scenarioRepo.UpdateStepShallow(step);
+        }
+
         [Route("api/step/invocation")]
         public void PutInvocation(Invocation invocation)
         {
