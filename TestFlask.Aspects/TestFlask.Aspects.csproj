@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiClient\TestFlaskApiClient.cs" />
+    <Compile Include="ApiClient\TestFlaskApi.cs" />
     <Compile Include="Config\TestFlaskConfig.cs" />
     <Compile Include="Config\TestFlaskConfigSection.cs" />
     <Compile Include="Context\TestFlaskContext.cs" />

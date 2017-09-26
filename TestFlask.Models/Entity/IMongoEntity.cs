@@ -9,6 +9,6 @@ namespace TestFlask.Models.Entity
 {
     public interface IMongoEntity
     {
-        ObjectId Id { get; set; }
+        string Id { get; set; }
     }
 }

@@ -11,7 +11,8 @@ namespace TestFlask.Models.Entity
     public class MongoEntity : IMongoEntity
     {
         [BsonId]
-        public ObjectId Id
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id
         {
             get; set;
         }
