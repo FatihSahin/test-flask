@@ -1,0 +1,12 @@
+﻿<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
+    <section name="testFlaskAssistant" type="TestFlask.Assistant.Config.TestFlaskAssistantConfigSection, TestFlask.Assistant, PublicKeyToken=null, Version=1.0.0.0" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+  </configSections>
+  <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
+  <testFlaskAssistant enabled="true" xdt:Transform="InsertIfMissing">
+      <api url="http://testFlaskApiUrl" xdt:Transform="InsertIfMissing" />
+      <manager url="http://testFlaskManagerUrl" xdt:Transform="InsertIfMissing" />
+      <project key="yourTestFlaskProjectKey" xdt:Transform="InsertIfMissing" />
+  </testFlaskAssistant>
+</configuration>

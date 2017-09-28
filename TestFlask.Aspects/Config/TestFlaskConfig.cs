@@ -22,7 +22,7 @@ namespace TestFlask.Aspects.Config
             {
                 if (instance == null)
                 {
-                    var section = ConfigurationManager.GetSection("testFlaskConfig/testFlask") as TestFlaskConfigSection;
+                    var section = ConfigurationManager.GetSection("testFlask") as TestFlaskConfigSection;
 
                     instance = new TestFlaskConfig
                     {

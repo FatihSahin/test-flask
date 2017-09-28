@@ -8,12 +8,12 @@
     <owners>Fatih Sahin</owners>
     <developmentDependency>true</developmentDependency>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
-    <!--<projectUrl></projectUrl>-->
+    <projectUrl>http://github.com/FatihSahin/test-flask</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!--<iconUrl></iconUrl>-->
     <description>TestFlask Fody add-in.</description>
     <summary>
-      This addin is all you need to use test flask aspects and weaving features.
+      This addin is all you need to use TestFlask aspects and weaving features.
     </summary>
     <language>en-US</language>
     <tags>ILWeaving, Fody, Cecil, TestFlask</tags>

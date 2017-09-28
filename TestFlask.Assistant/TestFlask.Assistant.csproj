@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TestFlask.Assistant</RootNamespace>
     <AssemblyName>TestFlask.Assistant</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,8 +31,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,17 +52,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\TestFlaskAssistantConfigSection.cs" />
+    <Compile Include="WcfExtensions\WcfEndpointBehavior.cs" />
+    <Compile Include="WcfExtensions\WcfEndpointBehaviorExtensionElement.cs" />
+    <Compile Include="WcfExtensions\WcfMessageInspector.cs" />
+    <Content Include="Areas\TestFlask\Controllers\AssistantController.cs" />
+    <Compile Include="ApiClient\TestFlaskApi.cs" />
+    <Content Include="Areas\TestFlask\TestFlaskAreaRegistration.cs" />
+    <Compile Include="Config\TestFlaskAssistantConfig.cs" />
+    <Compile Include="Models\StepsViewModel.cs" />
+    <Compile Include="Models\TestFlaskAssistantContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Content\testFlask.css" />
+    <Content Include="Scripts\testFlask.js" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ApiClient\" />
-    <Folder Include="Areas\TestFlask\Controllers\" />
-    <Folder Include="Areas\TestFlask\Models\" />
-    <Folder Include="Areas\TestFlask\Views\" />
-    <Folder Include="Config\" />
-    <Folder Include="Content\" />
-    <Folder Include="Scripts\" />
-    <Folder Include="WcfExtensions\" />
+    <Content Include="Areas\TestFlask\Views\web.config" />
+    <None Include="packages.config" />
+    <None Include="TestFlask.Assistant.nuspec" />
+    <None Include="web.config.install.xdt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\TestFlask\Views\Assistant\Index.cshtml" />
+    <Content Include="Areas\TestFlask\Views\Assistant\Steps.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestFlask.Models\TestFlask.Models.csproj">
+      <Project>{950e37cd-2c68-4b4e-9137-f82e696dc52c}</Project>
+      <Name>TestFlask.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

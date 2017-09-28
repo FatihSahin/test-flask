@@ -1,0 +1,70 @@
+﻿@using TestFlask.Assistant.Config
+@using TestFlask.Assistant.Models
+@model TestFlaskAssistantContext
+@functions {
+
+    public string GetBodyVisibility()
+    {
+        return Model.IsViewExpanded ? "block" : "none";
+    }
+
+    public string GetRefreshVisibility()
+    {
+        return Model.IsViewExpanded ? "inline" : "none";
+    }
+}
+<!-- if test flask is enabled in config, only then render testFlask assistant -->
+@if (TestFlaskAssistantConfig.Instance.Enabled)
+{
+    <div class="test-flask-assistant-container" onload="initAssistant()">
+        <div class="test-flask-assistant-header">
+            <a href="javascript:void(0)" class="test-flask-margin-link" onclick="testFlask.toggleView()">Test Flask Assistant - @Model.ProjectKey</a>
+            <span style="float:right;">
+                <img id="testFlaskRefreshLoadingGif" src="https://cdnjs.cloudflare.com/ajax/libs/timelinejs/2.25/css/loading.gif" style="display:none;" width="15" />
+                <a id="testFlaskRefresh" style="display:@GetRefreshVisibility();" href="javascript:void(0)" class="test-flask-margin-link" onclick="testFlask.refresh()">Refresh</a>
+            </span>
+        </div>
+        <div class="test-flask-assistant-body" id="testFlaskAssistantBody" style="display:@GetBodyVisibility();">
+            <div>
+                <span><strong>Scenarios</strong></span>
+                <select id="testFlaskScenariosDropdown" onchange="testFlask.loadSteps(this.value)"></select>
+                <span>
+                    <a href="javascript:void(0)" class="test-flask-margin-link" onclick="testFlask.createScenario()">New</a>
+                    | <a href="javascript:void(0)" class="test-flask-margin-link" onclick="testFlask.manageScenario()">Manage</a>
+                </span>
+                <div id="testFlaskCreateNewScenario" style="display:none;padding:5px;">
+                    <span style="margin-right:5px;">New Scenario Name</span>
+                    <input type="text" id="testFlaskNewScenarioName" />
+                    <div>
+                        <div style="float:right">
+                            <a href="javascript:void(0)" class="test-flask-margin-link" onclick="testFlask.cancelNewScenario()">Cancel</a>
+                            <a href="javascript:void(0)" class="test-flask-margin-link" onclick="testFlask.saveNewScenario()">Save</a>
+                        </div>
+                    </div>
+                </div>
+                <div id="testFlaskSteps">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/Scripts/testFlask.js"></script>
+    <script type="text/javascript">
+        @{ string controllerName = "Assistant"; } //modify controller name if you changed test flask area default controller name
+        //initialize testFlask with options
+        testFlask.initialize({
+            recordMode: @Model.RecordMode.ToString().ToLower(),
+            scenarioNo: @Model.CurrentScenarioNo,
+            overwriteStepNo: @Model.OverwriteStepNo,
+            managerScenarioBaseUrl: '@Model.ManagerUrl' + '/project/' + '@Model.ProjectKey' + '/scenario/',
+            actions: {
+                toggleView: '@Url.Action("ToggleView", controllerName)',
+                createNewScenario: '@Url.Action("CreateNewScenario", controllerName)',
+                getScenarios: '@Url.Action("GetScenarios", controllerName)',
+                steps: '@Url.Action("Steps", controllerName)',
+                record: '@Url.Action("Record", controllerName)',
+                updateStep: '@Url.Action("UpdateStep", controllerName)'
+            }
+        });
+    </script>
+}

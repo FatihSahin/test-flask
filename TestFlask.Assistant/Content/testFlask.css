@@ -1,0 +1,54 @@
+﻿.test-flask-assistant-container {
+    background-color: #eaeef3;
+    display: inline-block;
+    border: 1px solid #bbbaba;
+    border-radius: 6px;
+    padding: 3px;
+    font-size: small;
+    opacity: 0.9;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 999;
+}
+
+.test-flask-assistant-header {
+    padding-bottom: 3px;
+}
+
+.test-flask-assistant-body {
+    margin: 10px;
+    display: none;
+}
+
+.test-flask-margin-link {
+    margin: 5px;
+}
+
+.test-flask-steps-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    clear: both;
+}
+
+.test-flask-steps-header {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.test-flask-step-item {
+    margin-top: 3px;
+    margin-bottom: 5px;
+}
+
+.test-flask-step-date {
+    margin-top: 3px;
+    margin-left: 25px;
+    font-size: x-small;
+    font-style: italic;
+}
+
+.test-flask-steps-body {
+    max-height: 200px;
+    overflow-y: scroll;
+}
