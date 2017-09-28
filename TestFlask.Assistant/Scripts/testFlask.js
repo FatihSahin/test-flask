@@ -224,7 +224,7 @@ var testFlask = {};
     $this.manageScenario = function () {
         var elem = document.getElementById("testFlaskScenariosDropdown");
         var scenarioNo = elem.value;
-        var scenarioManagerUrl = $this.managerScenarioBaseUrl + '/' + scenarioNo;
+        var scenarioManagerUrl = $this.managerScenarioBaseUrl + scenarioNo;
         window.open(scenarioManagerUrl);
     };
 
