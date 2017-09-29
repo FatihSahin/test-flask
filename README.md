@@ -21,9 +21,8 @@ public Movie GetMovieWithStockCount(string name)
 
 ```
 
-And after you build your project, TestFlask will weave your code and turn it into something like this. You can see it if you decompile your assembly with a decompiler tool. 
+And after you build your project, TestFlask will weave your code and turn it into something like this. 
 
-Thanks to wonderful [Fody](https://github.com/Fody/Fody) library for simplifying .net assembly weaving.
 ```csharp
 
 [Playback(typeof (MovieNameIdentifier), null)]
@@ -53,10 +52,12 @@ public Movie GetMovieWithStockCount__Original(string name)
 }
 ```
 
+You can see it if you decompile your assembly with a decompiler tool. Thanks to wonderful [Fody](https://github.com/Fody/Fody) library for simplifying .net assembly weaving.
+
 This auto-wrapping enables TestFlask to intercept your method call and act as requested. It can record your request, replay your request or just calls original method. TestFlask determines what to do by looking up to custom https headers that the client sent to the service. There are actually four test modes. 
 
 TestFlask-Mode  | Description
-------------- | -------------
+--------------- | -------------
 Record | Calls original method and then persists request and response object through TestFlask.API into a mongoDB database
 Play | Calls TestFlask.API to look for a recorded response for the current request and returns that response
 NoMock | Calls original method with no mocking
@@ -80,8 +81,8 @@ This project is actually an ASP.NET MVC API project. As a persistence mechanism,
 
 There are four http header that TestFlask looks up to determine how to store your intercepted request &response 
 
-Http Header  | Description
------------- | -------------
+Http Header    | Description
+-------------- | -------------
 TestFlask-Mode | See above
 TestFlask-ProjectKey | This is the key that you created for your backend service to categorize scenarios
 TestFlask-ScenarioNo | This is the number for your test scenario
