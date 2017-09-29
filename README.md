@@ -23,7 +23,7 @@ public Movie GetMovieWithStockCount(string name)
 
 And after you build your project, TestFlask will weave your code and turn it into something like this. You can see it if you decompile your assembly with a decompiler tool. 
 
-Thanks to wondeful [Fody](https://github.com/Fody/Fody) library for simplifying .net assembly weaving.
+Thanks to wonderful [Fody](https://github.com/Fody/Fody) library for simplifying .net assembly weaving.
 ```csharp
 
 [Playback(typeof (MovieNameIdentifier), null)]
@@ -53,18 +53,20 @@ public Movie GetMovieWithStockCount__Original(string name)
 }
 ```
 
-This auto-wrapping enables TestFlask to intercept your method call and act as requested. It can record your request, replay your request or just calls original method. TestFlask determines what to do by looking up to custom https headers that the client sent to the service. There are actually four test modes 
+This auto-wrapping enables TestFlask to intercept your method call and act as requested. It can record your request, replay your request or just calls original method. TestFlask determines what to do by looking up to custom https headers that the client sent to the service. There are actually four test modes. 
 
-    * Record: Calls original method and then persists request and response object through TestFlask.API into a mongoDB database
-    * Play: Calls TestFlask.API to look for a recorded response for the current request and returns that response
-    * NoMock: Calls original method with no mocking
-    * Assert: Same as Play, however in this case TestFlask stores last response as an assertion result to assert later on.
+TestFlask-Mode  | Description
+------------- | -------------
+Record | Calls original method and then persists request and response object through TestFlask.API into a mongoDB database
+Play | Calls TestFlask.API to look for a recorded response for the current request and returns that response
+NoMock | Calls original method with no mocking
+Assert | Same as Play, however in this case TestFlask stores last response as an assertion result to assert later on.
 
 As you can see TestFlask talks to a REST API to do recording and playing. That component is called TestFlask.API
 
 ## How to instantiate a TestFlask.API Host
 
-In order to intercept calls from your weaved methods, you should initiate a TestFlask.API host. 
+In order to persist your intercepted calls from your weaved methods, you should initiate a TestFlask.API host. 
 
 This project is actually an ASP.NET MVC API project. As a persistence mechanism, it uses mongoDB. Therefore, configure your TestFlask.API project's web.config with a running mongoDB instance
 
@@ -74,9 +76,22 @@ This project is actually an ASP.NET MVC API project. As a persistence mechanism,
     <add key="testFlaskMongoDbName" value="test" />
 </appSettings>
 ```
-## How will I send proper TestFlask HttpHeaders to determine testing mode
+## How will I send proper TestFlask HttpHeaders to determine testing mode?
 
-TestFlask.Assistant project (nuget package) is an ASP.NET MVC extension to ease integrating your ASP.NET MVC client to send proper headers to your TestFlask ready backend service.
+There are four http header that TestFlask looks up to determine how to store your intercepted request &response 
 
-Please examine [Movie Rental Sample App](https://github.com/FatihSahin/test-flask-sample) to further investigate how to use TestFlask with scenarios, steps and also manage your tests with [TestFlask Manager](https://github.com/FatihSahin/test-flask-web). You can also examine a SoapUI project inside that sample app to trigger your backend without UI.
+Http Header  | Description
+------------ | -------------
+TestFlask-Mode | See above
+TestFlask-ProjectKey | This is the key that you created for your backend service to categorize scenarios
+TestFlask-ScenarioNo | This is the number for your test scenario
+TestFlask-StepNo | This is optional, if you provide a step no, it will override that step. If you do not, TestFlask will create an auto step under that scenario.
+
+Please examine [Movie Rental Sample App](https://github.com/FatihSahin/test-flask-sample) to further investigate how to use TestFlask with scenarios, steps and also manage your scenarios with [TestFlask Manager](https://github.com/FatihSahin/test-flask-web). 
+
+You can also examine a SoapUI project inside that sample app to trigger your backend without UI.
+
+Lastly, TestFlask.Assistant project (nuget package) is an ASP.NET MVC extension to ease integrating your ASP.NET MVC client to send proper headers to your TestFlask ready backend service.
+
+TestFlask still needs a lot of development and hopefully it will go on. It is on a very early beta phase. Please feel free to contribute with PRs.
 
