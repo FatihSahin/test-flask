@@ -19,9 +19,7 @@ public Movie GetMovieWithStockCount(string name)
     return movie;
 }
 
-```
-
-And after you build your project, TestFlask will weave your code and turn it into something like below . You can see it if you decompile your assembly with a decompiler tool. 
+After you build your project, TestFlask will weave your code and turn it into something like below . You can see it if you decompile your assembly with a decompiler tool. 
 
 ```csharp
 
@@ -80,8 +78,8 @@ This project is actually an ASP.NET MVC API project. As a persistence mechanism,
 
 There are four http headers that TestFlask looks up to determine how to store your intercepted request & response.
 
-Http Header  | Description
------------- | -------------
+Http Header    | Description
+-------------- | -------------
 TestFlask-Mode | See above
 TestFlask-ProjectKey | This is the key that you created for your backend service to categorize scenarios
 TestFlask-ScenarioNo | This is the number for your test scenario
