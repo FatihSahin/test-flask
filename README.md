@@ -2,7 +2,7 @@
 
 TestFlask is a set of components that manipulates (called weaving) your any backend .net method calls inside WCF service or REST API. In addition to weaving, TestFlask records your method request and responses, store them inside a document database, and replay them if requested. 
 
-There is a nuget package called TestFlaskAddin.Fody inside the solution. If you reference that package in your backend service, you can mark your methods with [Playback] attribute as below
+There is a nuget package called TestFlaskAddin.Fody inside the solution. If you reference that package in your backend service, you can mark your methods with [Playback] attribute as below.
 
 ```csharp
 
@@ -21,9 +21,8 @@ public Movie GetMovieWithStockCount(string name)
 
 ```
 
-And after you build your project, TestFlask will weave your code and turn it into something like this. You can see it if you decompile your assembly with a decompiler tool. 
+And after you build your project, TestFlask will weave your code and turn it into something like below . You can see it if you decompile your assembly with a decompiler tool. 
 
-Thanks to wonderful [Fody](https://github.com/Fody/Fody) library for simplifying .net assembly weaving.
 ```csharp
 
 [Playback(typeof (MovieNameIdentifier), null)]
@@ -33,14 +32,14 @@ public Movie GetMovieWithStockCount(string name)
     player.StartInvocation(name);
     switch (player.DetermineTestMode(name))
     {
-    case TestModes.NoMock:
-        return player.CallOriginal(name, new Func<string, Movie>(this.GetMovieWithStockCount__Original));
-    case TestModes.Record:
-        return player.Record(name, new Func<string, Movie>(this.GetMovieWithStockCount__Original));
-    case TestModes.Play:
-        return player.Play(name);
-    default:
-        return (Movie) null;
+        case TestModes.NoMock:
+            return player.CallOriginal(name, new Func<string, Movie>(this.GetMovieWithStockCount__Original));
+        case TestModes.Record:
+            return player.Record(name, new Func<string, Movie>(this.GetMovieWithStockCount__Original));
+        case TestModes.Play:
+            return player.Play(name);
+        default:
+            return (Movie) null;
     }
 }
 
@@ -52,14 +51,15 @@ public Movie GetMovieWithStockCount__Original(string name)
     return movieInfo;
 }
 ```
+Thanks to wonderful [Fody](https://github.com/Fody/Fody) library for simplifying .net assembly weaving.
 
-This auto-wrapping enables TestFlask to intercept your method call and act as requested. It can record your request, replay your request or just calls original method. TestFlask determines what to do by looking up to custom https headers that the client sent to the service. There are actually four test modes. 
+This auto-wrapping enables TestFlask to intercept your method calls and act as requested. It can record your request, replay your request or just calls the original method. TestFlask determines what to do by looking up to custom https headers that the client has sent to the service. There are actually four test modes. 
 
 TestFlask-Mode  | Description
 ------------- | -------------
-Record | Calls original method and then persists request and response object through TestFlask.API into a mongoDB database
-Play | Calls TestFlask.API to look for a recorded response for the current request and returns that response
-NoMock | Calls original method with no mocking
+Record | Calls the original method and then persists request and response objects through TestFlask.API into a mongoDB database.
+Play | Calls TestFlask.API to look for a recorded response for the current request and returns that response.
+NoMock | Calls the original method with no mocking.
 Assert | Same as Play, however in this case TestFlask stores last response as an assertion result to assert later on.
 
 As you can see TestFlask talks to a REST API to do recording and playing. That component is called TestFlask.API
@@ -78,7 +78,7 @@ This project is actually an ASP.NET MVC API project. As a persistence mechanism,
 ```
 ## How will I send proper TestFlask HttpHeaders to determine testing mode?
 
-There are four http header that TestFlask looks up to determine how to store your intercepted request &response 
+There are four http headers that TestFlask looks up to determine how to store your intercepted request & response.
 
 Http Header  | Description
 ------------ | -------------
