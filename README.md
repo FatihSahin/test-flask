@@ -18,14 +18,7 @@ public Movie GetMovieWithStockCount(string name)
     return movie;
 }
 ```
-
-<<<<<<< HEAD
-```
-
-And after you build your project, TestFlask will weave your code and turn it into something like below . You can see it if you decompile your assembly with a decompiler tool. 
-=======
 After you build your project, TestFlask will weave your code and turn it into something like below . You can see it if you decompile your assembly with a decompiler tool. 
->>>>>>> 6a62ed444c632c2fcaa69121650237bec46f37f9
 
 ```csharp
 [Playback(typeof (MovieNameIdentifier), null)]
