@@ -5,7 +5,6 @@ TestFlask is a set of components that manipulates (called weaving) your any back
 There is a nuget package called TestFlaskAddin.Fody inside the solution. If you reference that package in your backend service, you can mark your methods with [Playback] attribute as below.
 
 ```csharp
-
 [Playback(typeof(MovieNameIdentifier))]
 public Movie GetMovieWithStockCount(string name)
 {
@@ -18,11 +17,11 @@ public Movie GetMovieWithStockCount(string name)
     
     return movie;
 }
+```
 
 After you build your project, TestFlask will weave your code and turn it into something like below . You can see it if you decompile your assembly with a decompiler tool. 
 
 ```csharp
-
 [Playback(typeof (MovieNameIdentifier), null)]
 public Movie GetMovieWithStockCount(string name)
 {
