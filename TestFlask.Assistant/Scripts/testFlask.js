@@ -24,7 +24,7 @@ var testFlask = {};
         var httpRequest = new XMLHttpRequest();
 
         httpRequest.onreadystatechange = () => {
-            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                 action();
             }
         };
@@ -99,7 +99,7 @@ var testFlask = {};
                 var option = document.createElement("option");
                 option.text = sce.ScenarioName;
                 option.value = sce.ScenarioNo;
-                option.selected = sce.ScenarioNo == $this.currentScenarioNo;
+                option.selected = sce.ScenarioNo.toString() === $this.currentScenarioNo.toString();
                 elem.add(option);
             });
 
@@ -224,7 +224,7 @@ var testFlask = {};
     $this.manageScenario = function () {
         var elem = document.getElementById("testFlaskScenariosDropdown");
         var scenarioNo = elem.value;
-        var scenarioManagerUrl = $this.managerScenarioBaseUrl + scenarioNo;
+        var scenarioManagerUrl = $this.managerScenarioBaseUrl + '/' + scenarioNo;
         window.open(scenarioManagerUrl);
     };
 

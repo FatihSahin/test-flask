@@ -12,13 +12,13 @@ using TestFlask.Models.Entity;
 
 namespace TestFlask.Assistant.Controllers
 {
-    public class AssistantController : Controller
+    public class TestFlaskAssistantController : Controller
     {
         private readonly TestFlaskAssistantConfig config;
         private readonly TestFlaskAssistantContext context;
         private readonly TestFlaskApi api;
 
-        public AssistantController()
+        public TestFlaskAssistantController()
         {
             config = TestFlaskAssistantConfig.Instance;
             context = TestFlaskAssistantContext.Current;
@@ -78,7 +78,7 @@ namespace TestFlask.Assistant.Controllers
 
             IEnumerable<Step> steps = api.GetSteps(scenarioNo);
 
-            return PartialView("~/Areas/TestFlask/Views/Assistant/Steps.cshtml", new StepsViewModel(context, steps));
+            return PartialView("~/Areas/TestFlask/Views/TestFlaskAssistant/Steps.cshtml", new StepsViewModel(context, steps));
         }
 
         [HttpPost]

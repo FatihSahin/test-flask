@@ -56,7 +56,7 @@
     <Compile Include="WcfExtensions\WcfEndpointBehavior.cs" />
     <Compile Include="WcfExtensions\WcfEndpointBehaviorExtensionElement.cs" />
     <Compile Include="WcfExtensions\WcfMessageInspector.cs" />
-    <Content Include="Areas\TestFlask\Controllers\AssistantController.cs" />
+    <Content Include="Areas\TestFlask\Controllers\TestFlaskAssistantController.cs" />
     <Compile Include="ApiClient\TestFlaskApi.cs" />
     <Content Include="Areas\TestFlask\TestFlaskAreaRegistration.cs" />
     <Compile Include="Config\TestFlaskAssistantConfig.cs" />
@@ -73,8 +73,8 @@
     <None Include="web.config.install.xdt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\TestFlask\Views\Assistant\Index.cshtml" />
-    <Content Include="Areas\TestFlask\Views\Assistant\Steps.cshtml" />
+    <Content Include="Areas\TestFlask\Views\TestFlaskAssistant\Index.cshtml" />
+    <Content Include="Areas\TestFlask\Views\TestFlaskAssistant\Steps.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TestFlask.Models\TestFlask.Models.csproj">

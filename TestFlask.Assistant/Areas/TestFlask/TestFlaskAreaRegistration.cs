@@ -17,7 +17,7 @@ namespace TestFlask.Assistant.Areas.TestFlask
             context.MapRoute(
                  "TestFlask_Default",
                  "TestFlask/{controller}/{action}/{id}",
-                 new { controller = "Assistant", action = "Index", id = UrlParameter.Optional },
+                 new { controller = "TestFlaskAssistant", action = "Index", id = UrlParameter.Optional },
                  new string[] { "TestFlask.Assistant.Controllers" }
              );
         }
