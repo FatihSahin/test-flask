@@ -159,7 +159,10 @@ namespace TestFlask.Aspects
 
                 requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
                 requestedInvocation.Response = JsonConvert.SerializeObject(response);
-                var responseType = response.GetType();
+
+                //if response is not null, use its type (as it may me a derived type, if null we have no choice to use declared generic type
+                //Does not support proxified entities
+                var responseType = response != null ? response.GetType() : typeof(TRes); 
 
                 var regex = new Regex(@"(, PublicKeyToken=(null|\w{16}))|(, Version=[^,]+)|(, Culture=[^,]+)");
 
