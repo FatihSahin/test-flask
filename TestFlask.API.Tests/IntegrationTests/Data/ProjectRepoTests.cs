@@ -1,14 +1,14 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
 using TestFlask.Data.Repos;
+using NUnit.Framework;
 
 namespace TestFlask.API.Tests.IntegrationTests.Data
 {
-    [TestClass]
+    [TestFixture]
     public class ProjectRepoTests : BaseRepoTests
     {
-        [TestMethod]
+        [Test]
         public void Test_Int_InsertProject_Success()
         {
             CounterRepo counterRepo = new CounterRepo(db);

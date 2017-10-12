@@ -1,17 +1,17 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
 using TestFlask.Data.Repos;
 using TestFlask.Models.Entity;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 
 namespace TestFlask.API.Tests.IntegrationTests.Data
 {
-    [TestClass]
+    [TestFixture]
     public class ScenarioRepoTests : BaseRepoTests
     {
-        [TestMethod]
+        [Test]
         public void Test_Int_GetStep_Success()
         {
             CounterRepo counterRepo = new CounterRepo(db);
@@ -48,7 +48,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
         }
 
 
-        [TestMethod]
+        [Test]
         public void Test_Int_InsertInvocationsForStep_Success()
         {
             CounterRepo counterRepo = new CounterRepo(db);
@@ -86,7 +86,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
             scenarioRepo.InsertInvocationsForStep(dummyStep);
         }
 
-        [TestMethod]
+        [Test]
         public void Test_Int_InsertStep_Success()
         {
             CounterRepo counterRepo = new CounterRepo(db);
@@ -106,7 +106,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
             scenarioRepo.InsertStep(dummyStep);
         }
 
-        [TestMethod]
+        [Test]
         public void Test_Int_UpdateStep_Success()
         {
             CounterRepo counterRepo = new CounterRepo(db);
@@ -145,7 +145,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
             scenarioRepo.UpdateStep(dbStep2);
         }
 
-        [TestMethod]
+        [Test]
         public void Test_Int_GetInvocation_Success()
         {
             CounterRepo counterRepo = new CounterRepo(db);
@@ -156,7 +156,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
             Assert.IsNotNull(invocation);
         }
 
-        [TestMethod]
+        [Test]
         public void Test_Int_UpdateInvocation_Success()
         {
             CounterRepo counterRepo = new CounterRepo(db);

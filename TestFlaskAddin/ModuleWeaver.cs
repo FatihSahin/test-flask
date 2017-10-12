@@ -279,6 +279,8 @@ public class ModuleWeaver
     {
         switch (reqArgCount)
         {
+            case 0:
+                return typeof(Func<>);
             case 1:
                 return typeof(Func<,>);
             case 2:
@@ -306,6 +308,8 @@ public class ModuleWeaver
     {
         switch (reqArgCount)
         {
+            case 0:
+                return typeof(Player<>);
             case 1:
                 return typeof(Player<,>);
             case 2:
