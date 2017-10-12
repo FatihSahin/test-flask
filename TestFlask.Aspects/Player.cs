@@ -16,6 +16,53 @@ namespace TestFlask.Aspects
         protected InnerPlayer<TRes> innerPlayer;
     }
 
+    //A player for a method with no args, returns response
+    public class Player<TRes> : PlayerBase<TRes>
+    {
+        private readonly string methodSignature;
+        private readonly IRequestIdentifier requestIdentifier;
+        private readonly IResponseIdentifier<TRes> responseIdentifer;
+        //keeps last recorded invocation duration (made it a class memeber to access from recordexception)
+        private long recordedDuration = 0L;
+
+        public Player(string pMethodSignature, IRequestIdentifier reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
+        {
+            methodSignature = pMethodSignature;
+            requestIdentifier = reqIdentifer;
+            responseIdentifer = resIdentifer;
+        }
+
+        public void StartInvocation()
+        {
+            innerPlayer = new InnerPlayer<TRes>(methodSignature,
+                null,
+                null,
+                responseIdentifer);
+
+            innerPlayer.StartInvocation();
+        }
+
+        public TestModes DetermineTestMode()
+        {
+            return innerPlayer.DetermineTestMode();
+        }
+
+        public TRes Play()
+        {
+            return innerPlayer.Play();
+        }
+
+        public TRes Record(Func<TRes> originalMethod)
+        {
+            return innerPlayer.Record(originalMethod.Target, originalMethod.Method);
+        }
+
+        public TRes CallOriginal(Func<TRes> originalMethod)
+        {
+            return innerPlayer.CallOriginal(originalMethod.Target, originalMethod.Method);
+        }
+    }
+
     //TODO: A more elegant (params object[]) solution seems possible
     public class Player<TReq, TRes> : PlayerBase<TRes>
     {

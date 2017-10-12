@@ -86,7 +86,24 @@ namespace AssemblyToProcess
             return response;
         }
 
-        [Playback(typeof(GetFooArgsIdentifier))]
+        [Playback]
+        public SomeResponse ReturnSome()
+        {
+            return new SomeResponse
+            {
+                SomeProperty = 0,
+                SomeOtherProperty = "no args"
+            };
+        }
+
+        //[Playback]
+        public void DoSome(SomeRequest req)
+        {
+            int a = 5 * 5;
+            Console.WriteLine(a);
+        }
+
+        //[Playback(typeof(GetFooArgsIdentifier))]
         public FooResponse GetFooWithTooManyArgs(int a, string str, float f)
         {
             var response = new FooResponse
@@ -145,5 +162,7 @@ namespace AssemblyToProcess
                     return null;
             }
         }
+
+
     }
 }
