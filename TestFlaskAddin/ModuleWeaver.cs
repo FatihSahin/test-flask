@@ -82,7 +82,6 @@ public class ModuleWeaver
 
     public void Execute()
     {
-
         if (!string.IsNullOrEmpty(AddinDirectoryPath)) //it is not empty when triggered from MS Build (Fody)
         {
             List<string> localRefDirs = new List<string>();

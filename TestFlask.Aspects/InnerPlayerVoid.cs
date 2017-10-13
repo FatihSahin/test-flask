@@ -19,23 +19,18 @@ using TestFlask.Models.Entity;
 
 namespace TestFlask.Aspects
 {
-    public class InnerPlayer<TRes> : InnerPlayerBase
+    public class InnerPlayerVoid : InnerPlayerBase
     {
-        private readonly IResponseIdentifier<TRes> responseIdentifier;
-
-        public InnerPlayer(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo, IResponseIdentifier<TRes> pResponseIdentifier) 
-            : base(pMethodSignature, pRequestIdentifierKey, pRequestDisplayInfo)
+        public InnerPlayerVoid(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo) : base(pMethodSignature, pRequestIdentifierKey, pRequestDisplayInfo)
         {
-            responseIdentifier = pResponseIdentifier;
         }
 
-        public TRes CallOriginal(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
+        public void CallOriginal(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
         {
             try
             {
-                TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
-                EndInvocation(response);
-                return response;
+                originalMethodInfo.Invoke(target, requestArgs);
+                EndInvocation();
             }
             catch (Exception ex)
             {
@@ -44,26 +39,17 @@ namespace TestFlask.Aspects
             }
         }
 
-        public TRes Record(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
+        public void Record(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
             try
             {
-                TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
+                originalMethodInfo.Invoke(target, requestArgs);
                 requestedInvocation.Duration = sw.ElapsedMilliseconds;
 
-                requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
-                requestedInvocation.Response = JsonConvert.SerializeObject(response);
+                requestedInvocation.ResponseType = "System.Void";
 
-                //if response is not null, use its type (as it may me a derived type, if null we have no choice to use declared generic type
-                //Does not support proxified entities
-                var responseType = response != null ? response.GetType() : typeof(TRes); 
-
-                var regex = new Regex(@"(, PublicKeyToken=(null|\w{16}))|(, Version=[^,]+)|(, Culture=[^,]+)");
-
-                requestedInvocation.ResponseType = regex.Replace(responseType.AssemblyQualifiedName, string.Empty); //save without version, public key token, culture
-                
                 if (requestedInvocation.Depth == 1)    //root invocation
                 {
                     requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;
@@ -71,9 +57,7 @@ namespace TestFlask.Aspects
 
                 TryPersistStepInvocations();
 
-                EndInvocation(response);
-
-                return response;
+                EndInvocation();
             }
             catch (Exception ex)
             {
@@ -87,15 +71,13 @@ namespace TestFlask.Aspects
             }
         }
 
-        public TRes Play(params object[] requestArgs)
+        public void Play(params object[] requestArgs)
         {
             var loadedInvocation = TestFlaskContext.GetInvocation(requestedInvocation.InstanceHashCode);
 
             if (!loadedInvocation.IsFaulted)
             {
-                var response = (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType));
-                EndInvocation(response);
-                return response;
+                EndInvocation();
             }
             else
             {
