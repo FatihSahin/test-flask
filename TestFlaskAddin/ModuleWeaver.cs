@@ -9,24 +9,64 @@ using TestFlask.Aspects;
 using TestFlask.Aspects.Enums;
 using System.Collections.Generic;
 using TestFlaskAddin.Fody;
+using System.Xml.Linq;
+using System.Threading.Tasks;
 
 public class ModuleWeaver
 {
-    // Will log an informational message to MSBuild
+    // Will contain the full element XML from FodyWeavers.xml. OPTIONAL
+    public XElement Config { get; set; }
+
+    // Will log an MessageImportance.Normal message to MSBuild. OPTIONAL
+    public Action<string> LogDebug { get; set; }
+
+    // Will log an MessageImportance.High message to MSBuild. OPTIONAL
     public Action<string> LogInfo { get; set; }
 
-    // An instance of Mono.Cecil.ModuleDefinition for processing
-    public ModuleDefinition ModuleDefinition { get; set; }
+    // Will log an warning message to MSBuild. OPTIONAL
+    public Action<string> LogWarning { get; set; }
 
-    // Will contain the full directory path of the current weaver.
-    public string AddinDirectoryPath { get; set; }
+    // Will log an warning message to MSBuild at a specific point in the code. OPTIONAL
+    public Action<string, SequencePoint> LogWarningPoint { get; set; }
+
+    // Will log an error message to MSBuild. OPTIONAL
+    public Action<string> LogError { get; set; }
+
+    // Will log an error message to MSBuild at a specific point in the code. OPTIONAL
+    public Action<string, SequencePoint> LogErrorPoint { get; set; }
 
     // An instance of Mono.Cecil.IAssemblyResolver for resolving assembly references. OPTIONAL
     public IAssemblyResolver AssemblyResolver { get; set; }
 
+    // An instance of Mono.Cecil.ModuleDefinition for processing. REQUIRED
+    public ModuleDefinition ModuleDefinition { get; set; }
+
+    // Will contain the full path of the target assembly. OPTIONAL
+    public string AssemblyFilePath { get; set; }
+
     // Will contain the full directory path of the target project. 
     // A copy of $(ProjectDir). OPTIONAL
     public string ProjectDirectoryPath { get; set; }
+
+    // Will contain the full directory path of the current weaver. OPTIONAL
+    public string AddinDirectoryPath { get; set; }
+
+    // Will contain the full directory path of the current solution.
+    // A copy of `$(SolutionDir)` or, if it does not exist, a copy of `$(MSBuildProjectDirectory)..\..\..\`. OPTIONAL
+    public string SolutionDirectoryPath { get; set; }
+
+    // Will contain a semicomma delimetered string that contains 
+    // all the references for the target project. 
+    // A copy of the contents of the @(ReferencePath). OPTIONAL
+    public string References { get; set; }
+
+    // Will a list of all the references marked as copy-local. 
+    // A copy of the contents of the @(ReferenceCopyLocalPaths). OPTIONAL
+    public List<string> ReferenceCopyLocalPaths { get; set; }
+
+    // Will a list of all the msbuild constants. 
+    // A copy of the contents of the $(DefineConstants). OPTIONAL
+    public List<string> DefineConstants { get; set; }
 
     private ModuleDefinition TestFlaskAspectsModule { get; set; }
 
@@ -42,23 +82,33 @@ public class ModuleWeaver
 
     public void Execute()
     {
+
         if (!string.IsNullOrEmpty(AddinDirectoryPath)) //it is not empty when triggered from MS Build (Fody)
         {
+            List<string> localRefDirs = new List<string>();
+            foreach (var refCopyLocalPath in ReferenceCopyLocalPaths)
+            {
+                localRefDirs.Add(Directory.GetParent(refCopyLocalPath).FullName);
+            }
+
             var defAssemblyResolver = new DefaultAssemblyResolver();
-            defAssemblyResolver.AddSearchDirectory(ProjectDirectoryPath + "bin");
-            defAssemblyResolver.AddSearchDirectory(ProjectDirectoryPath + @"bin\Debug");
-            defAssemblyResolver.AddSearchDirectory(ProjectDirectoryPath + @"bin\Release");
+
+            defAssemblyResolver.AddSearchDirectory(AddinDirectoryPath);
+
+            localRefDirs.ForEach(refDir => defAssemblyResolver.AddSearchDirectory(refDir));
+
             AssemblyResolver = defAssemblyResolver;
         }
         else //for testing
-        { 
+        {
             AssemblyResolver = ModuleDefinition.AssemblyResolver;
         }
 
         ReferencedModules = new List<ModuleDefinition>();
-        foreach(var x in ModuleDefinition.AssemblyReferences)
+        foreach (var assemblyRef in ModuleDefinition.AssemblyReferences)
         {
-            ReferencedModules.Add(AssemblyResolver.Resolve(x).MainModule);
+            var refModuleDefinition = AssemblyResolver.Resolve(assemblyRef).MainModule;
+            ReferencedModules.Add(refModuleDefinition);
         }
 
         TestFlaskAspectsModule = ResolveTestFlaskAspectsModuleDefinition();
@@ -98,26 +148,7 @@ public class ModuleWeaver
     {
         var testFlaskAspectsAssemblyReference = new AssemblyNameReference("TestFlask.Aspects", new Version("1.0.0.0"));
 
-        AssemblyDefinition definition;
-
-        if (!string.IsNullOrEmpty(AddinDirectoryPath))
-        {
-            //todo use an integration test to test this!
-            var assemblyResolver = new DefaultAssemblyResolver();
-
-            assemblyResolver.AddSearchDirectory(AddinDirectoryPath);
-
-            definition = assemblyResolver.Resolve(testFlaskAspectsAssemblyReference);
-
-            if (definition == null)
-            {
-                throw new Exception("Can't find TestFlask.Aspects assembly. Make sure you've downloaded and installed the nuget package!");
-            }
-        }
-        else
-        {
-            definition = ModuleDefinition.AssemblyResolver.Resolve(testFlaskAspectsAssemblyReference);
-        }
+        AssemblyDefinition definition = ModuleDefinition.AssemblyResolver.Resolve(testFlaskAspectsAssemblyReference);
 
         return definition.MainModule;
     }
@@ -126,7 +157,7 @@ public class ModuleWeaver
     {
         var reqResTypes = new List<TypeReference>();
 
-        foreach(var pType in playableMethod.Parameters)
+        foreach (var pType in playableMethod.Parameters)
         {
             var module = GetModuleForReferencedType(pType.ParameterType);
             var def = module.ImportReference(pType.ParameterType);
