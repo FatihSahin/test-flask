@@ -17,7 +17,7 @@ using TestFlask.Aspects.Enums;
 using TestFlask.Aspects.Identifiers;
 using TestFlask.Models.Entity;
 
-namespace TestFlask.Aspects
+namespace TestFlask.Aspects.Player
 {
     public class InnerPlayerBase
     {

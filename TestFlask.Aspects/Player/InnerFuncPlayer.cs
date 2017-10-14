@@ -17,20 +17,25 @@ using TestFlask.Aspects.Enums;
 using TestFlask.Aspects.Identifiers;
 using TestFlask.Models.Entity;
 
-namespace TestFlask.Aspects
+namespace TestFlask.Aspects.Player
 {
-    public class InnerPlayerVoid : InnerPlayerBase
+    public class InnerFuncPlayer<TRes> : InnerPlayerBase
     {
-        public InnerPlayerVoid(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo) : base(pMethodSignature, pRequestIdentifierKey, pRequestDisplayInfo)
+        private readonly IResponseIdentifier<TRes> responseIdentifier;
+
+        public InnerFuncPlayer(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo, IResponseIdentifier<TRes> pResponseIdentifier) 
+            : base(pMethodSignature, pRequestIdentifierKey, pRequestDisplayInfo)
         {
+            responseIdentifier = pResponseIdentifier;
         }
 
-        public void CallOriginal(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
+        public TRes CallOriginal(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
         {
             try
             {
-                originalMethodInfo.Invoke(target, requestArgs);
-                EndInvocation();
+                TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
+                EndInvocation(response);
+                return response;
             }
             catch (Exception ex)
             {
@@ -39,17 +44,26 @@ namespace TestFlask.Aspects
             }
         }
 
-        public void Record(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
+        public TRes Record(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
             try
             {
-                originalMethodInfo.Invoke(target, requestArgs);
+                TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
                 requestedInvocation.Duration = sw.ElapsedMilliseconds;
 
-                requestedInvocation.ResponseType = "System.Void";
+                requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
+                requestedInvocation.Response = JsonConvert.SerializeObject(response);
 
+                //if response is not null, use its type (as it may me a derived type, if null we have no choice to use declared generic type
+                //Does not support proxified entities
+                var responseType = response != null ? response.GetType() : typeof(TRes); 
+
+                var regex = new Regex(@"(, PublicKeyToken=(null|\w{16}))|(, Version=[^,]+)|(, Culture=[^,]+)");
+
+                requestedInvocation.ResponseType = regex.Replace(responseType.AssemblyQualifiedName, string.Empty); //save without version, public key token, culture
+                
                 if (requestedInvocation.Depth == 1)    //root invocation
                 {
                     requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;
@@ -57,7 +71,9 @@ namespace TestFlask.Aspects
 
                 TryPersistStepInvocations();
 
-                EndInvocation();
+                EndInvocation(response);
+
+                return response;
             }
             catch (Exception ex)
             {
@@ -71,13 +87,15 @@ namespace TestFlask.Aspects
             }
         }
 
-        public void Play(params object[] requestArgs)
+        public TRes Play(params object[] requestArgs)
         {
             var loadedInvocation = TestFlaskContext.GetInvocation(requestedInvocation.InstanceHashCode);
 
             if (!loadedInvocation.IsFaulted)
             {
-                EndInvocation();
+                var response = (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType));
+                EndInvocation(response);
+                return response;
             }
             else
             {

@@ -9,23 +9,21 @@ using System.Threading.Tasks;
 using TestFlask.Aspects.Enums;
 using TestFlask.Aspects.Identifiers;
 
-namespace TestFlask.Aspects
+namespace TestFlask.Aspects.Player
 {
-    public class PlayerBase<TRes>
+    public class FuncPlayerBase<TRes>
     {
-        protected InnerPlayer<TRes> innerPlayer;
+        protected InnerFuncPlayer<TRes> innerPlayer;
     }
 
     //A player for a method with no args, returns response
-    public class Player<TRes> : PlayerBase<TRes>
+    public class FuncPlayer<TRes> : FuncPlayerBase<TRes>
     {
         private readonly string methodSignature;
         private readonly IRequestIdentifier requestIdentifier;
         private readonly IResponseIdentifier<TRes> responseIdentifer;
-        //keeps last recorded invocation duration (made it a class memeber to access from recordexception)
-        private long recordedDuration = 0L;
 
-        public Player(string pMethodSignature, IRequestIdentifier reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
+        public FuncPlayer(string pMethodSignature, IRequestIdentifier reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
         {
             methodSignature = pMethodSignature;
             requestIdentifier = reqIdentifer;
@@ -34,7 +32,7 @@ namespace TestFlask.Aspects
 
         public void StartInvocation()
         {
-            innerPlayer = new InnerPlayer<TRes>(methodSignature,
+            innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                 null,
                 null,
                 responseIdentifer);
@@ -64,15 +62,13 @@ namespace TestFlask.Aspects
     }
 
     //TODO: A more elegant (params object[]) solution seems possible
-    public class Player<TReq, TRes> : PlayerBase<TRes>
+    public class FuncPlayer<TReq, TRes> : FuncPlayerBase<TRes>
     {
         private readonly string methodSignature;
         private readonly IRequestIdentifier<TReq> requestIdentifier;
         private readonly IResponseIdentifier<TRes> responseIdentifer;
-        //keeps last recorded invocation duration (made it a class memeber to access from recordexception)
-        private long recordedDuration = 0L;
 
-        public Player(string pMethodSignature, IRequestIdentifier<TReq> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
+        public FuncPlayer(string pMethodSignature, IRequestIdentifier<TReq> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
         {
             methodSignature = pMethodSignature;
             requestIdentifier = reqIdentifer;
@@ -81,7 +77,7 @@ namespace TestFlask.Aspects
 
         public void StartInvocation(TReq request)
         {
-            innerPlayer = new InnerPlayer<TRes>(methodSignature,
+            innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                 requestIdentifier?.ResolveIdentifierKey(request),
                 requestIdentifier?.ResolveDisplayInfo(request),
                 responseIdentifer);
@@ -110,15 +106,13 @@ namespace TestFlask.Aspects
         }
     }
 
-    public class Player<TArg0, TArg1, TRes> : PlayerBase<TRes>
+    public class FuncPlayer<TArg0, TArg1, TRes> : FuncPlayerBase<TRes>
     {
         private readonly string methodSignature;
         private readonly IRequestIdentifier<TArg0, TArg1> requestIdentifier;
         private readonly IResponseIdentifier<TRes> responseIdentifer;
-        //keeps last recorded invocation duration (made it a class memeber to access from recordexception)
-        private long recordedDuration = 0L;
 
-        public Player(string pMethodSignature, IRequestIdentifier<TArg0, TArg1> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
+        public FuncPlayer(string pMethodSignature, IRequestIdentifier<TArg0, TArg1> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
         {
             methodSignature = pMethodSignature;
             requestIdentifier = reqIdentifer;
@@ -127,7 +121,7 @@ namespace TestFlask.Aspects
 
         public void StartInvocation(TArg0 reqArg0, TArg1 reqArg1)
         {
-            innerPlayer = new InnerPlayer<TRes>(methodSignature,
+            innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                 requestIdentifier?.ResolveIdentifierKey(reqArg0, reqArg1),
                 requestIdentifier?.ResolveDisplayInfo(reqArg0, reqArg1),
                 responseIdentifer);
@@ -156,15 +150,13 @@ namespace TestFlask.Aspects
         }
     }
 
-    public class Player<TArg0, TArg1, TArg2, TRes> : PlayerBase<TRes>
+    public class FuncPlayer<TArg0, TArg1, TArg2, TRes> : FuncPlayerBase<TRes>
     {
         private readonly string methodSignature;
         private readonly IRequestIdentifier<TArg0, TArg1, TArg2> requestIdentifier;
         private readonly IResponseIdentifier<TRes> responseIdentifer;
-        //keeps last recorded invocation duration (made it a class memeber to access from recordexception)
-        private long recordedDuration = 0L;
 
-        public Player(string pMethodSignature, IRequestIdentifier<TArg0, TArg1, TArg2> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
+        public FuncPlayer(string pMethodSignature, IRequestIdentifier<TArg0, TArg1, TArg2> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
         {
             methodSignature = pMethodSignature;
             requestIdentifier = reqIdentifer;
@@ -173,7 +165,7 @@ namespace TestFlask.Aspects
 
         public void StartInvocation(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2)
         {
-            innerPlayer = new InnerPlayer<TRes>(methodSignature,
+            innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                 requestIdentifier?.ResolveIdentifierKey(reqArg0, reqArg1, reqArg2),
                 requestIdentifier?.ResolveDisplayInfo(reqArg0, reqArg1, reqArg2),
                 responseIdentifer);
@@ -202,15 +194,13 @@ namespace TestFlask.Aspects
         }
     }
 
-    public class Player<TArg0, TArg1, TArg2, TArg3, TRes> : PlayerBase<TRes>
+    public class FuncPlayer<TArg0, TArg1, TArg2, TArg3, TRes> : FuncPlayerBase<TRes>
     {
         private readonly string methodSignature;
         private readonly IRequestIdentifier<TArg0, TArg1, TArg2, TArg3> requestIdentifier;
         private readonly IResponseIdentifier<TRes> responseIdentifer;
-        //keeps last recorded invocation duration (made it a class memeber to access from recordexception)
-        private long recordedDuration = 0L;
 
-        public Player(string pMethodSignature, IRequestIdentifier<TArg0, TArg1, TArg2, TArg3> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
+        public FuncPlayer(string pMethodSignature, IRequestIdentifier<TArg0, TArg1, TArg2, TArg3> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
         {
             methodSignature = pMethodSignature;
             requestIdentifier = reqIdentifer;
@@ -219,7 +209,7 @@ namespace TestFlask.Aspects
 
         public void StartInvocation(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2, TArg3 reqArg3)
         {
-            innerPlayer = new InnerPlayer<TRes>(methodSignature,
+            innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                requestIdentifier?.ResolveIdentifierKey(reqArg0, reqArg1, reqArg2, reqArg3),
                requestIdentifier?.ResolveDisplayInfo(reqArg0, reqArg1, reqArg2, reqArg3),
                responseIdentifer);
@@ -248,15 +238,13 @@ namespace TestFlask.Aspects
         }
     }
 
-    public class Player<TArg0, TArg1, TArg2, TArg3, TArg4, TRes> : PlayerBase<TRes>
+    public class FuncPlayer<TArg0, TArg1, TArg2, TArg3, TArg4, TRes> : FuncPlayerBase<TRes>
     {
         private readonly string methodSignature;
         private readonly IRequestIdentifier<TArg0, TArg1, TArg2, TArg3, TArg4> requestIdentifier;
         private readonly IResponseIdentifier<TRes> responseIdentifer;
-        //keeps last recorded invocation duration (made it a class memeber to access from recordexception)
-        private long recordedDuration = 0L;
 
-        public Player(string pMethodSignature, IRequestIdentifier<TArg0, TArg1, TArg2, TArg3, TArg4> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
+        public FuncPlayer(string pMethodSignature, IRequestIdentifier<TArg0, TArg1, TArg2, TArg3, TArg4> reqIdentifer = null, IResponseIdentifier<TRes> resIdentifer = null)
         {
             methodSignature = pMethodSignature;
             requestIdentifier = reqIdentifer;
@@ -265,7 +253,7 @@ namespace TestFlask.Aspects
 
         public void StartInvocation(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2, TArg3 reqArg3, TArg4 reqArg4)
         {
-            innerPlayer = new InnerPlayer<TRes>(methodSignature,
+            innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                requestIdentifier?.ResolveIdentifierKey(reqArg0, reqArg1, reqArg2, reqArg3, reqArg4),
                requestIdentifier?.ResolveDisplayInfo(reqArg0, reqArg1, reqArg2, reqArg3, reqArg4),
                responseIdentifer);
