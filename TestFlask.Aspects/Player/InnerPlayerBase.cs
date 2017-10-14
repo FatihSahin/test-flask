@@ -17,24 +17,22 @@ using TestFlask.Aspects.Enums;
 using TestFlask.Aspects.Identifiers;
 using TestFlask.Models.Entity;
 
-namespace TestFlask.Aspects
+namespace TestFlask.Aspects.Player
 {
-    public class InnerPlayer<TRes>
+    public class InnerPlayerBase
     {
-        private readonly string methodSignature;
-        private readonly string requestDisplayInfo;
-        private readonly string requestIdentifierKey;
-        private readonly IResponseIdentifier<TRes> responseIdentifier;
-        private Invocation requestedInvocation;
-        private TestFlaskApi api;
+        protected readonly string methodSignature;
+        protected readonly string requestDisplayInfo;
+        protected readonly string requestIdentifierKey;
+        protected Invocation requestedInvocation;
+        protected TestFlaskApi api;
         private bool mustPersistAssertionResult;
 
-        public InnerPlayer(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo, IResponseIdentifier<TRes> pResponseIdentifier)
+        public InnerPlayerBase(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo)
         {
             methodSignature = pMethodSignature;
             requestIdentifierKey = pRequestIdentifierKey;
             requestDisplayInfo = pRequestDisplayInfo;
-            responseIdentifier = pResponseIdentifier;
             api = new TestFlaskApi();
         }
 
@@ -86,17 +84,17 @@ namespace TestFlask.Aspects
             TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.InstanceHashCode;
         }
 
-        private void EndInvocation(object result)
+        protected void EndInvocation(object result = null)
         {
             TestFlaskContext.CurrentDepth--;
 
-            if (mustPersistAssertionResult)
+            if (mustPersistAssertionResult && result != null)
             {
                 Invocation rootInvocation = TestFlaskContext.GetRootInvocation();
                 rootInvocation.AssertionResult = JsonConvert.SerializeObject(result);
                 api.PutInvocation(rootInvocation); //persist assertion result
             }
-        } 
+        }
 
         public TestModes DetermineTestMode(params object[] requestArgs)
         {
@@ -132,66 +130,7 @@ namespace TestFlask.Aspects
             }
         }
 
-        public TRes CallOriginal(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
-        {
-            try
-            {
-                TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
-                EndInvocation(response);
-                return response;
-            }
-            catch (Exception ex)
-            {
-                EndInvocation(ex.InnerException); //outer exception is TargetInvocationException (System.Reflection)
-                throw ex.InnerException;
-            }
-        }
-
-        //not thread safe 
-        public TRes Record(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            try
-            {
-                TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
-                requestedInvocation.Duration = sw.ElapsedMilliseconds;
-
-                requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
-                requestedInvocation.Response = JsonConvert.SerializeObject(response);
-
-                //if response is not null, use its type (as it may me a derived type, if null we have no choice to use declared generic type
-                //Does not support proxified entities
-                var responseType = response != null ? response.GetType() : typeof(TRes); 
-
-                var regex = new Regex(@"(, PublicKeyToken=(null|\w{16}))|(, Version=[^,]+)|(, Culture=[^,]+)");
-
-                requestedInvocation.ResponseType = regex.Replace(responseType.AssemblyQualifiedName, string.Empty); //save without version, public key token, culture
-                
-                if (requestedInvocation.Depth == 1)    //root invocation
-                {
-                    requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;
-                }
-
-                TryPersistStepInvocations();
-
-                EndInvocation(response);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                //outer exception is TargetInvocationException (System.Reflection)
-                RecordException(ex.InnerException, sw.ElapsedMilliseconds, requestArgs);
-                throw ex.InnerException;
-            }
-            finally
-            {
-                sw.Stop();
-            }
-        }
-
-        private void TryPersistStepInvocations()
+        protected void TryPersistStepInvocations()
         {
             var step = TestFlaskContext.RequestedStep;
 
@@ -208,7 +147,7 @@ namespace TestFlask.Aspects
             }
         }
 
-        private void RecordException(Exception ex, long duration, params object[] requestArgs)
+        protected void RecordException(Exception ex, long duration, params object[] requestArgs)
         {
             requestedInvocation.IsFaulted = true;
             requestedInvocation.ExceptionType = ex.GetType().ToString();
@@ -224,24 +163,6 @@ namespace TestFlask.Aspects
             TryPersistStepInvocations();
 
             EndInvocation(ex);
-        }
-
-        public TRes Play(params object[] requestArgs)
-        {
-            var loadedInvocation = TestFlaskContext.GetInvocation(requestedInvocation.InstanceHashCode);
-
-            if (!loadedInvocation.IsFaulted)
-            {
-                var response = (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType));
-                EndInvocation(response);
-                return response;
-            }
-            else
-            {
-                var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType));
-                EndInvocation(exception);
-                throw exception;
-            }
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TestFlask.API.Tests.IntegrationTests.Controller
 {
-    [TestClass]
+    [TestFixture]
     public class ProjectControllerTests
     {
-        [TestMethod]
+        [Test]
         public void Test_Int_PutProject_Success()
         {
 

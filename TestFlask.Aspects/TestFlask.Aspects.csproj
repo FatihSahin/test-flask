@@ -63,9 +63,12 @@
     <Compile Include="Enums\TestModes.cs" />
     <Compile Include="Identifiers\IRequestIdentifier.cs" />
     <Compile Include="Identifiers\IResponseIdentifier.cs" />
+    <Compile Include="Player\InnerPlayerBase.cs" />
+    <Compile Include="Player\InnerActionPlayer.cs" />
     <Compile Include="PlaybackAttribute.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="InnerPlayer.cs" />
+    <Compile Include="Player\ActionPlayer.cs" />
+    <Compile Include="Player\FuncPlayer.cs" />
+    <Compile Include="Player\InnerFuncPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
 using TestFlask.Data.Repos;
+using NUnit.Framework;
 
 namespace TestFlask.API.Tests.IntegrationTests.Data
 {
@@ -10,7 +10,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
         protected MongoClient client;
         protected IMongoDatabase db;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             client = new MongoClient("mongodb://localhost");
