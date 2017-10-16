@@ -10,13 +10,12 @@
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
     <projectUrl>http://github.com/FatihSahin/test-flask</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <!--<iconUrl></iconUrl>-->
+    <!-- Erlenmeyer Flask by Rockicon from the Noun Project -->
+    <iconUrl>https://raw.githubusercontent.com/FatihSahin/test-flask/master/Icons/package_icon.png</iconUrl>
     <description>TestFlask.Aspects</description>
-    <summary>
-      This package contains test flask interfaces and aspects.
-    </summary>
+    <summary>This package contains TestFlask interfaces and aspects.</summary>
     <language>en-US</language>
-    <tags>ILWeaving, Fody, Cecil, TestFlask</tags>
+    <tags>ILWeaving, Fody, Cecil, TestFlask, Testing</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Configuration"  />
       <frameworkAssembly assemblyName="System.Net.Http"  />

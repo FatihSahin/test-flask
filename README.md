@@ -1,6 +1,8 @@
-# TestFlask
+# TestFlask 
 
-TestFlask is a set of components that manipulates (called weaving) your any backend .net method calls inside WCF service or REST API. In addition to weaving, TestFlask records your method request and responses, store them inside a document database, and replay them if requested. 
+![Erlenmeyer](Icons/package_icon.png)
+
+TestFlask is a set of components that manipulates (a.k.a. weaving) your any backend .net method calls inside WCF service or REST API. In addition to weaving, TestFlask records your method request and responses, store them inside a document database, and replay them if requested. 
 
 There is a nuget package called TestFlaskAddin.Fody inside the solution. If you reference that package in your backend service, you can mark your methods with [Playback] attribute as below.
 
@@ -24,7 +26,7 @@ After you build your project, TestFlask will weave your code and turn it into so
 [Playback(typeof (MovieNameIdentifier), null)]
 public Movie GetMovieWithStockCount(string name)
 {
-    Player<string, Movie> player = new Player<string, Movie>("MovieRental.Models.Movie MovieRental.Business.RentalManager::GetMovieWithStockCount(System.String)", (IRequestIdentifier<string>) new MovieNameIdentifier(), (IResponseIdentifier<Movie>) null);
+    FuncPlayer<string, Movie> player = new FuncPlayer<string, Movie>("MovieRental.Models.Movie MovieRental.Business.RentalManager::GetMovieWithStockCount(System.String)", (IRequestIdentifier<string>) new MovieNameIdentifier(), (IResponseIdentifier<Movie>) null);
     player.StartInvocation(name);
     switch (player.DetermineTestMode(name))
     {
@@ -90,3 +92,7 @@ You can also examine a SoapUI project inside that sample app to trigger your bac
 Lastly, TestFlask.Assistant project (nuget package) is an ASP.NET MVC extension to ease integrating your ASP.NET MVC client to send proper headers to your TestFlask ready backend service.
 
 TestFlask still needs a lot of development and hopefully it will go on. It is on a very early beta phase. Please feel free to contribute with PRs.
+
+### Icon
+
+[Erlenmeyer Flask](https://thenounproject.com/search/?q=flasks&i=707717) by Rockicon from the Noun Project

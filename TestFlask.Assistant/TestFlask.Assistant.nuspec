@@ -10,13 +10,12 @@
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
     <projectUrl>http://github.com/FatihSahin/test-flask</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <!--<iconUrl></iconUrl>-->
+    <!-- Erlenmeyer Flask by Rockicon from the Noun Project -->
+    <iconUrl>https://raw.githubusercontent.com/FatihSahin/test-flask/master/Icons/package_icon.png</iconUrl>
     <description>TestFlask.Assistant</description>
-    <summary>
-      This package contains test flask assistant ASP.NET MVC controllers, and scripts to enable test flask easy recording plugin inside your existing ASP.NET MVC application
-    </summary>
+    <summary>This package contains TestFlask Assistant ASP.NET MVC controllers, and scripts to ease plugging TestFlask capabilities into your existing ASP.NET MVC application.</summary>
     <language>en-US</language>
-    <tags>TestFlask</tags>
+    <tags>TestFlask, ASP.NET MVC</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Configuration"  />
       <frameworkAssembly assemblyName="System.Net.Http"  />
