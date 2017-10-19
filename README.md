@@ -2,6 +2,8 @@
 
 ![Erlenmeyer](Icons/package_icon.png)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/iwmii0fmtpyopkgu?svg=true)](https://ci.appveyor.com/project/FatihSahin/test-flask)
+
 TestFlask is a set of components that manipulates (a.k.a. weaving) your any backend .net method calls inside WCF service or REST API. In addition to weaving, TestFlask records your method request and responses, store them inside a document database, and replay them if requested. 
 
 There is a nuget package called TestFlaskAddin.Fody inside the solution. If you reference that package in your backend service, you can mark your methods with [Playback] attribute as below.
