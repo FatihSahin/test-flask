@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace TestFlask.API.Tests.IntegrationTests.Controller
 {
-    [TestFixture]
+    [TestFixture, Category("Integration")]
     public class ProjectControllerTests
     {
         [Test]

@@ -56,13 +56,6 @@ public class WeaverTests
     }
 
 
-    [Test]
-    public void WeaveDoSome()
-    {
-       
-    }
-
-
 #if(DEBUG)
     [Test]
     public void PeVerify()

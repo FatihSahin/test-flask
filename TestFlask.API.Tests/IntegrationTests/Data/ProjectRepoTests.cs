@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace TestFlask.API.Tests.IntegrationTests.Data
 {
-    [TestFixture]
+    [TestFixture, Category("Integration")]
     public class ProjectRepoTests : BaseRepoTests
     {
         [Test]

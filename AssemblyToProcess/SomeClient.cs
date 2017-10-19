@@ -63,7 +63,7 @@ namespace AssemblyToProcess
     public class SomeClient
     {
 
-        //[Playback(typeof(SomeRequestIdentifier))]
+        [Playback(typeof(SomeRequestIdentifier))]
         public SomeResponse GetSome(SomeRequest req)
         {
             var response = new SomeResponse
@@ -75,7 +75,7 @@ namespace AssemblyToProcess
             return response;
         }
 
-        //[Playback]
+        [Playback]
         public FooResponse GetFoo(FooRequest req)
         {
             var response = new FooResponse
@@ -87,7 +87,7 @@ namespace AssemblyToProcess
             return response;
         }
 
-        //[Playback]
+        [Playback]
         public SomeResponse ReturnSome()
         {
             return new SomeResponse
@@ -97,7 +97,7 @@ namespace AssemblyToProcess
             };
         }
 
-        //[Playback]
+        [Playback]
         public void DoSome(SomeRequest req)
         {
             int a = 5 * 5;

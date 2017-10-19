@@ -67,7 +67,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NormalTests.cs" />
     <Compile Include="Verifier.cs" />
     <Compile Include="WeaverTests.cs" />
   </ItemGroup>
