@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using TestFlask.Assistant.Config;
 
-namespace TestFlask.Assistant.Models
+namespace TestFlask.Assistant.Core.Models
 {
     public class TestFlaskAssistantContext
     {

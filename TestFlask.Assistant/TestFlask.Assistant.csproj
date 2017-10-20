@@ -53,15 +53,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\TestFlaskAssistantConfigSection.cs" />
-    <Compile Include="WcfExtensions\WcfEndpointBehavior.cs" />
-    <Compile Include="WcfExtensions\WcfEndpointBehaviorExtensionElement.cs" />
-    <Compile Include="WcfExtensions\WcfMessageInspector.cs" />
     <Content Include="Areas\TestFlask\Controllers\TestFlaskAssistantController.cs" />
     <Compile Include="ApiClient\TestFlaskApi.cs" />
     <Content Include="Areas\TestFlask\TestFlaskAreaRegistration.cs" />
     <Compile Include="Config\TestFlaskAssistantConfig.cs" />
     <Compile Include="Models\StepsViewModel.cs" />
-    <Compile Include="Models\TestFlaskAssistantContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Content\testFlask.css" />
     <Content Include="Scripts\testFlask.js" />
