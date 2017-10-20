@@ -20,8 +20,6 @@
       <frameworkAssembly assemblyName="System.Configuration"  />
       <frameworkAssembly assemblyName="System.Net.Http"  />
       <frameworkAssembly assemblyName="System.Web" />
-      <frameworkAssembly assemblyName="System.ServiceModel" />
-      <frameworkAssembly assemblyName="System.ServiceModel.Web" />
     </frameworkAssemblies>
     <dependencies>
       <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />

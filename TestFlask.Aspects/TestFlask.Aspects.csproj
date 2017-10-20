@@ -44,8 +44,6 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -60,6 +58,7 @@
     <Compile Include="Config\TestFlaskConfigSection.cs" />
     <Compile Include="Context\TestFlaskContext.cs" />
     <Compile Include="Context\TestFlaskHttpModule.cs" />
+    <Compile Include="Context\TestFlaskMessageHandler.cs" />
     <Compile Include="Enums\TestModes.cs" />
     <Compile Include="Identifiers\IRequestIdentifier.cs" />
     <Compile Include="Identifiers\IResponseIdentifier.cs" />
