@@ -1,5 +1,7 @@
 # TestFlask 
 
+[![Join the chat at https://gitter.im/test-flask/Lobby](https://badges.gitter.im/test-flask/Lobby.svg)](https://gitter.im/test-flask/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ![Erlenmeyer](Icons/package_icon.png)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/iwmii0fmtpyopkgu?svg=true)](https://ci.appveyor.com/project/FatihSahin/test-flask)
