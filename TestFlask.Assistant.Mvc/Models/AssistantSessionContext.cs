@@ -4,28 +4,28 @@ using System.Linq;
 using System.Web;
 using TestFlask.Assistant.Core.Config;
 
-namespace TestFlask.Assistant.Core.Models
+namespace TestFlask.Assistant.Mvc.Models
 {
-    public class TestFlaskAssistantContext
+    public class AssistantSessionContext
     {
         private const string SessionKey = "TestFlask-AssistantContext";
         private TestFlaskAssistantConfig config;
 
-        public TestFlaskAssistantContext()
+        public AssistantSessionContext()
         {
             config = TestFlaskAssistantConfig.Instance;
         }
         
-        public static TestFlaskAssistantContext Current
+        public static AssistantSessionContext Current
         {
             get
             {
                 if (HttpContext.Current.Session[SessionKey] == null)
                 {
-                    HttpContext.Current.Session[SessionKey] = new TestFlaskAssistantContext();                    
+                    HttpContext.Current.Session[SessionKey] = new AssistantSessionContext();                    
                 }
 
-                return HttpContext.Current.Session[SessionKey] as TestFlaskAssistantContext;
+                return HttpContext.Current.Session[SessionKey] as AssistantSessionContext;
             }
         }
 
@@ -39,6 +39,6 @@ namespace TestFlask.Assistant.Core.Models
 
         public int OverwriteStepNo { get; set; }
 
-        public bool RecordMode { get; set; }
+        public bool IsInRecordMode { get; set; }
     }
 }

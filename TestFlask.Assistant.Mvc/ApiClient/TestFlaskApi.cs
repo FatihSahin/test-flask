@@ -8,7 +8,7 @@ using TestFlask.Assistant.Core.Config;
 using TestFlask.Models.Context;
 using TestFlask.Models.Entity;
 
-namespace TestFlask.Assistant.ApiClient
+namespace TestFlask.Assistant.Mvc.ApiClient
 {
     public class TestFlaskApi
     {

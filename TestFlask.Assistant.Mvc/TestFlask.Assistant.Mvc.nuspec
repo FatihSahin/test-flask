@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata minClientVersion="2.8">
-    <id>TestFlask.Assistant</id>
+    <id>TestFlask.Assistant.Mvc</id>
     <version>$version$</version>
-    <title>TestFlask.Assistant</title>
+    <title>TestFlask.Assistant.Mvc</title>
     <authors>Fatih Sahin</authors>
     <owners>Fatih Sahin</owners>
     <developmentDependency>true</developmentDependency>
@@ -12,8 +12,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!-- Erlenmeyer Flask by Rockicon from the Noun Project -->
     <iconUrl>https://raw.githubusercontent.com/FatihSahin/test-flask/master/Icons/package_icon.png</iconUrl>
-    <description>TestFlask.Assistant</description>
-    <summary>This package contains TestFlask Assistant ASP.NET MVC controllers, and scripts to ease plugging TestFlask capabilities into your existing ASP.NET MVC application.</summary>
+    <description>TestFlask.Assistant.Mvc</description>
+    <summary>This package contains TestFlask Assistant ASP.NET MVC controllers, WCF behaviors, Web API client message handlers specific to work inside MVC, scripts to ease plugging TestFlask capabilities into your existing ASP.NET MVC application.</summary>
     <language>en-US</language>
     <tags>TestFlask, ASP.NET MVC</tags>
     <dependencies>

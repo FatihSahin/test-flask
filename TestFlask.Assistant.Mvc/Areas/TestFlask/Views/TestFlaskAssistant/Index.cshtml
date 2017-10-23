@@ -1,6 +1,6 @@
-﻿@using TestFlask.Assistant.Config
-@using TestFlask.Assistant.Models
-@model TestFlaskAssistantContext
+﻿@using TestFlask.Assistant.Core.Config
+@using TestFlask.Assistant.Mvc.Models
+@model AssistantSessionContext
 @functions {
 
     public string GetBodyVisibility()
@@ -53,7 +53,7 @@
         @{ string controllerName = "TestFlaskAssistant"; } //modify controller name if you changed test flask area default controller name
         //initialize testFlask with options
         testFlask.initialize({
-            recordMode: @Model.RecordMode.ToString().ToLower(),
+            recordMode: @Model.IsInRecordMode.ToString().ToLower(),
             scenarioNo: @Model.CurrentScenarioNo,
             overwriteStepNo: @Model.OverwriteStepNo,
             managerScenarioBaseUrl: '@Model.ManagerUrl' + '/project/' + '@Model.ProjectKey' + '/scenario',

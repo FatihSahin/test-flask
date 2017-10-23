@@ -18,7 +18,7 @@ namespace TestFlask.Assistant.Areas.TestFlask
                  "TestFlask_Default",
                  "TestFlask/{controller}/{action}/{id}",
                  new { controller = "TestFlaskAssistant", action = "Index", id = UrlParameter.Optional },
-                 new string[] { "TestFlask.Assistant.Controllers" }
+                 new string[] { "TestFlask.Assistant.Mvc.Controllers" }
              );
         }
     }

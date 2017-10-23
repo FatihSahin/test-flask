@@ -5,6 +5,7 @@
   </configSections>
   <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
   <testFlaskAssistant enabled="true" xdt:Transform="InsertIfMissing">
+    <project key="yourTestFlaskProjectKey" xdt:Transform="InsertIfMissing" />
     <api url="http://testFlaskApiUrl" xdt:Transform="InsertIfMissing" />
     <manager url="http://testFlaskManagerUrl" xdt:Transform="InsertIfMissing" />
   </testFlaskAssistant>

@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="Config\TestFlaskAssistantConfig.cs" />
     <Compile Include="Config\TestFlaskAssistantConfigSection.cs" />
-    <Compile Include="Models\TestFlaskAssistantContext.cs" />
+    <Compile Include="Models\AssistantIncomingContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WcfExtensions\WcfEndpointBehavior.cs" />
     <Compile Include="WcfExtensions\WcfEndpointBehaviorExtensionElement.cs" />

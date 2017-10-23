@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TestFlask.Assistant.Core.Config;
-using TestFlask.Assistant.Core.Models;
+using TestFlask.Assistant.Mvc.Models;
 using TestFlask.Models.Context;
 
-namespace TestFlask.Assistant.Core.WebApi
+namespace TestFlask.Assistant.Mvc.WebApi
 {
     /// <summary>
     /// This class is used for ASP.NET Web API clients. 
@@ -20,26 +20,17 @@ namespace TestFlask.Assistant.Core.WebApi
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var config = TestFlaskAssistantConfig.Instance;
+            var context = AssistantSessionContext.Current;
 
-            if (config.Enabled && AssistantIncomingContext.HasTestFlaskHeaders)
+            if (config.Enabled && context != null && context.IsInRecordMode)
             {
-                string projectKey = AssistantIncomingContext.ProjectKey;
-                string scenarioNo = AssistantIncomingContext.ScenarioNo;
-                string stepNo = AssistantIncomingContext.StepNo;
-                string testMode = AssistantIncomingContext.TestMode;
+                request.Headers.Add(ContextKeys.ProjectKey, config.Project.Key);
+                request.Headers.Add(ContextKeys.ScenarioNo, context.CurrentScenarioNo.ToString());
+                request.Headers.Add(ContextKeys.TestMode, "Record");
 
-
-                request.Headers.Add(ContextKeys.ProjectKey, projectKey);
-                request.Headers.Add(ContextKeys.ScenarioNo, scenarioNo);
-
-                if (!string.IsNullOrWhiteSpace(stepNo))
+                if (context.OverwriteStepNo > 0)
                 {
-                    request.Headers.Add(ContextKeys.StepNo, stepNo);
-                }
-
-                if (!string.IsNullOrWhiteSpace(testMode))
-                {
-                    request.Headers.Add(ContextKeys.TestMode, testMode);
+                    request.Headers.Add(ContextKeys.StepNo, context.OverwriteStepNo.ToString());
                 }
             }
 

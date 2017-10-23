@@ -5,6 +5,5 @@
   </configSections>
   <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
   <testFlaskAssistant enabled="true" xdt:Transform="InsertIfMissing">
-      <project key="yourTestFlaskProjectKey" xdt:Transform="InsertIfMissing" />
   </testFlaskAssistant>
 </configuration>

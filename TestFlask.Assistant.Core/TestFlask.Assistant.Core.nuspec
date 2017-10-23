@@ -13,9 +13,9 @@
     <!-- Erlenmeyer Flask by Rockicon from the Noun Project -->
     <iconUrl>https://raw.githubusercontent.com/FatihSahin/test-flask/master/Icons/package_icon.png</iconUrl>
     <description>TestFlask.Assistant.Core</description>
-    <summary>This package contains TestFlask Assistant Wcf behaviours or web api client message handlers to delegate TestFlask headers inside the incoming request to outgoing TestFlask api requests</summary>
+    <summary>This package contains custome TestFlask config sections, TestFlask Assistant Wcf behaviours and Web API Client message handlers to delegate TestFlask headers inside the incoming request to outgoing TestFlask API requests</summary>
     <language>en-US</language>
-    <tags>TestFlask, ASP.NET MVC</tags>
+    <tags>TestFlask, ASP.NET Web API, WCF</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Configuration"  />
       <frameworkAssembly assemblyName="System.Net.Http"  />

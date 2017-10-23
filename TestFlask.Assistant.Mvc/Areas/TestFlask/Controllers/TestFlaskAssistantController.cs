@@ -10,7 +10,7 @@ using TestFlask.Assistant.Config;
 using TestFlask.Assistant.Models;
 using TestFlask.Models.Entity;
 
-namespace TestFlask.Assistant.Controllers
+namespace TestFlask.Assistant.Mvc.Controllers
 {
     public class TestFlaskAssistantController : Controller
     {

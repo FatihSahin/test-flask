@@ -6,40 +6,33 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Web;
 using TestFlask.Assistant.Core.Config;
-using TestFlask.Assistant.Core.Models;
+using TestFlask.Assistant.Mvc.Models;
 using TestFlask.Models.Context;
 
-namespace TestFlask.Assistant.Core.WcfExtensions
+namespace TestFlask.Assistant.Mvc.WcfExtensions
 {
     public class WcfMessageInspector : IClientMessageInspector
     {
         /// <summary>
-        /// Enables inspection or modification of a message before a request message is sent to a service.
+        /// Enables inspection or modification of a message before a request message is sent to a WCF service.
         /// </summary>
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
             var config = TestFlaskAssistantConfig.Instance;
+            var sessionContext = AssistantSessionContext.Current;
 
-            if (config.Enabled && AssistantIncomingContext.HasTestFlaskHeaders)
+            if (config.Enabled && sessionContext != null && sessionContext.IsInRecordMode) 
             {
-                string projectKey = AssistantIncomingContext.ProjectKey;
-                string scenarioNo = AssistantIncomingContext.ScenarioNo;
-                string stepNo = AssistantIncomingContext.StepNo;
-                string testMode = AssistantIncomingContext.TestMode;
-
                 HttpRequestMessageProperty property = request.Properties[HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
+               
+                property.Headers[ContextKeys.ProjectKey] = config.Project.Key;
+                property.Headers[ContextKeys.ScenarioNo] = sessionContext.CurrentScenarioNo.ToString();
 
-                property.Headers[ContextKeys.ProjectKey] = projectKey;
-                property.Headers[ContextKeys.ScenarioNo] = scenarioNo;
+                property.Headers[ContextKeys.TestMode] = "Record";
 
-                if (!string.IsNullOrWhiteSpace(stepNo))
+                if (sessionContext.OverwriteStepNo > 0)
                 {
-                    property.Headers[ContextKeys.StepNo] = stepNo;
-                }
-
-                if (!string.IsNullOrWhiteSpace(testMode))
-                {
-                    property.Headers[ContextKeys.TestMode] = testMode;
+                    property.Headers[ContextKeys.StepNo] = sessionContext.OverwriteStepNo.ToString();
                 }
             }
 

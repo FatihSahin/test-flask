@@ -7,8 +7,8 @@
     <ProjectGuid>{7D792397-F283-47B1-A611-5E2086D335B4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestFlask.Assistant</RootNamespace>
-    <AssemblyName>TestFlask.Assistant</AssemblyName>
+    <RootNamespace>TestFlask.Assistant.Mvc</RootNamespace>
+    <AssemblyName>TestFlask.Assistant.Mvc</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -52,6 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AssistantSessionContext.cs" />
+    <Compile Include="WcfExtensions\WcfEndpointBehavior.cs" />
+    <Compile Include="WcfExtensions\WcfEndpointBehaviorExtensionElement.cs" />
+    <Compile Include="WcfExtensions\WcfMessageInspector.cs" />
+    <Compile Include="WebApi\TestFlaskMessageHandler.cs" />
     <Content Include="Areas\TestFlask\Controllers\TestFlaskAssistantController.cs" />
     <Compile Include="ApiClient\TestFlaskApi.cs" />
     <Content Include="Areas\TestFlask\TestFlaskAreaRegistration.cs" />
@@ -63,7 +68,7 @@
   <ItemGroup>
     <Content Include="Areas\TestFlask\Views\web.config" />
     <None Include="packages.config" />
-    <None Include="TestFlask.Assistant.nuspec" />
+    <None Include="TestFlask.Assistant.Mvc.nuspec" />
     <None Include="web.config.install.xdt">
       <SubType>Designer</SubType>
     </None>
