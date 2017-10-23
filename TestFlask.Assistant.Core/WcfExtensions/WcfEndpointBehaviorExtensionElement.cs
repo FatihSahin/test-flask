@@ -4,7 +4,7 @@ using System.Linq;
 using System.ServiceModel.Configuration;
 using System.Web;
 
-namespace TestFlask.Assistant.WcfExtensions
+namespace TestFlask.Assistant.Core.WcfExtensions
 {
     public class WcfEndpointBehaviorExtensionElement : BehaviorExtensionElement
     {

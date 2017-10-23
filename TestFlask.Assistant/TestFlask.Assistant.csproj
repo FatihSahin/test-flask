@@ -52,11 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config\TestFlaskAssistantConfigSection.cs" />
     <Content Include="Areas\TestFlask\Controllers\TestFlaskAssistantController.cs" />
     <Compile Include="ApiClient\TestFlaskApi.cs" />
     <Content Include="Areas\TestFlask\TestFlaskAreaRegistration.cs" />
-    <Compile Include="Config\TestFlaskAssistantConfig.cs" />
     <Compile Include="Models\StepsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Content\testFlask.css" />
@@ -66,13 +64,19 @@
     <Content Include="Areas\TestFlask\Views\web.config" />
     <None Include="packages.config" />
     <None Include="TestFlask.Assistant.nuspec" />
-    <None Include="web.config.install.xdt" />
+    <None Include="web.config.install.xdt">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\TestFlask\Views\TestFlaskAssistant\Index.cshtml" />
     <Content Include="Areas\TestFlask\Views\TestFlaskAssistant\Steps.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TestFlask.Assistant.Core\TestFlask.Assistant.Core.csproj">
+      <Project>{fd9e1dbb-4ca8-4357-8ae1-d3cf0c975d08}</Project>
+      <Name>TestFlask.Assistant.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TestFlask.Models\TestFlask.Models.csproj">
       <Project>{950e37cd-2c68-4b4e-9137-f82e696dc52c}</Project>
       <Name>TestFlask.Models</Name>

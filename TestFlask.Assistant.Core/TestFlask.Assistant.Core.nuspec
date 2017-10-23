@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata minClientVersion="2.8">
-    <id>TestFlask.Assistant</id>
+    <id>TestFlask.Assistant.Core</id>
     <version>$version$</version>
-    <title>TestFlask.Assistant</title>
+    <title>TestFlask.Assistant.Core</title>
     <authors>Fatih Sahin</authors>
     <owners>Fatih Sahin</owners>
     <developmentDependency>true</developmentDependency>
@@ -12,20 +12,23 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!-- Erlenmeyer Flask by Rockicon from the Noun Project -->
     <iconUrl>https://raw.githubusercontent.com/FatihSahin/test-flask/master/Icons/package_icon.png</iconUrl>
-    <description>TestFlask.Assistant</description>
-    <summary>This package contains TestFlask Assistant ASP.NET MVC controllers, and scripts to ease plugging TestFlask capabilities into your existing ASP.NET MVC application.</summary>
+    <description>TestFlask.Assistant.Core</description>
+    <summary>This package contains TestFlask Assistant Wcf behaviours or web api client message handlers to delegate TestFlask headers inside the incoming request to outgoing TestFlask api requests</summary>
     <language>en-US</language>
     <tags>TestFlask, ASP.NET MVC</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Configuration"  />
+      <frameworkAssembly assemblyName="System.Net.Http"  />
+      <frameworkAssembly assemblyName="System.Web" />
+      <frameworkAssembly assemblyName="System.ServiceModel" />
+      <frameworkAssembly assemblyName="System.ServiceModel.Web" />
+    </frameworkAssemblies>
     <dependencies>
-      <dependency id="TestFlask.Assistant.Core" version="1.0.0" />
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
+      <dependency id="Newtonsoft.Json" version="6.0.4" />
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\$Configuration$\TestFlask.Models.dll" target="lib\net452"  />
-    <file src="bin\$Configuration$\MongoDB.Bson.dll" target="lib\net452"  />
     <file src="*.xdt" target="content" />
-    <file src="Areas\TestFlask\**\*.*" target="content\Areas\TestFlask" />
-    <file src="Scripts\testFlask.js" target="content\Scripts" />
-    <file src="Content\testFlask.css" target="content\Content" />
   </files>
 </package>

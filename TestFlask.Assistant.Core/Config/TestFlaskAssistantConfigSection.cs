@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestFlask.Assistant.Config
+namespace TestFlask.Assistant.Core.Config
 {
     public class TestFlaskAssistantConfigSection : ConfigurationSection
     {

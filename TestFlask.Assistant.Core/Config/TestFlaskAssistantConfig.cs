@@ -8,7 +8,7 @@ using System.Web;
 using TestFlask.Models.Context;
 using TestFlask.Models.Entity;
 
-namespace TestFlask.Assistant.Config
+namespace TestFlask.Assistant.Core.Config
 {
     public interface ITestFlaskAssistantConfig
     {
@@ -34,11 +34,11 @@ namespace TestFlask.Assistant.Config
                         Enabled = section.Enabled,
                         Api = new ApiConfig
                         {
-                            Url = section.Api.Url
+                            Url = section.Api?.Url
                         },
                         Manager = new ManagerConfig
                         {
-                            Url = section.Manager.Url
+                            Url = section.Manager?.Url
                         },
                         Project = new ProjectConfig
                         {

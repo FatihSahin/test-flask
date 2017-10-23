@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web;
-using TestFlask.Assistant.Config;
+using TestFlask.Assistant.Core.Config;
 using TestFlask.Models.Context;
 using TestFlask.Models.Entity;
 

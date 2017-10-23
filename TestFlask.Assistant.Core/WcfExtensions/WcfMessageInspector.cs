@@ -5,11 +5,11 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Web;
-using TestFlask.Assistant.Config;
-using TestFlask.Assistant.Models;
+using TestFlask.Assistant.Core.Config;
+using TestFlask.Assistant.Core.Models;
 using TestFlask.Models.Context;
 
-namespace TestFlask.Assistant.WcfExtensions 
+namespace TestFlask.Assistant.Core.WcfExtensions
 {
     public class WcfMessageInspector : IClientMessageInspector
     {

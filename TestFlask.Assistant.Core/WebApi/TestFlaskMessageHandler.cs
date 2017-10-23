@@ -5,11 +5,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TestFlask.Assistant.Config;
-using TestFlask.Assistant.Models;
+using TestFlask.Assistant.Core.Config;
+using TestFlask.Assistant.Core.Models;
 using TestFlask.Models.Context;
 
-namespace TestFlask.Assistant.WebApi
+namespace TestFlask.Assistant.Core.WebApi
 {
     /// <summary>
     /// This class is used for ASP.NET Web API clients. 

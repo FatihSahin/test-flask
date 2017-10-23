@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using TestFlask.Assistant.Config;
+using TestFlask.Assistant.Core.Config;
 
 namespace TestFlask.Assistant.Core.Models
 {

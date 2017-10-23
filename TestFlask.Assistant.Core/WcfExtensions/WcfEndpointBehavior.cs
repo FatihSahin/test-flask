@@ -6,7 +6,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Web;
 
-namespace TestFlask.Assistant.WcfExtensions
+namespace TestFlask.Assistant.Core.WcfExtensions
 {
     public class WcfEndpointBehavior : IEndpointBehavior
     {
