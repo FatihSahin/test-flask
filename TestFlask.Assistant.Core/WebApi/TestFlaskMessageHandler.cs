@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TestFlask.Aspects.Context;
 using TestFlask.Assistant.Core.Config;
 using TestFlask.Assistant.Core.Models;
 using TestFlask.Models.Context;
@@ -25,9 +26,9 @@ namespace TestFlask.Assistant.Core.WebApi
             {
                 string projectKey = AssistantIncomingContext.ProjectKey;
                 string scenarioNo = AssistantIncomingContext.ScenarioNo;
-                string stepNo = AssistantIncomingContext.StepNo;
+                string stepNo = ResolveStepNo();
                 string testMode = AssistantIncomingContext.TestMode;
-
+                string initialDepth = ResolveInitialDepth();
 
                 request.Headers.Add(ContextKeys.ProjectKey, projectKey);
                 request.Headers.Add(ContextKeys.ScenarioNo, scenarioNo);
@@ -41,9 +42,24 @@ namespace TestFlask.Assistant.Core.WebApi
                 {
                     request.Headers.Add(ContextKeys.TestMode, testMode);
                 }
+
+                if (!string.IsNullOrEmpty(initialDepth))
+                {
+                    request.Headers.Add(ContextKeys.InitialDepth, initialDepth);
+                }
             }
 
             return base.SendAsync(request, cancellationToken);
+        }
+
+        private string ResolveStepNo()
+        {
+            return TestFlaskContext.LoadedStep?.StepNo.ToString() ?? AssistantIncomingContext.StepNo;
+        }
+
+        private string ResolveInitialDepth()
+        {
+            return TestFlaskContext.CurrentDepth.ToString();
         }
     }
 }

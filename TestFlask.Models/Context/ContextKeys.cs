@@ -15,5 +15,7 @@ namespace TestFlask.Models.Context
         public const string StepNo = "TestFlask-StepNo";
 
         public const string TestMode = "TestFlask-Mode";
+
+        public const string InitialDepth = "TestFlask-InitialDepth";
     }
 }

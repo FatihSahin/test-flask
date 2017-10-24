@@ -24,8 +24,7 @@
       <frameworkAssembly assemblyName="System.ServiceModel.Web" />
     </frameworkAssemblies>
     <dependencies>
-      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
-      <dependency id="Newtonsoft.Json" version="6.0.4" />
+      <dependency id="TestFlask.Aspects" version="1.0.0" />
     </dependencies>
   </metadata>
   <files>

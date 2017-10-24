@@ -13,29 +13,11 @@ namespace TestFlask.Aspects.Context
 {
     public static class TestFlaskContext
     {
-        public static Dictionary<string, int> InvocationDepthTable
-        {
-            get
-            {
-                return GetInvocationDepthTable();
-            }
-        }
+        public static Dictionary<string, int> InvocationDepthTable => GetInvocationDepthTable();
 
-        public static Dictionary<int, string> InvocationParentTable
-        {
-            get
-            {
-                return GetInvocationParentTable();
-            }
-        }
+        public static Dictionary<int, string> InvocationParentTable => GetInvocationParentTable();
 
-        public static Step RequestedStep
-        {
-            get
-            {
-                return GetRequestedStep();
-            }
-        }
+        public static Step RequestedStep => GetRequestedStep();
 
         public static Step LoadedStep
         {
@@ -61,13 +43,7 @@ namespace TestFlask.Aspects.Context
             }
         }
 
-        public static TestModes RequestedMode
-        {
-            get
-            {
-                return GetRequestedMode();
-            }
-        }
+        public static TestModes RequestedMode => GetRequestedMode();
 
         public static string RawRequest
         {
@@ -80,6 +56,10 @@ namespace TestFlask.Aspects.Context
                 SetRawRequest(value);
             }
         }
+
+        public static int InitialDepth => GetInitialDepth();
+
+        #region NotPublic
 
         private static TestModes GetRequestedMode()
         {
@@ -272,5 +252,22 @@ namespace TestFlask.Aspects.Context
         {
             return LoadedStep.Invocations.SingleOrDefault(inv => inv.InstanceHashCode == instanceHashCode);
         }
+
+        private static int GetInitialDepth()
+        {
+            if (HttpContext.Current != null)
+            {
+                var initialDepth = HttpContext.Current.Request.Headers[ContextKeys.InitialDepth];
+
+                if (initialDepth != null)
+                {
+                    return int.Parse(initialDepth);
+                }
+            }
+
+            return 0;
+        }
+
+        #endregion
     }
 }

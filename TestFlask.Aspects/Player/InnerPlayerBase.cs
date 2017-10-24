@@ -42,7 +42,7 @@ namespace TestFlask.Aspects.Player
 
             string parentInstanceHashCode = TestFlaskContext.InvocationParentTable.ContainsKey(currentDepth) ? TestFlaskContext.InvocationParentTable[currentDepth] : null;
 
-            TestFlaskContext.CurrentDepth++;
+            TestFlaskContext.CurrentDepth = ResolveDepth() + 1;
 
             var step = TestFlaskContext.RequestedStep;
 
@@ -82,6 +82,12 @@ namespace TestFlask.Aspects.Player
 
             //make this invocation latest parent for the current depth
             TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.InstanceHashCode;
+        }
+
+        private int ResolveDepth()
+        {
+            int currentDepth = TestFlaskContext.CurrentDepth;
+            return currentDepth > 0 ? currentDepth : TestFlaskContext.InitialDepth;
         }
 
         protected void EndInvocation(object result = null)
