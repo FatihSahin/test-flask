@@ -21,6 +21,8 @@ namespace TestFlask.Data.Repos
         Scenario Update(Scenario scenario);
         void UpdateInvocation(Invocation invocation);
         Invocation GetInvocation(string instanceHashCode);
+        void AppendInvocationsForStep(Step step);
+        void DeleteInvocationsForStep(long scenarioNo, long stepNo);
     }
 
     public class ScenarioRepo : MongoRepo<Scenario>, IScenarioRepo
@@ -133,6 +135,30 @@ namespace TestFlask.Data.Repos
             var deleteInvocations = Builders<Scenario>.Update.PullFilter("Steps.$.Invocations", Builders<Invocation>.Filter.Empty);
 
             Collection.FindOneAndUpdate(compositeFilter, deleteInvocations);
+
+            var addInvocations = Builders<Scenario>.Update.PushEach("Steps.$.Invocations", step.Invocations);
+
+            Collection.FindOneAndUpdate(compositeFilter, addInvocations);
+        }
+
+        public void DeleteInvocationsForStep(long scenarioNo, long stepNo)
+        {
+            var scenarioFilter = Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, scenarioNo);
+            var stepFilter = Builders<Scenario>.Filter.Eq("Steps.StepNo", stepNo);
+
+            var compositeFilter = Builders<Scenario>.Filter.And(scenarioFilter, stepFilter);
+
+            var deleteInvocations = Builders<Scenario>.Update.PullFilter("Steps.$.Invocations", Builders<Invocation>.Filter.Empty);
+
+            Collection.FindOneAndUpdate(compositeFilter, deleteInvocations);
+        }
+
+        public void AppendInvocationsForStep(Step step)
+        {
+            var scenarioFilter = Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, step.ScenarioNo);
+            var stepFilter = Builders<Scenario>.Filter.Eq("Steps.StepNo", step.StepNo);
+
+            var compositeFilter = Builders<Scenario>.Filter.And(scenarioFilter, stepFilter);
 
             var addInvocations = Builders<Scenario>.Update.PushEach("Steps.$.Invocations", step.Invocations);
 

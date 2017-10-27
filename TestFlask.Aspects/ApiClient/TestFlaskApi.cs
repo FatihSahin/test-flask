@@ -42,6 +42,18 @@ namespace TestFlask.Aspects.ApiClient
             var response = httpClient.PutAsJsonAsync("api/step/invocations", step).Result;
         }
 
+        public void AppendStepInvocations(Step step)
+        {
+            var httpClient = PrepareClient();
+            var response = httpClient.PutAsJsonAsync("api/step/invocations/append", step).Result;
+        }
+
+        public void DeleteStepInvocations(Step step)
+        {
+            var httpClient = PrepareClient();
+            var response = httpClient.DeleteAsync($"api/step/invocations/{step.ScenarioNo}/{step.StepNo}").Result;
+        }
+
         public Step InsertStep(Step step)
         {
             var httpClient = PrepareClient();

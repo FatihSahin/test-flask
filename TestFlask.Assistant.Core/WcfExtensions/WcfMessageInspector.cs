@@ -7,6 +7,7 @@ using System.ServiceModel.Dispatcher;
 using System.Web;
 using TestFlask.Assistant.Core.Config;
 using TestFlask.Assistant.Core.Models;
+using TestFlask.Assistant.Core.Outgoing;
 using TestFlask.Models.Context;
 
 namespace TestFlask.Assistant.Core.WcfExtensions
@@ -24,8 +25,10 @@ namespace TestFlask.Assistant.Core.WcfExtensions
             {
                 string projectKey = AssistantIncomingContext.ProjectKey;
                 string scenarioNo = AssistantIncomingContext.ScenarioNo;
-                string stepNo = AssistantIncomingContext.StepNo;
+                string stepNo = OutgoingHeadersHelper.ResolveStepNo();
                 string testMode = AssistantIncomingContext.TestMode;
+                string initialDepth = OutgoingHeadersHelper.ResolveInitialDepth();
+                string parentInvocationInstance = OutgoingHeadersHelper.ResolveParentInvocationInstanceHashCode();
 
                 HttpRequestMessageProperty property = request.Properties[HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
 
@@ -40,6 +43,16 @@ namespace TestFlask.Assistant.Core.WcfExtensions
                 if (!string.IsNullOrWhiteSpace(testMode))
                 {
                     property.Headers[ContextKeys.TestMode] = testMode;
+                }
+
+                if (!string.IsNullOrEmpty(initialDepth))
+                {
+                    property.Headers[ContextKeys.InitialDepth] = initialDepth;
+                }
+
+                if (!string.IsNullOrEmpty(parentInvocationInstance))
+                {
+                    property.Headers[ContextKeys.ParentInvocationInstance] = parentInvocationInstance;
                 }
             }
 

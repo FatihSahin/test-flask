@@ -33,6 +33,18 @@ namespace TestFlask.API.Controllers
             scenarioRepo.InsertInvocationsForStep(step);
         }
 
+        [Route("api/step/invocations/append")]
+        public void PutAppendedInvocations(Step step)
+        {
+            scenarioRepo.AppendInvocationsForStep(step);
+        }
+
+        [Route("api/step/invocations/{scenarioNo}/{stepNo}")]
+        public void DeleteInvocations(long scenarioNo, long stepNo)
+        {
+            scenarioRepo.DeleteInvocationsForStep(scenarioNo, stepNo);
+        }
+
         [Route("api/step/")]
         public Step Post(Step step)
         {

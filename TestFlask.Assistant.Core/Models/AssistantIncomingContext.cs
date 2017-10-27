@@ -42,6 +42,22 @@ namespace TestFlask.Assistant.Core.Models
             }
         }
 
+        public static string ParentInvocationInstance
+        {
+            get
+            {
+                return HttpContext.Current.Request.Headers[ContextKeys.ParentInvocationInstance];
+            }
+        }
+
+        public static string InitialDepth
+        {
+            get
+            {
+                return HttpContext.Current.Request.Headers[ContextKeys.InitialDepth];
+            }
+        }
+
         public static bool HasTestFlaskHeaders
         {
             get

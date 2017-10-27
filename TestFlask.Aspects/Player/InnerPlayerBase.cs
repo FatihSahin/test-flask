@@ -38,11 +38,13 @@ namespace TestFlask.Aspects.Player
 
         public void StartInvocation(params object[] requestArgs)
         {
-            int currentDepth = TestFlaskContext.CurrentDepth;
+            InitParentTable();
+
+            int currentDepth = ResolveDepth();
 
             string parentInstanceHashCode = TestFlaskContext.InvocationParentTable.ContainsKey(currentDepth) ? TestFlaskContext.InvocationParentTable[currentDepth] : null;
 
-            TestFlaskContext.CurrentDepth = ResolveDepth() + 1;
+            TestFlaskContext.CurrentDepth = currentDepth + 1;
 
             var step = TestFlaskContext.RequestedStep;
 
@@ -84,10 +86,17 @@ namespace TestFlask.Aspects.Player
             TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.InstanceHashCode;
         }
 
+        private static void InitParentTable()
+        {
+            if (TestFlaskContext.CurrentDepth == 0 && TestFlaskContext.InitialDepth > 0)
+            {
+                TestFlaskContext.InvocationParentTable[TestFlaskContext.InitialDepth - 1] = TestFlaskContext.InitialParentInvocationInstance;
+            }
+        }
+
         private int ResolveDepth()
         {
-            int currentDepth = TestFlaskContext.CurrentDepth;
-            return currentDepth > 0 ? currentDepth : TestFlaskContext.InitialDepth;
+            return Math.Max(TestFlaskContext.CurrentDepth, TestFlaskContext.InitialDepth - 1);
         }
 
         protected void EndInvocation(object result = null)
@@ -112,7 +121,7 @@ namespace TestFlask.Aspects.Player
             }
             else
             {
-                if (TestFlaskContext.LoadedStep == null && TestFlaskContext.CurrentDepth == 1)
+                if (TestFlaskContext.LoadedStep == null && (TestFlaskContext.IsRootDepth || TestFlaskContext.IsInitialDepth))
                 {
                     TestFlaskContext.LoadedStep = api.GetStep(requestedInvocation.StepNo);
                 }
@@ -123,7 +132,7 @@ namespace TestFlask.Aspects.Player
                 {
                     if (requestedMode == TestModes.Assert)
                     {
-                        mustPersistAssertionResult = (TestFlaskContext.CurrentDepth == 1);
+                        mustPersistAssertionResult = TestFlaskContext.IsRootDepth;
                     }
                     //lookup existing invocation and determine test mode
                     return existingInvocation.IsReplayable ? TestModes.Play : TestModes.NoMock;
@@ -147,9 +156,14 @@ namespace TestFlask.Aspects.Player
 
             step.Invocations.Add(requestedInvocation);
 
-            if (TestFlaskContext.CurrentDepth == 1)
+            if (TestFlaskContext.IsRootDepth && TestFlaskContext.IsOverwriteStep)
             {
-                api.PutStepInvocations(step);
+                api.DeleteStepInvocations(step);
+            }
+
+            if (TestFlaskContext.IsRootDepth || TestFlaskContext.IsInitialDepth)
+            {
+                api.AppendStepInvocations(step);
             }
         }
 

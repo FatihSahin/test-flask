@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TestFlask.Aspects.Context;
 using TestFlask.Assistant.Core.Config;
 using TestFlask.Assistant.Core.Models;
+using TestFlask.Assistant.Core.Outgoing;
 using TestFlask.Models.Context;
 
 namespace TestFlask.Assistant.Core.WebApi
@@ -26,9 +27,10 @@ namespace TestFlask.Assistant.Core.WebApi
             {
                 string projectKey = AssistantIncomingContext.ProjectKey;
                 string scenarioNo = AssistantIncomingContext.ScenarioNo;
-                string stepNo = ResolveStepNo();
+                string stepNo = OutgoingHeadersHelper.ResolveStepNo();
                 string testMode = AssistantIncomingContext.TestMode;
-                string initialDepth = ResolveInitialDepth();
+                string initialDepth = OutgoingHeadersHelper.ResolveInitialDepth();
+                string parentInvocationInstance = OutgoingHeadersHelper.ResolveParentInvocationInstanceHashCode();
 
                 request.Headers.Add(ContextKeys.ProjectKey, projectKey);
                 request.Headers.Add(ContextKeys.ScenarioNo, scenarioNo);
@@ -47,19 +49,14 @@ namespace TestFlask.Assistant.Core.WebApi
                 {
                     request.Headers.Add(ContextKeys.InitialDepth, initialDepth);
                 }
+                
+                if (!string.IsNullOrEmpty(parentInvocationInstance))
+                {
+                    request.Headers.Add(ContextKeys.ParentInvocationInstance, parentInvocationInstance);
+                }
             }
 
             return base.SendAsync(request, cancellationToken);
-        }
-
-        private string ResolveStepNo()
-        {
-            return TestFlaskContext.LoadedStep?.StepNo.ToString() ?? AssistantIncomingContext.StepNo;
-        }
-
-        private string ResolveInitialDepth()
-        {
-            return TestFlaskContext.CurrentDepth.ToString();
         }
     }
 }
