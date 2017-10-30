@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata minClientVersion="2.8">
-    <id>TestFlask.Aspects</id>
+    <id>TestFlask.Assistant.Core</id>
     <version>$version$</version>
-    <title>TestFlask.Aspects</title>
+    <title>TestFlask.Assistant.Core</title>
     <authors>Fatih Sahin</authors>
     <owners>Fatih Sahin</owners>
     <developmentDependency>true</developmentDependency>
@@ -12,23 +12,22 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!-- Erlenmeyer Flask by Rockicon from the Noun Project -->
     <iconUrl>https://raw.githubusercontent.com/FatihSahin/test-flask/master/Icons/package_icon.png</iconUrl>
-    <description>TestFlask.Aspects</description>
-    <summary>This package contains TestFlask interfaces and aspects.</summary>
+    <description>TestFlask.Assistant.Core</description>
+    <summary>This package contains custome TestFlask config sections, TestFlask Assistant Wcf behaviours and Web API Client message handlers to delegate TestFlask headers inside the incoming request to outgoing TestFlask API requests</summary>
     <language>en-US</language>
-    <tags>ILWeaving, Fody, Cecil, TestFlask, Testing</tags>
+    <tags>TestFlask, ASP.NET Web API, WCF</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Configuration"  />
       <frameworkAssembly assemblyName="System.Net.Http"  />
       <frameworkAssembly assemblyName="System.Web" />
+      <frameworkAssembly assemblyName="System.ServiceModel" />
+      <frameworkAssembly assemblyName="System.ServiceModel.Web" />
     </frameworkAssemblies>
     <dependencies>
-      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
-      <dependency id="Newtonsoft.Json" version="10.0.2" />
+      <dependency id="TestFlask.Aspects" version="1.0.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\$Configuration$\TestFlask.Models.dll" target="lib\net452"  />
-    <file src="bin\$Configuration$\MongoDB.Bson.dll" target="lib\net452"  />
     <file src="*.xdt" target="content" />
   </files>
 </package>

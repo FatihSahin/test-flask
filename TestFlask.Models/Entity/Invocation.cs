@@ -58,6 +58,7 @@ namespace TestFlask.Models.Entity
         public string InstanceHashCode { get; set; }
 
         public string ParentInstanceHashCode { get; set; }
+        public string RecordingTime { get; set; }
 
         public string GetInvocationHashCode()
         {
@@ -81,6 +82,12 @@ namespace TestFlask.Models.Entity
         {
             string invocationDeepHashCode = GetInvocationDeepHashCode();
             return $"{ScenarioNo}_{invocationDeepHashCode}_{InvocationIndex}";
+        }
+
+        public string GetRecordingInstanceHashCode()
+        {
+            string invocationDeepHashCode = GetInvocationDeepHashCode();
+            return $"{ScenarioNo}_{invocationDeepHashCode}_{RecordingTime}"; ;
         }
     }
 }

@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BA64CDC3-47BD-4987-9E9E-FC1A61DDF070}</ProjectGuid>
+    <ProjectGuid>{7D792397-F283-47B1-A611-5E2086D335B4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestFlask.Aspects</RootNamespace>
-    <AssemblyName>TestFlask.Aspects</AssemblyName>
+    <RootNamespace>TestFlask.Assistant.Mvc</RootNamespace>
+    <AssemblyName>TestFlask.Assistant.Mvc</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -21,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,12 +29,10 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -44,6 +41,7 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -53,42 +51,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AssistantSessionContext.cs" />
+    <Compile Include="WcfExtensions\WcfEndpointBehavior.cs" />
+    <Compile Include="WcfExtensions\WcfEndpointBehaviorExtensionElement.cs" />
+    <Compile Include="WcfExtensions\WcfMessageInspector.cs" />
+    <Compile Include="WebApi\TestFlaskMessageHandler.cs" />
+    <Content Include="Areas\TestFlask\Controllers\TestFlaskAssistantController.cs" />
     <Compile Include="ApiClient\TestFlaskApi.cs" />
-    <Compile Include="Config\TestFlaskConfig.cs" />
-    <Compile Include="Config\TestFlaskConfigSection.cs" />
-    <Compile Include="Context\TestFlaskContext.cs" />
-    <Compile Include="Context\TestFlaskHttpModule.cs" />
-    <Compile Include="Enums\TestModes.cs" />
-    <Compile Include="Identifiers\IRequestIdentifier.cs" />
-    <Compile Include="Identifiers\IResponseIdentifier.cs" />
-    <Compile Include="Player\InnerPlayerBase.cs" />
-    <Compile Include="Player\InnerActionPlayer.cs" />
-    <Compile Include="PlaybackAttribute.cs" />
-    <Compile Include="Player\ActionPlayer.cs" />
-    <Compile Include="Player\FuncPlayer.cs" />
-    <Compile Include="Player\InnerFuncPlayer.cs" />
+    <Content Include="Areas\TestFlask\TestFlaskAreaRegistration.cs" />
+    <Compile Include="Models\StepsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Content\testFlask.css" />
+    <Content Include="Scripts\testFlask.js" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\TestFlask\Views\web.config" />
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="TestFlask.Aspects.nuspec" />
-    <None Include="app.config.install.xdt" />
-    <None Include="web.config.install.xdt" />
+    <None Include="TestFlask.Assistant.Mvc.nuspec" />
+    <None Include="web.config.install.xdt">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <Content Include="Areas\TestFlask\Views\TestFlaskAssistant\Index.cshtml" />
+    <Content Include="Areas\TestFlask\Views\TestFlaskAssistant\Steps.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestFlask.Assistant.Core\TestFlask.Assistant.Core.csproj">
+      <Project>{fd9e1dbb-4ca8-4357-8ae1-d3cf0c975d08}</Project>
+      <Name>TestFlask.Assistant.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TestFlask.Models\TestFlask.Models.csproj">
-      <Project>{950E37CD-2C68-4B4E-9137-F82E696DC52C}</Project>
+      <Project>{950e37cd-2c68-4b4e-9137-f82e696dc52c}</Project>
       <Name>TestFlask.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

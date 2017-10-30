@@ -11,6 +11,11 @@ using TestFlask.Models.Entity;
 
 namespace TestFlask.Aspects.Context
 {
+    /// <summary>
+    /// This class works for WCF and ASP.NET Web API servers. It actually captures raw request and sets it to TestFlaskContext.
+    /// Also may create an auto step document on record mode if no existing step no is provided 
+    /// It must be registered in system.webServer > modules section inside service web.config.
+    /// </summary>
     public class TestFlaskHttpModule : IHttpModule
     {
         public void Dispose()

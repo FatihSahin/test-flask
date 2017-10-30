@@ -1,0 +1,41 @@
+﻿@model TestFlask.Assistant.Mvc.Models.StepsViewModel
+<div class="test-flask-steps-container">
+    <div class="test-flask-steps-header">
+        <span style="margin-right:90px;">
+            <strong>Steps</strong>
+        </span>
+        <label for="testFlaskRecordCheckBox" style="color:red;">
+            <input type="checkbox" style="margin-right:5px;position:relative;top:2px;" id="testFlaskRecordCheckBox" onchange="testFlask.record(@Model.Context.CurrentScenarioNo)" />Record
+        </label>
+    </div>
+    <div class="test-flask-steps-body">
+        @{
+            if (Model.Steps.Any())
+            {
+                foreach (var step in Model.Steps.OrderByDescending(s => s.StepNo))
+                {
+                    <div class="test-flask-step-item">
+                        <div>
+                            <strong>#@step.StepNo</strong>
+                            <input type="text" id="testFlaskStepName_@step.StepNo" value="@step.StepName" readonly="readonly" />
+                            <span id="testFlaskStepDefaultActions_@step.StepNo">
+                                <a href="javascript:void(0)" id="testFlaskStepOverwrite_@step.StepNo" onclick="testFlask.overwriteStep(@step.StepNo)">@(Model.Context.OverwriteStepNo == @step.StepNo ? "Stop" : "Overwrite")</a> |
+                                <a href="javascript:void(0)" title="Edit" onclick="testFlask.editStep(@step.StepNo)">Edit</a>
+                            </span>
+                            <span id="testFlaskStepEditActions_@step.StepNo" style="display:none;">
+                                <a href="javascript:void(0)" title="Save" onclick="testFlask.saveStep(@step.StepNo)">Save</a> |
+                                <a href="javascript:void(0)" title="Cancel" onclick="testFlask.cancelStep(@step.StepNo)">Cancel</a>
+                            </span>
+                        </div>
+                        <div class="test-flask-step-date">@step.CreatedOn.ToString("MM/dd/yyyy HH:mm:ss")</div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>There aren't any recorded steps yet.</p>
+                <p>You can turn on record mode and trigger some steps.</p>
+            }
+        }
+    </div>
+</div>

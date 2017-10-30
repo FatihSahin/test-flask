@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
-using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -15,29 +13,13 @@ namespace TestFlask.Aspects.Context
 {
     public static class TestFlaskContext
     {
-        public static Dictionary<string, int> InvocationDepthTable
-        {
-            get
-            {
-                return GetInvocationDepthTable();
-            }
-        }
+        public static Dictionary<string, int> InvocationDepthTable => GetInvocationDepthTable();
 
-        public static Dictionary<int, string> InvocationParentTable
-        {
-            get
-            {
-                return GetInvocationParentTable();
-            }
-        }
+        public static Dictionary<int, string> InvocationParentTable => GetInvocationParentTable();
 
-        public static Step RequestedStep
-        {
-            get
-            {
-                return GetRequestedStep();
-            }
-        }
+        public static Step RequestedStep => GetRequestedStep();
+
+        public static string InitialParentInvocationInstance => GetInitialParentInvocationInstance();
 
         public static Step LoadedStep
         {
@@ -63,13 +45,7 @@ namespace TestFlask.Aspects.Context
             }
         }
 
-        public static TestModes RequestedMode
-        {
-            get
-            {
-                return GetRequestedMode();
-            }
-        }
+        public static TestModes RequestedMode => GetRequestedMode();
 
         public static string RawRequest
         {
@@ -82,6 +58,17 @@ namespace TestFlask.Aspects.Context
                 SetRawRequest(value);
             }
         }
+
+        public static int InitialDepth => GetInitialDepth();
+
+        public static bool IsRootDepth => CurrentDepth == 1;
+
+        public static bool IsInitialDepth => InitialDepth > 0 && CurrentDepth == (InitialDepth + 1);
+
+        public static bool IsOverwriteStep => bool.Parse(HttpContext.Current.Items["OverwriteStep"].ToString() ?? "false");
+
+
+        #region NotPublic
 
         private static TestModes GetRequestedMode()
         {
@@ -224,6 +211,16 @@ namespace TestFlask.Aspects.Context
             }
         }
 
+        private static string GetInitialParentInvocationInstance()
+        {
+            if (HttpContext.Current != null)
+            {
+                return HttpContext.Current.Request.Headers[ContextKeys.ParentInvocationInstance];
+            }
+
+            return null;
+        }
+
         private static Step BuildRequestedStep()
         {
             if (HttpContext.Current != null)
@@ -254,6 +251,8 @@ namespace TestFlask.Aspects.Context
 
         private static long BuildStepNo()
         {
+            HttpContext.Current.Items.Add("OverwriteStep", false);
+
             //normally we expect the backend service to intercept incoming call and create a step beforehand on the fly (via httpModule or sth.) and set generated step no on http context items
             if (HttpContext.Current.Items.Contains(ContextKeys.StepNo))
             {
@@ -261,6 +260,7 @@ namespace TestFlask.Aspects.Context
             }
             else if (HttpContext.Current.Request.Headers[ContextKeys.StepNo] != null)
             {
+                HttpContext.Current.Items["OverwriteStep"] = true;
                 //but if it does not we expect step no (which created elsewhere before that service invocation) on the header
                 return long.Parse(HttpContext.Current.Request.Headers[ContextKeys.StepNo]);
             }
@@ -274,5 +274,22 @@ namespace TestFlask.Aspects.Context
         {
             return LoadedStep.Invocations.SingleOrDefault(inv => inv.InstanceHashCode == instanceHashCode);
         }
+
+        private static int GetInitialDepth()
+        {
+            if (HttpContext.Current != null)
+            {
+                var initialDepth = HttpContext.Current.Request.Headers[ContextKeys.InitialDepth];
+
+                if (initialDepth != null)
+                {
+                    return int.Parse(initialDepth);
+                }
+            }
+
+            return 0;
+        }
+
+        #endregion
     }
 }

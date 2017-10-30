@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFlaskAddin", "TestFlaskAddin\TestFlaskAddin.csproj", "{C3578A7B-09A6-4444-9383-0DEAFA4958BD}"
 EndProject
@@ -34,7 +34,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFlask.API.Tests", "Test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assistant", "Assistant", "{F064E206-E941-4043-A0DB-0A11C17EF9E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFlask.Assistant", "TestFlask.Assistant\TestFlask.Assistant.csproj", "{7D792397-F283-47B1-A611-5E2086D335B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFlask.Assistant.Mvc", "TestFlask.Assistant.Mvc\TestFlask.Assistant.Mvc.csproj", "{7D792397-F283-47B1-A611-5E2086D335B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFlask.Assistant.Core", "TestFlask.Assistant.Core\TestFlask.Assistant.Core.csproj", "{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -116,6 +118,14 @@ Global
 		{7D792397-F283-47B1-A611-5E2086D335B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D792397-F283-47B1-A611-5E2086D335B4}.Release|x86.ActiveCfg = Release|Any CPU
 		{7D792397-F283-47B1-A611-5E2086D335B4}.Release|x86.Build.0 = Release|Any CPU
+		{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,6 +142,7 @@ Global
 		{B81C2B9C-4F4D-4BDD-950B-75BE24F8A30F} = {771A066F-490A-4ABC-BF77-4B6D5C431B4F}
 		{1608760A-100B-4A26-BA01-7F8C7F102FAF} = {F0539223-5D05-499F-907D-C9BED56F3C01}
 		{7D792397-F283-47B1-A611-5E2086D335B4} = {F064E206-E941-4043-A0DB-0A11C17EF9E2}
+		{FD9E1DBB-4CA8-4357-8AE1-D3CF0C975D08} = {F064E206-E941-4043-A0DB-0A11C17EF9E2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D054B8BC-600B-46CA-B032-1BBAA8115F95}
