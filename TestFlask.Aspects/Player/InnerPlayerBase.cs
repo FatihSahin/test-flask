@@ -79,24 +79,26 @@ namespace TestFlask.Aspects.Player
                 requestedInvocation.InvocationIndex = invocationDepthTable[requestedInvocation.DeepHashCode];
             }
 
-            requestedInvocation.InstanceHashCode = requestedInvocation.GetInvocationInstanceHashCode();
+            requestedInvocation.RecordingTime = DateTime.Now.ToUniversalTime().ToString("yyyyMMddHHmmssfffffff");
             requestedInvocation.ParentInstanceHashCode = parentInstanceHashCode;
 
             //make this invocation latest parent for the current depth
-            TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.InstanceHashCode;
+            TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.GetRecordingInstanceHashCode();
+
+            TryCleanStepInvocations();
         }
 
         private static void InitParentTable()
         {
             if (TestFlaskContext.CurrentDepth == 0 && TestFlaskContext.InitialDepth > 0)
             {
-                TestFlaskContext.InvocationParentTable[TestFlaskContext.InitialDepth - 1] = TestFlaskContext.InitialParentInvocationInstance;
+                TestFlaskContext.InvocationParentTable[TestFlaskContext.InitialDepth] = TestFlaskContext.InitialParentInvocationInstance;
             }
         }
 
         private int ResolveDepth()
         {
-            return Math.Max(TestFlaskContext.CurrentDepth, TestFlaskContext.InitialDepth - 1);
+            return Math.Max(TestFlaskContext.CurrentDepth, TestFlaskContext.InitialDepth);
         }
 
         protected void EndInvocation(object result = null)
@@ -145,6 +147,16 @@ namespace TestFlask.Aspects.Player
             }
         }
 
+        protected void TryCleanStepInvocations()
+        {
+            var step = TestFlaskContext.RequestedStep;
+
+            if (TestFlaskContext.IsRootDepth && TestFlaskContext.IsOverwriteStep)
+            {
+                api.DeleteStepInvocations(step);
+            }
+        }
+
         protected void TryPersistStepInvocations()
         {
             var step = TestFlaskContext.RequestedStep;
@@ -156,14 +168,14 @@ namespace TestFlask.Aspects.Player
 
             step.Invocations.Add(requestedInvocation);
 
-            if (TestFlaskContext.IsRootDepth && TestFlaskContext.IsOverwriteStep)
-            {
-                api.DeleteStepInvocations(step);
-            }
-
-            if (TestFlaskContext.IsRootDepth || TestFlaskContext.IsInitialDepth)
+            if (TestFlaskContext.IsInitialDepth)
             {
                 api.AppendStepInvocations(step);
+            }
+
+            if (TestFlaskContext.IsRootDepth)
+            {
+                api.CompleteStepInvocations(step);
             }
         }
 

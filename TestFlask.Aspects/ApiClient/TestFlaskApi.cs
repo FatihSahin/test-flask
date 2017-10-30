@@ -36,10 +36,10 @@ namespace TestFlask.Aspects.ApiClient
             return client;
         }
 
-        public void PutStepInvocations(Step step)
+        internal void CompleteStepInvocations(Step step)
         {
             var httpClient = PrepareClient();
-            var response = httpClient.PutAsJsonAsync("api/step/invocations", step).Result;
+            var response = httpClient.PutAsJsonAsync("api/step/invocations/complete", step).Result;
         }
 
         public void AppendStepInvocations(Step step)

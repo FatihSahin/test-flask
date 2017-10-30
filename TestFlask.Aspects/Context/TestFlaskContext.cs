@@ -63,10 +63,10 @@ namespace TestFlask.Aspects.Context
 
         public static bool IsRootDepth => CurrentDepth == 1;
 
-        public static bool IsInitialDepth => IsRootDepth || CurrentDepth == InitialDepth;
+        public static bool IsInitialDepth => InitialDepth > 0 && CurrentDepth == (InitialDepth + 1);
 
         public static bool IsOverwriteStep => bool.Parse(HttpContext.Current.Items["OverwriteStep"].ToString() ?? "false");
-        
+
 
         #region NotPublic
 
