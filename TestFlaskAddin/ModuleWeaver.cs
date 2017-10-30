@@ -160,12 +160,12 @@ public class ModuleWeaver
         {
             var module = GetModuleForReferencedType(pType.ParameterType);
             var def = module.ImportReference(pType.ParameterType);
-            reqResTypes.Add(ModuleDefinition.ImportReference(def.Resolve()));
+            reqResTypes.Add(ModuleDefinition.ImportReference(def));
         }
 
         var resModule = GetModuleForReferencedType(playableMethod.ReturnType);
 
-        var responseType = ModuleDefinition.ImportReference(resModule.ImportReference(playableMethod.ReturnType).Resolve());
+        var responseType = ModuleDefinition.ImportReference(resModule.ImportReference(playableMethod.ReturnType));
 
         bool isFunc = responseType.FullName != "System.Void"; //this is to determine if original method is a function or an action
 

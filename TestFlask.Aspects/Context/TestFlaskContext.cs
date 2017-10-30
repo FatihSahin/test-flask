@@ -67,7 +67,6 @@ namespace TestFlask.Aspects.Context
 
         public static bool IsOverwriteStep => bool.Parse(HttpContext.Current.Items["OverwriteStep"].ToString() ?? "false");
 
-
         #region NotPublic
 
         private static TestModes GetRequestedMode()
@@ -84,7 +83,6 @@ namespace TestFlask.Aspects.Context
 
             return TestModes.NoMock; //if no header provided it is a probable real call
         }
-
         private static Dictionary<string, int> GetInvocationDepthTable()
         {
             if (HttpContext.Current != null)

@@ -88,6 +88,12 @@ namespace AssemblyToProcess
         }
 
         [Playback]
+        public FooResponse[] GetFoos(FooRequest req)
+        {
+            return new FooResponse[] { GetFoo(req) };
+        }
+
+        [Playback]
         public SomeResponse ReturnSome()
         {
             return new SomeResponse
@@ -116,7 +122,7 @@ namespace AssemblyToProcess
             return response;
         }
 
-        //[Playback]
+        [Playback]
         public void DoNoArgsNoResponse()
         {
             Console.WriteLine("Anooo");

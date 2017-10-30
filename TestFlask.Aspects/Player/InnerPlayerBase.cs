@@ -84,8 +84,6 @@ namespace TestFlask.Aspects.Player
 
             //make this invocation latest parent for the current depth
             TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.GetRecordingInstanceHashCode();
-
-            TryCleanStepInvocations();
         }
 
         private static void InitParentTable()
@@ -117,8 +115,13 @@ namespace TestFlask.Aspects.Player
         {
             var requestedMode = TestFlaskContext.RequestedMode;
 
-            if (requestedMode == TestModes.Record || requestedMode == TestModes.NoMock)
+            if (requestedMode == TestModes.NoMock)
             {
+                return requestedMode;
+            }
+            else if (requestedMode == TestModes.Record)
+            {
+                TryCleanStepInvocations();
                 return requestedMode;
             }
             else
@@ -128,7 +131,8 @@ namespace TestFlask.Aspects.Player
                     TestFlaskContext.LoadedStep = api.GetStep(requestedInvocation.StepNo);
                 }
 
-                Invocation existingInvocation = TestFlaskContext.GetInvocation(requestedInvocation.InstanceHashCode);
+                //Does not support sibling invocations, invocation index is 0 (because of cross service context passing)
+                Invocation existingInvocation = TestFlaskContext.GetInvocation(requestedInvocation.GetInvocationInstanceHashCode());
 
                 if (existingInvocation != null)
                 {

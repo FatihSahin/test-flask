@@ -73,7 +73,7 @@ namespace TestFlask.Aspects.Player
 
         public void Play(params object[] requestArgs)
         {
-            var loadedInvocation = TestFlaskContext.GetInvocation(requestedInvocation.InstanceHashCode);
+            var loadedInvocation = TestFlaskContext.GetInvocation(requestedInvocation.GetInvocationInstanceHashCode());
 
             if (!loadedInvocation.IsFaulted)
             {
