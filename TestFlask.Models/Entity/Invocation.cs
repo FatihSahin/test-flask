@@ -60,7 +60,6 @@ namespace TestFlask.Models.Entity
         public string InstanceHashCode { get; set; }
 
         public string ParentInstanceHashCode { get; set; }
-        public string RecordingTime { get; set; }
 
         public string GetInvocationHashCode()
         {
