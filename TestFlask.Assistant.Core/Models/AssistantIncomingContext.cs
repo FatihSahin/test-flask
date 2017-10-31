@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using TestFlask.Aspects.Enums;
 using TestFlask.Assistant.Core.Config;
 using TestFlask.Models.Context;
 
@@ -38,7 +39,7 @@ namespace TestFlask.Assistant.Core.Models
         {
             get
             {
-                return HttpContext.Current.Request.Headers[ContextKeys.TestMode];
+                return HttpContext.Current.Request.Headers[ContextKeys.TestMode] ?? TestModes.NoMock.ToString();
             }
         }
 
@@ -55,6 +56,14 @@ namespace TestFlask.Assistant.Core.Models
             get
             {
                 return HttpContext.Current.Request.Headers[ContextKeys.InitialDepth];
+            }
+        }
+
+        public static string ContextId
+        {
+            get
+            {
+                return HttpContext.Current.Request.Headers[ContextKeys.ContextId];
             }
         }
 

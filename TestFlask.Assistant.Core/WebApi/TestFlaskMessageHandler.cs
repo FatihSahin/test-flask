@@ -5,7 +5,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
+using TestFlask.Aspects.ApiClient;
 using TestFlask.Aspects.Context;
+using TestFlask.Aspects.Enums;
 using TestFlask.Assistant.Core.Config;
 using TestFlask.Assistant.Core.Models;
 using TestFlask.Assistant.Core.Outgoing;
@@ -31,6 +34,7 @@ namespace TestFlask.Assistant.Core.WebApi
                 string testMode = AssistantIncomingContext.TestMode;
                 string initialDepth = OutgoingHeadersHelper.ResolveInitialDepth();
                 string parentInvocationInstance = OutgoingHeadersHelper.ResolveParentInvocationInstanceHashCode();
+                string contextId = OutgoingHeadersHelper.ResolveContextId();
 
                 request.Headers.Add(ContextKeys.ProjectKey, projectKey);
                 request.Headers.Add(ContextKeys.ScenarioNo, scenarioNo);
@@ -54,6 +58,40 @@ namespace TestFlask.Assistant.Core.WebApi
                 {
                     request.Headers.Add(ContextKeys.ParentInvocationInstance, parentInvocationInstance);
                 }
+
+                if (!string.IsNullOrEmpty(contextId))
+                {
+                    request.Headers.Add(ContextKeys.ContextId, contextId);
+                }
+
+                var mode = (TestModes)Enum.Parse(typeof(TestModes), testMode);
+
+                if (mode != TestModes.NoMock && TestFlaskContext.InvocationLeafTable?.Count > 0)
+                {
+                    TestFlaskApi api = new TestFlaskApi();
+                    api.PostLeafTable(contextId, TestFlaskContext.InvocationLeafTable);
+                }
+
+                return Task.Factory.StartNew((ctx) =>
+                {
+                    var task = base.SendAsync(request, cancellationToken);
+                    var response = task.Result;
+
+                    HttpContext.Current = ctx as HttpContext;
+
+                    if (mode != TestModes.NoMock && TestFlaskContext.InvocationLeafTable?.Count > 0)
+                    {
+                        TestFlaskApi api = new TestFlaskApi();
+                        var leafTable = api.GetLeafTable(contextId);
+
+                        if (leafTable?.Count > 0)
+                        {
+                            TestFlaskContext.InvocationLeafTable = leafTable;
+                        }
+                    }
+
+                    return response;
+                }, HttpContext.Current);
             }
 
             return base.SendAsync(request, cancellationToken);

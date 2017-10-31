@@ -19,5 +19,7 @@ namespace TestFlask.Models.Context
         public const string InitialDepth = "TestFlask-InitialDepth";
 
         public const string ParentInvocationInstance = "TestFlask-ParentInvocationInstance";
+
+        public const string ContextId = "TestFlask-ContextId";
     }
 }

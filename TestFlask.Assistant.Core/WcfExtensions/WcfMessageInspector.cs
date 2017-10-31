@@ -5,6 +5,9 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Web;
+using TestFlask.Aspects.ApiClient;
+using TestFlask.Aspects.Context;
+using TestFlask.Aspects.Enums;
 using TestFlask.Assistant.Core.Config;
 using TestFlask.Assistant.Core.Models;
 using TestFlask.Assistant.Core.Outgoing;
@@ -29,6 +32,7 @@ namespace TestFlask.Assistant.Core.WcfExtensions
                 string testMode = AssistantIncomingContext.TestMode;
                 string initialDepth = OutgoingHeadersHelper.ResolveInitialDepth();
                 string parentInvocationInstance = OutgoingHeadersHelper.ResolveParentInvocationInstanceHashCode();
+                string contextId = OutgoingHeadersHelper.ResolveContextId();
 
                 HttpRequestMessageProperty property = request.Properties[HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
 
@@ -54,6 +58,19 @@ namespace TestFlask.Assistant.Core.WcfExtensions
                 {
                     property.Headers[ContextKeys.ParentInvocationInstance] = parentInvocationInstance;
                 }
+
+                if (!string.IsNullOrEmpty(contextId))
+                {
+                    property.Headers[ContextKeys.ContextId] = contextId;
+                }
+
+                var mode = (TestModes)Enum.Parse(typeof(TestModes), testMode);
+
+                if (mode != TestModes.NoMock && TestFlaskContext.InvocationLeafTable?.Count > 0)
+                {
+                    TestFlaskApi api = new TestFlaskApi();
+                    api.PostLeafTable(contextId, TestFlaskContext.InvocationLeafTable);
+                }
             }
 
             return null;
@@ -64,7 +81,20 @@ namespace TestFlask.Assistant.Core.WcfExtensions
         /// </summary>
         public void AfterReceiveReply(ref System.ServiceModel.Channels.Message reply, object correlationState)
         {
-            // Nothing special here
+            string testMode = AssistantIncomingContext.TestMode;
+            var mode = (TestModes)Enum.Parse(typeof(TestModes), testMode);
+            string contextId = OutgoingHeadersHelper.ResolveContextId();
+
+            if (mode != TestModes.NoMock && TestFlaskContext.InvocationLeafTable?.Count > 0)
+            {
+                TestFlaskApi api = new TestFlaskApi();
+                var leafTable = api.GetLeafTable(contextId);
+
+                if (leafTable?.Count > 0)
+                {
+                    TestFlaskContext.InvocationLeafTable = leafTable;
+                }
+            }
         }
     }
 }

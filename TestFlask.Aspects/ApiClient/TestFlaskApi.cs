@@ -87,5 +87,24 @@ namespace TestFlask.Aspects.ApiClient
             var httpClient = PrepareClient();
             var response = httpClient.PutAsJsonAsync($"api/step/invocation", invocation).Result; 
         }
+
+        public Dictionary<string, int> GetLeafTable(string contextId)
+        {
+            var httpClient = PrepareClient();
+            var response = httpClient.GetAsync($"api/context/leafTable/{contextId}").Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<Dictionary<string, int>>().Result;
+            }
+
+            return null;
+        }
+
+        public void PostLeafTable(string contextId, Dictionary<string, int> leafTable)
+        {
+            var httpClient = PrepareClient();
+            var response = httpClient.PostAsJsonAsync($"api/context/leafTable/{contextId}", leafTable).Result;
+        }
     }
 }

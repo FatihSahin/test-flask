@@ -33,5 +33,10 @@ namespace TestFlask.Assistant.Core.Outgoing
                 ? TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth]
                 : AssistantIncomingContext.ParentInvocationInstance;
         }
+
+        public static string ResolveContextId()
+        {
+            return TestFlaskContext.ContextId ?? AssistantIncomingContext.ContextId;
+        }
     }
 }

@@ -55,6 +55,8 @@ namespace TestFlask.Models.Entity
 
         public string DeepHashCode { get; set; }
 
+        public string LeafHashCode { get; set; }
+
         public string InstanceHashCode { get; set; }
 
         public string ParentInstanceHashCode { get; set; }
@@ -72,22 +74,23 @@ namespace TestFlask.Models.Entity
             return strBuilder.ToString();
         }
 
-        public string GetInvocationDeepHashCode()
+        public string GetDeepHashCode()
         {
             string invocationHashCode = GetInvocationHashCode();
             return $"{StepNo}_{invocationHashCode}_{Depth}";
         }
 
-        public string GetInvocationInstanceHashCode()
+        public string GetLeafHashCode()
         {
-            string invocationDeepHashCode = GetInvocationDeepHashCode();
-            return $"{ScenarioNo}_{invocationDeepHashCode}_{InvocationIndex}";
+            string deepHashCode = GetDeepHashCode();
+            int parentInstanceHashCodeHashCode = (ParentInstanceHashCode ?? "null").GetHashCode();
+            return $"{deepHashCode}_{parentInstanceHashCodeHashCode}";
         }
 
-        public string GetRecordingInstanceHashCode()
+        public string GetInvocationInstanceHashCode()
         {
-            string invocationDeepHashCode = GetInvocationDeepHashCode();
-            return $"{ScenarioNo}_{invocationDeepHashCode}_{RecordingTime}"; ;
+            string leafHashCode = GetLeafHashCode();
+            return $"{ScenarioNo}_{leafHashCode}_{InvocationIndex}";
         }
     }
 }

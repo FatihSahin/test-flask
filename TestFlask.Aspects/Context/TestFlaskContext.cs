@@ -13,7 +13,29 @@ namespace TestFlask.Aspects.Context
 {
     public static class TestFlaskContext
     {
-        public static Dictionary<string, int> InvocationDepthTable => GetInvocationDepthTable();
+        public static string ContextId
+        {
+            get
+            {
+                return GetContextId();
+            }
+            set
+            {
+                SetContextId(value);
+            }
+        }
+
+        public static Dictionary<string, int> InvocationLeafTable
+        {
+            get
+            {
+                return GetInvocationLeafTable();
+            }
+            set
+            {
+                SetInvocationLeafTable(value);
+            }
+        }
 
         public static Dictionary<int, string> InvocationParentTable => GetInvocationParentTable();
 
@@ -65,9 +87,39 @@ namespace TestFlask.Aspects.Context
 
         public static bool IsInitialDepth => InitialDepth > 0 && CurrentDepth == (InitialDepth + 1);
 
-        public static bool IsOverwriteStep => bool.Parse(HttpContext.Current.Items["OverwriteStep"].ToString() ?? "false");
+        public static bool IsOverwriteStep => bool.Parse(HttpContext.Current.Items["TestFlask_OverwriteStep"].ToString() ?? "false");
 
         #region NotPublic
+
+        private static string GetContextId()
+        {
+            if (HttpContext.Current != null)
+            {
+                if (HttpContext.Current.Items.Contains(ContextKeys.ContextId))
+                {
+                    return HttpContext.Current.Items[ContextKeys.ContextId].ToString();
+                }
+
+                string ctxId = HttpContext.Current.Request.Headers[ContextKeys.ContextId];
+
+                if (ctxId != null)
+                {
+                    HttpContext.Current.Items[ContextKeys.ContextId] = ctxId;
+                }
+
+                return ctxId;
+            }
+
+            return null;
+        }
+
+        private static void SetContextId(string id)
+        {
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.Items[ContextKeys.ContextId] = id;
+            }
+        }
 
         private static TestModes GetRequestedMode()
         {
@@ -83,22 +135,30 @@ namespace TestFlask.Aspects.Context
 
             return TestModes.NoMock; //if no header provided it is a probable real call
         }
-        private static Dictionary<string, int> GetInvocationDepthTable()
+        private static Dictionary<string, int> GetInvocationLeafTable()
         {
             if (HttpContext.Current != null)
             {
-                var invocationDepthTable = HttpContext.Current.Items["TestFlask_InvocationDepthTable"] as Dictionary<string, int>;
+                var invocationLeafTable = HttpContext.Current.Items["TestFlask_InvocationLeafTable"] as Dictionary<string, int>;
 
-                if (invocationDepthTable == null)
+                if (invocationLeafTable == null)
                 {
-                    invocationDepthTable = new Dictionary<string, int>();
-                    HttpContext.Current.Items["TestFlask_InvocationDepthTable"] = invocationDepthTable;
+                    invocationLeafTable = new Dictionary<string, int>();
+                    HttpContext.Current.Items["TestFlask_InvocationLeafTable"] = invocationLeafTable;
                 }
 
-                return invocationDepthTable;
+                return invocationLeafTable;
             }
 
             return null;
+        }
+
+        private static void SetInvocationLeafTable(Dictionary<string, int> leafTable)
+        {
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.Items["TestFlask_InvocationLeafTable"] = leafTable;
+            }
         }
 
         private static Dictionary<int, string> GetInvocationParentTable()
@@ -249,7 +309,7 @@ namespace TestFlask.Aspects.Context
 
         private static long BuildStepNo()
         {
-            HttpContext.Current.Items.Add("OverwriteStep", false);
+            HttpContext.Current.Items.Add("TestFlask_OverwriteStep", false);
 
             //normally we expect the backend service to intercept incoming call and create a step beforehand on the fly (via httpModule or sth.) and set generated step no on http context items
             if (HttpContext.Current.Items.Contains(ContextKeys.StepNo))
@@ -258,7 +318,7 @@ namespace TestFlask.Aspects.Context
             }
             else if (HttpContext.Current.Request.Headers[ContextKeys.StepNo] != null)
             {
-                HttpContext.Current.Items["OverwriteStep"] = true;
+                HttpContext.Current.Items["TestFlask_OverwriteStep"] = true;
                 //but if it does not we expect step no (which created elsewhere before that service invocation) on the header
                 return long.Parse(HttpContext.Current.Request.Headers[ContextKeys.StepNo]);
             }
