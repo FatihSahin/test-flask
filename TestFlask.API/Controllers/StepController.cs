@@ -34,27 +34,6 @@ namespace TestFlask.API.Controllers
 
             dbStep.Invocations.AddRange(step.Invocations);
 
-            //calculate invocation indexes and instance hash codes by recording time
-            foreach (var depthGroup in dbStep.Invocations.GroupBy(i => i.DeepHashCode))
-            {
-                int invOrder = 0;
-                foreach (var sibling in depthGroup.OrderBy(i => i.RecordingTime))
-                {
-                    sibling.InvocationIndex = invOrder++;
-
-                    string invocationInstanceHashCode = sibling.GetInvocationInstanceHashCode();
-                    string recordingInstanecHashCode = sibling.GetRecordingInstanceHashCode();
-
-                    //update any childs of current sibling
-                    foreach (var child in dbStep.Invocations.Where(inv => inv.ParentInstanceHashCode == recordingInstanecHashCode))
-                    {
-                        child.ParentInstanceHashCode = invocationInstanceHashCode;
-                    }
-
-                    sibling.InstanceHashCode = invocationInstanceHashCode;
-                }
-            } 
-
             scenarioRepo.InsertInvocationsForStep(dbStep);
         }
 

@@ -38,13 +38,19 @@ namespace TestFlask.Aspects.Player
 
         public void StartInvocation(params object[] requestArgs)
         {
-            InitParentTable();
+            InitContext();
 
             int currentDepth = ResolveDepth();
 
             string parentInstanceHashCode = TestFlaskContext.InvocationParentTable.ContainsKey(currentDepth) ? TestFlaskContext.InvocationParentTable[currentDepth] : null;
 
             TestFlaskContext.CurrentDepth = currentDepth + 1;
+
+            //if it is root
+            if (TestFlaskContext.IsRootDepth)
+            {
+                TestFlaskContext.ContextId = Guid.NewGuid().ToString();
+            }
 
             var step = TestFlaskContext.RequestedStep;
 
@@ -63,34 +69,45 @@ namespace TestFlask.Aspects.Player
             requestedInvocation.Request = JsonConvert.SerializeObject(requestArgs);
 
             //set hash codes
+            requestedInvocation.ParentInstanceHashCode = parentInstanceHashCode;
             requestedInvocation.HashCode = requestedInvocation.GetInvocationHashCode();
-            requestedInvocation.DeepHashCode = requestedInvocation.GetInvocationDeepHashCode();
+            requestedInvocation.DeepHashCode = requestedInvocation.GetDeepHashCode();
+            requestedInvocation.LeafHashCode = requestedInvocation.GetLeafHashCode();
+            //set an invocation index and set instance hashcode for the leaf
+            SetInstanceHashCode();
 
-            //need to find an invocation index on that depth level using something like testFlaskContext.InvocationDepthTable (deep hash code)
-            var invocationDepthTable = TestFlaskContext.InvocationDepthTable;
-            if (!invocationDepthTable.ContainsKey(requestedInvocation.DeepHashCode))
+            //make this invocation latest parent for the current depth
+            TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.InstanceHashCode;
+        }
+
+        private void SetInstanceHashCode()
+        {
+            var invocationLeafTable = TestFlaskContext.InvocationLeafTable;
+            if (!invocationLeafTable.ContainsKey(requestedInvocation.LeafHashCode))
             {
-                invocationDepthTable[requestedInvocation.DeepHashCode] = 0;
+                invocationLeafTable[requestedInvocation.LeafHashCode] = 0;
                 requestedInvocation.InvocationIndex = 0;
             }
             else
             {
-                invocationDepthTable[requestedInvocation.DeepHashCode] = invocationDepthTable[requestedInvocation.DeepHashCode] + 1;
-                requestedInvocation.InvocationIndex = invocationDepthTable[requestedInvocation.DeepHashCode];
+                invocationLeafTable[requestedInvocation.LeafHashCode] = invocationLeafTable[requestedInvocation.LeafHashCode] + 1;
+                requestedInvocation.InvocationIndex = invocationLeafTable[requestedInvocation.LeafHashCode];
             }
 
-            requestedInvocation.RecordingTime = DateTime.Now.ToUniversalTime().ToString("yyyyMMddHHmmssfffffff");
-            requestedInvocation.ParentInstanceHashCode = parentInstanceHashCode;
-
-            //make this invocation latest parent for the current depth
-            TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.GetRecordingInstanceHashCode();
+            requestedInvocation.InstanceHashCode = requestedInvocation.GetInvocationInstanceHashCode();
         }
 
-        private static void InitParentTable()
+        private void InitContext()
         {
+            //if it is initial for a cross request
             if (TestFlaskContext.CurrentDepth == 0 && TestFlaskContext.InitialDepth > 0)
             {
                 TestFlaskContext.InvocationParentTable[TestFlaskContext.InitialDepth] = TestFlaskContext.InitialParentInvocationInstance;
+
+                if (TestFlaskContext.RequestedMode != TestModes.NoMock)
+                {
+                    TestFlaskContext.InvocationLeafTable = api.GetLeafTable(TestFlaskContext.ContextId);
+                }
             }
         }
 
@@ -102,6 +119,12 @@ namespace TestFlask.Aspects.Player
         protected void EndInvocation(object result = null)
         {
             TestFlaskContext.CurrentDepth--;
+
+            //if it is back to initial for a cross request
+            if (TestFlaskContext.InitialDepth > 0 && TestFlaskContext.InitialDepth == TestFlaskContext.CurrentDepth)
+            {
+                api.PostLeafTable(TestFlaskContext.ContextId, TestFlaskContext.InvocationLeafTable);
+            }
 
             if (mustPersistAssertionResult && result != null)
             {
@@ -131,8 +154,7 @@ namespace TestFlask.Aspects.Player
                     TestFlaskContext.LoadedStep = api.GetStep(requestedInvocation.StepNo);
                 }
 
-                //Does not support sibling invocations, invocation index is 0 (because of cross service context passing)
-                Invocation existingInvocation = TestFlaskContext.GetInvocation(requestedInvocation.GetInvocationInstanceHashCode());
+                Invocation existingInvocation = TestFlaskContext.GetInvocation(requestedInvocation.InstanceHashCode);
 
                 if (existingInvocation != null)
                 {
