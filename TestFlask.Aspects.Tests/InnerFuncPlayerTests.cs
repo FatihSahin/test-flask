@@ -44,7 +44,7 @@ namespace TestFlask.Aspects.Tests
         assemblyPath = assemblyPath.Replace("Debug", "Release");
 #endif
 
-            newAssemblyPath = assemblyPath.Replace(".dll", ".TestFlask.dll");
+            newAssemblyPath = assemblyPath.Replace(".dll", ".AspectsTests.dll");
             File.Copy(assemblyPath, newAssemblyPath, true);
 
             using (var moduleDefinition = ModuleDefinition.ReadModule(assemblyPath, new ReaderParameters { AssemblyResolver = resolver }))
