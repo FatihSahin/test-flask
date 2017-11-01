@@ -2,7 +2,9 @@
  *                                                                  *
  *  This file contains some dummy classes with different request    *
  *  response signatures and some IL Cheatsheet examples             *
- *  to test in TestFlask ModuleWeaver                               *
+ *  to test in TestFlask ModuleWeaver. Most classes demonstrate     *
+ *  different signatures for PEVerification inside                  *
+ *  TestFlaskAddin.Tests.WeaverTests.PeVerify()                     *
  *                                                                  *
  * *****************************************************************/
 using Newtonsoft.Json;

@@ -24,8 +24,8 @@ namespace TestFlask.Aspects.Player
         protected readonly string methodSignature;
         protected readonly string requestDisplayInfo;
         protected readonly string requestIdentifierKey;
-        protected Invocation requestedInvocation;
-        protected ITestFlaskApi api;
+        protected internal Invocation requestedInvocation;
+        protected readonly ITestFlaskApi api;
         private bool mustPersistAssertionResult;
 
         public InnerPlayerBase(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo)

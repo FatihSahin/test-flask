@@ -50,8 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Samples.cs" />
-    <Compile Include="SomeClient.cs" />
+    <Compile Include="ShoppingSamples.cs" />
+    <Compile Include="PEVerifying.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TestFlask.Aspects\TestFlask.Aspects.csproj">

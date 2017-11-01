@@ -13,7 +13,7 @@ namespace TestFlask.Aspects.Player
 {
     public class FuncPlayerBase<TRes>
     {
-        protected InnerFuncPlayer<TRes> innerPlayer;
+        protected internal InnerFuncPlayer<TRes> innerPlayer;
     }
 
     //A player for a method with no args, returns response

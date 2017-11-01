@@ -5,7 +5,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/iwmii0fmtpyopkgu?svg=true)](https://ci.appveyor.com/project/FatihSahin/test-flask)
 [![Join the chat at https://gitter.im/test-flask/Lobby](https://badges.gitter.im/test-flask/Lobby.svg)](https://gitter.im/test-flask/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-TestFlask is a set of components that manipulates (a.k.a. weaving) your any backend .net method calls inside WCF service or REST API. In addition to weaving, TestFlask records your method request and responses, store them inside a document database, and replay them if requested. 
+TestFlask is a set of components that manipulate (a.k.a. weaving) your any backend .net method call inside a WCF service or a REST API. In addition to weaving, TestFlask records your methods' requests and responses, store them inside a document database, and replay them if requested. 
 
 There is a nuget package called TestFlaskAddin.Fody inside the solution. If you reference that package in your backend service, you can mark your methods with [Playback] attribute as below.
 
@@ -13,13 +13,10 @@ There is a nuget package called TestFlaskAddin.Fody inside the solution. If you 
 [Playback(typeof(MovieNameIdentifier))]
 public Movie GetMovieWithStockCount(string name)
 {
-    //simulate a delay
-    Thread.Sleep(new Random().Next(500, 2000));
     //gets movie info from info service
     var movie = infoService.GetMovieInfo(name);
     //obtain stock info from stock service
     movie.StockCount = stockService.GetStock(name);
-    
     return movie;
 }
 ```
@@ -46,15 +43,14 @@ public Movie GetMovieWithStockCount(string name)
 
 public Movie GetMovieWithStockCount__Original(string name)
 {
-    Thread.Sleep(new Random().Next(500, 2000));
     Movie movieInfo = this.infoService.GetMovieInfo(name);
     movieInfo.StockCount = this.stockService.GetStock(name);
     return movieInfo;
 }
 ```
-Thanks to wonderful [Fody](https://github.com/Fody/Fody) library for simplifying .net assembly weaving.
+TestFlask uses [Fody](https://github.com/Fody/Fody) library to plug-in to MS Build process for weaving. It also depends on [Mono.Cecil](https://github.com/jbevain/cecil) library to manipulate IL.
 
-This auto-wrapping enables TestFlask to intercept your method calls and act as requested. It can record your request, replay your request or just calls the original method. TestFlask determines what to do by looking up to custom https headers that the client has sent to the service. There are actually four test modes. 
+This auto-wrapping enables TestFlask to intercept your method calls and to act as requested. It can record your request, replay your request or just calls the original method. TestFlask determines what to do by looking up to custom https headers that the client has sent to the service. There are actually four test modes. 
 
 TestFlask-Mode  | Description
 ------------- | -------------
@@ -81,20 +77,20 @@ This project is actually an ASP.NET MVC API project. As a persistence mechanism,
 
 There are four http headers that TestFlask looks up to determine how to store your intercepted request & response.
 
-Http Header    | Description
--------------- | -------------
-TestFlask-Mode | See above
-TestFlask-ProjectKey | This is the key that you created for your backend service to categorize scenarios
-TestFlask-ScenarioNo | This is the number for your test scenario
-TestFlask-StepNo | This is optional, if you provide a step no, it will override that step. If you do not, TestFlask will create an auto step under that scenario.
+Http Header         | Description
+--------------------| -------------
+TestFlask-Mode      | See above
+TestFlask-ProjectKey| This is the key that you created for your backend service to categorize scenarios
+TestFlask-ScenarioNo| This is the number for your test scenario
+TestFlask-StepNo    | This is optional, if you provide a step no, it will override that step. If you do not, TestFlask will create an auto step under that scenario.
 
 Please examine [Movie Rental Sample App](https://github.com/FatihSahin/test-flask-sample) to further investigate how to use TestFlask with scenarios, steps and also manage your scenarios with [TestFlask Manager](https://github.com/FatihSahin/test-flask-web). 
 
 You can also examine a SoapUI project inside that sample app to trigger your backend without UI.
 
-Lastly, TestFlask.Assistant project (nuget package) is an ASP.NET MVC extension to ease integrating your ASP.NET MVC client to send proper headers to your TestFlask ready backend service.
+Lastly, TestFlask.Assistant.Mvc project (nuget package) is an ASP.NET MVC extension to ease integrating your ASP.NET MVC client to send proper headers to your TestFlask ready backend service.
 
-TestFlask still needs a lot of development and hopefully it will go on. It is on a very early beta phase. Please feel free to contribute with PRs.
+TestFlask still needs a lot of development and hopefully it will go on. It is on a beta phase. Please feel free to contribute with PRs.
 
 ### Icon
 
