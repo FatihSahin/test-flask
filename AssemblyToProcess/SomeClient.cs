@@ -1,4 +1,10 @@
-﻿///This file contains some dummy code to weave and look up to generated IL to test or fix ModuleWeaver
+﻿/********************************************************************
+ *                                                                  *
+ *  This file contains some dummy classes with different request    *
+ *  response signatures and some IL Cheatsheet examples             *
+ *  to test in TestFlask ModuleWeaver                               *
+ *                                                                  *
+ * *****************************************************************/
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -122,7 +128,7 @@ namespace AssemblyToProcess
             return response;
         }
 
-        //[Playback]
+        [Playback]
         public void DoNoArgsNoResponse()
         {
             Console.WriteLine("Anooo");

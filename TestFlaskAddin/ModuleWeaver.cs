@@ -277,6 +277,14 @@ public class ModuleWeaver
         MethodReference playerCtorRef, MethodReference startInvocationMethodRef, MethodReference determineTestModeMethodRef,
         MethodReference orgMethodCtorRef, MethodReference callOriginalMethodRef, MethodReference recordMethodRef, MethodReference playMethodRef)
     {
+
+        TypeReference exceptionTypeRef = ModuleDefinition.ImportReference(typeof(Exception));
+
+        //get ctor reference for ctor Exception(string message)
+        MethodReference exceptionCtorRef = ModuleDefinition.ImportReference(
+            exceptionTypeRef.Resolve()
+            .GetConstructors().Where(c => c.Parameters.Count == 1).First());
+
         //Start re-writing body
         MethodBody body = playableMethod.Body;
 
@@ -292,7 +300,7 @@ public class ModuleWeaver
         var playClause = il.Create(OpCodes.Ldloc_0);
         var recordClause = il.Create(OpCodes.Ldloc_0);
         var noMockClause = il.Create(OpCodes.Ldloc_0);
-        var defaultClause = il.Create(OpCodes.Ldnull);
+        var defaultClause = il.Create(OpCodes.Ldstr, "Invalid TestFlask test mode detected!");
         var endOfMethod = il.Create(OpCodes.Ldloc_2);
 
         body.Instructions.Clear();
@@ -368,8 +376,8 @@ public class ModuleWeaver
 
         //defaultClause
         body.Instructions.Add(defaultClause);
-        body.Instructions.Add(il.Create(OpCodes.Stloc_2));
-        body.Instructions.Add(il.Create(OpCodes.Br_S, endOfMethod));
+        body.Instructions.Add(il.Create(OpCodes.Newobj, exceptionCtorRef));
+        body.Instructions.Add(il.Create(OpCodes.Throw));
 
         //end context
         body.Instructions.Add(endOfMethod);
@@ -388,6 +396,8 @@ public class ModuleWeaver
         body.Variables.Clear();
         body.Variables.Add(new VariableDefinition(playerTypeRef));
         body.Variables.Add(new VariableDefinition(ModuleDefinition.ImportReference(testModesDef)));
+
+        body.InitLocals = true;
 
         var il = body.GetILProcessor();
 

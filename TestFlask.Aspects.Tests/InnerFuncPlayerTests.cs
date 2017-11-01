@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using TestFlask.Aspects.Context;
+using TestFlask.Aspects.Player;
 
 namespace TestFlask.Aspects.Tests
 {
@@ -25,9 +26,9 @@ namespace TestFlask.Aspects.Tests
         [Test]
         public void Test_OK()
         {
-            
-
             HttpContextFactory.Current = mockHttpContext.Object;
+
+            //InnerFuncPlayer funcPlayer = new InnerFuncPlayer<>
 
 
         }
