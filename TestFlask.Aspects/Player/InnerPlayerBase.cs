@@ -25,7 +25,7 @@ namespace TestFlask.Aspects.Player
         protected readonly string requestDisplayInfo;
         protected readonly string requestIdentifierKey;
         protected Invocation requestedInvocation;
-        protected TestFlaskApi api;
+        protected ITestFlaskApi api;
         private bool mustPersistAssertionResult;
 
         public InnerPlayerBase(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo)
@@ -33,7 +33,7 @@ namespace TestFlask.Aspects.Player
             methodSignature = pMethodSignature;
             requestIdentifierKey = pRequestIdentifierKey;
             requestDisplayInfo = pRequestDisplayInfo;
-            api = new TestFlaskApi();
+            api = TestFlaskApiFactory.TestFlaskApi;
         }
 
         public void StartInvocation(params object[] requestArgs)

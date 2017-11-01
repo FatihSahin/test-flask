@@ -14,7 +14,7 @@ using TestFlask.Models.Entity;
 namespace TestFlask.Aspects.ApiClient
 {
     //It is called from weaver (do not use DI container here)
-    public class TestFlaskApi
+    public class TestFlaskApi : ITestFlaskApi
     {
         private readonly TestFlaskConfig config;
 
@@ -36,7 +36,7 @@ namespace TestFlask.Aspects.ApiClient
             return client;
         }
 
-        internal void CompleteStepInvocations(Step step)
+        public void CompleteStepInvocations(Step step)
         {
             var httpClient = PrepareClient();
             var response = httpClient.PutAsJsonAsync("api/step/invocations/complete", step).Result;
@@ -82,7 +82,7 @@ namespace TestFlask.Aspects.ApiClient
             return null;
         }
 
-        internal void PutInvocation(Invocation invocation)
+        public void PutInvocation(Invocation invocation)
         {
             var httpClient = PrepareClient();
             var response = httpClient.PutAsJsonAsync($"api/step/invocation", invocation).Result; 

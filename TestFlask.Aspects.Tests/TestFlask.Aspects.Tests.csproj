@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BA64CDC3-47BD-4987-9E9E-FC1A61DDF070}</ProjectGuid>
+    <ProjectGuid>{B9405C8E-AD45-4FB0-93ED-76568EA254FE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestFlask.Aspects</RootNamespace>
-    <AssemblyName>TestFlask.Aspects</AssemblyName>
+    <RootNamespace>TestFlask.Aspects.Tests</RootNamespace>
+    <AssemblyName>TestFlask.Aspects.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +20,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,20 +28,23 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.7.142.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.7.142\lib\net45\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.8.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -53,37 +54,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiClient\ITestFlaskApi.cs" />
-    <Compile Include="ApiClient\TestFlaskApi.cs" />
-    <Compile Include="ApiClient\TestFlaskApiFactory.cs" />
-    <Compile Include="Config\TestFlaskConfig.cs" />
-    <Compile Include="Config\TestFlaskConfigSection.cs" />
-    <Compile Include="Context\HttpContextFactory.cs" />
-    <Compile Include="Context\TestFlaskContext.cs" />
-    <Compile Include="Context\TestFlaskHttpModule.cs" />
-    <Compile Include="Enums\TestModes.cs" />
-    <Compile Include="Identifiers\IRequestIdentifier.cs" />
-    <Compile Include="Identifiers\IResponseIdentifier.cs" />
-    <Compile Include="Player\InnerPlayerBase.cs" />
-    <Compile Include="Player\InnerActionPlayer.cs" />
-    <Compile Include="PlaybackAttribute.cs" />
-    <Compile Include="Player\ActionPlayer.cs" />
-    <Compile Include="Player\FuncPlayer.cs" />
-    <Compile Include="Player\InnerFuncPlayer.cs" />
+    <Compile Include="InnerFuncPlayerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="TestFlask.Aspects.nuspec" />
-    <None Include="app.config.install.xdt" />
-    <None Include="web.config.install.xdt" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\TestFlask.Models\TestFlask.Models.csproj">
-      <Project>{950E37CD-2C68-4B4E-9137-F82E696DC52C}</Project>
-      <Name>TestFlask.Models</Name>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestFlask.Aspects\TestFlask.Aspects.csproj">
+      <Project>{BA64CDC3-47BD-4987-9E9E-FC1A61DDF070}</Project>
+      <Name>TestFlask.Aspects</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
