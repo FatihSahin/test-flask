@@ -22,40 +22,16 @@ using TestFlask.Models.Entity;
 namespace TestFlask.Aspects.Tests.PlayerTests
 {
     [TestFixture]
-    public class FuncPlayerTests
+    public class InnerPlayerTests : PlayerTestsBase
     {
-        private Mock<HttpContextBase> mockHttpContext;
-        private Mock<ITestFlaskApi> mockTestFlaskApi;
-        private Mock<HttpRequestBase> mockHttpRequest;
-
         private CustomerIdIdentifier customerIdIdentifier;
         private CustomerResponseIdentifier customerResponseIdentifier;
         private FuncPlayer<int, Customer> funcPlayer;
 
-        private Dictionary<string, object> httpItems;
-        private NameValueCollection requestHeaders;
-
         [SetUp]
-        public void Init()
+        protected override void SetUp()
         {
-            mockHttpRequest = new Mock<HttpRequestBase>();
-            mockHttpContext = new Mock<HttpContextBase>();
-
-            httpItems = new Dictionary<string, object>();
-            mockHttpContext.Setup(c => c.Items).Returns(httpItems);
-
-            requestHeaders = new NameValueCollection();
-            requestHeaders.Add(ContextKeys.ProjectKey, "UnitTest");
-            requestHeaders.Add(ContextKeys.ScenarioNo, "999");
-            requestHeaders.Add(ContextKeys.TestMode, TestModes.NoMock.ToString());
-
-            mockHttpRequest.Setup(r => r.Headers).Returns(requestHeaders);
-            mockHttpContext.Setup(c => c.Request).Returns(mockHttpRequest.Object);
-
-            mockTestFlaskApi = new Mock<ITestFlaskApi>();
-
-            HttpContextFactory.Current = mockHttpContext.Object;
-            TestFlaskApiFactory.TestFlaskApi = mockTestFlaskApi.Object;
+            base.SetUp();
 
             customerIdIdentifier = new CustomerIdIdentifier();
             customerResponseIdentifier = new CustomerResponseIdentifier();
@@ -66,7 +42,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_SetsRequestFields()
+        public void InnerPlayer_BeginInvocation_SetsRequestFields()
         {
             funcPlayer.BeginInvocation(1);
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
@@ -78,7 +54,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_IncrementsCurrentDepth()
+        public void InnerPlayer_BeginInvocation_IncrementsCurrentDepth()
         {
             TestFlaskContext.CurrentDepth = 5;
             funcPlayer.BeginInvocation(1);
@@ -89,7 +65,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_SetsInvocationToLatestParentForCurrentDepth()
+        public void InnerPlayer_BeginInvocation_SetsInvocationToLatestParentForCurrentDepth()
         {
             TestFlaskContext.CurrentDepth = 5;
             funcPlayer.BeginInvocation(1);
@@ -99,7 +75,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_SetsParent()
+        public void InnerPlayer_BeginInvocation_SetsParent()
         {
             string parentInstanceHashCode = "someParentInstanceHashCode";
 
@@ -112,7 +88,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_BuildsStepNoFromHttpItemsFirst()
+        public void InnerPlayer_BeginInvocation_BuildsStepNoFromHttpItemsFirst()
         {
             httpItems.Add(ContextKeys.StepNo, 55L);
             requestHeaders.Add(ContextKeys.StepNo, "66");
@@ -124,7 +100,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_BuildsStepNoFromRequestHeadersFirst()
+        public void InnerPlayer_BeginInvocation_BuildsStepNoFromRequestHeadersFirst()
         {
             requestHeaders.Add(ContextKeys.StepNo, "66");
 
@@ -135,7 +111,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_SetsOverwriteStepNo_WhenItBuildsStepFromRequestHeaders()
+        public void InnerPlayer_BeginInvocation_SetsOverwriteStepNo_WhenItBuildsStepFromRequestHeaders()
         {
             requestHeaders.Add(ContextKeys.StepNo, "66");
 
@@ -146,7 +122,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_SetsNewContextId_WhenItIsRootInvocation()
+        public void InnerPlayer_BeginInvocation_SetsNewContextId_WhenItIsRootInvocation()
         {
             TestFlaskContext.CurrentDepth = 0;
 
@@ -157,7 +133,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_DoesNotAlterContextId_WhenItIsNotRootInvocation()
+        public void InnerPlayer_BeginInvocation_DoesNotAlterContextId_WhenItIsNotRootInvocation()
         {
             string contextId = Guid.NewGuid().ToString();
             TestFlaskContext.ContextId = contextId;
@@ -170,7 +146,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_IncrementsInvocationIndex_ForSameLeafCodeSiblingCalls()
+        public void InnerPlayer_BeginInvocation_IncrementsInvocationIndex_ForSameLeafCodeSiblingCalls()
         {
             string parentInstanceHashCode = "someParentInstanceHashCode";
 
@@ -189,7 +165,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_DoesNotIncrementInvocationIndex_ForDiffLeafCodeSiblingCalls()
+        public void InnerPlayer_BeginInvocation_DoesNotIncrementInvocationIndex_ForDiffLeafCodeSiblingCalls()
         {
             string parentInstanceHashCode = "someParentInstanceHashCode";
 
@@ -208,7 +184,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_IdenticalInvocations_HaveSameLeafCodes_ButDiffInstanceCodes()
+        public void InnerPlayer_BeginInvocation_IdenticalInvocations_HaveSameLeafCodes_ButDiffInstanceCodes()
         {
             string parentInstanceHashCode = "someParentInstanceHashCode";
 
@@ -228,7 +204,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_BeginInvocation_StartsDepthFromCallerDepth_WhenGivenInRequestHeaders()
+        public void InnerPlayer_BeginInvocation_StartsDepthFromCallerDepth_WhenGivenInRequestHeaders()
         {
             requestHeaders.Add(ContextKeys.CallerDepth, "5");
 
@@ -240,7 +216,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_DetermineTestMode_SuppliesRequestedMode_NoMock()
+        public void InnerPlayer_DetermineTestMode_SuppliesRequestedMode_NoMock()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.NoMock.ToString();
 
@@ -251,7 +227,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_DetermineTestMode_SuppliesRequestedMode_Record()
+        public void InnerPlayer_DetermineTestMode_SuppliesRequestedMode_Record()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Record.ToString();
 
@@ -262,7 +238,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_DetermineTestMode_ReturnsPlayMode_WhenPlayRequested_And_InvocationIsReplayable()
+        public void InnerPlayer_DetermineTestMode_ReturnsPlayMode_WhenPlayRequested_And_InvocationIsReplayable()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Play.ToString();
 
@@ -280,7 +256,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_DetermineTestMode_ReturnsNoMockMode_WhenPlayRequested_But_InvocationIsNotReplayable()
+        public void InnerPlayer_DetermineTestMode_ReturnsNoMockMode_WhenPlayRequested_But_InvocationIsNotReplayable()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Play.ToString();
 
@@ -298,7 +274,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_DetermineTestMode_ReturnsPlayMode_WhenAssertRequested_And_InvocationIsReplayable()
+        public void InnerPlayer_DetermineTestMode_ReturnsPlayMode_WhenAssertRequested_And_InvocationIsReplayable()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Assert.ToString();
 
@@ -316,7 +292,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_DetermineTestMode_ReturnsNoMockMode_WhenPlayRequested_But_MatchingInvocationIsNotFound()
+        public void InnerPlayer_DetermineTestMode_ReturnsNoMockMode_WhenPlayRequested_But_MatchingInvocationIsNotFound()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Play.ToString();
 
@@ -334,7 +310,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_CallsApiDeleteInvocation_WhenOverwritingStepOnRecordMode_And_InRootDepth()
+        public void InnerPlayer_CallsApiDeleteInvocation_WhenOverwritingStepOnRecordMode_And_InRootDepth()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Record.ToString();
             requestHeaders.Add(ContextKeys.StepNo, "66");
@@ -346,7 +322,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_DoesNotCallApiDeleteInvocation_WhenOverwritingStepOnRecordMode_And_InInitialDepth()
+        public void InnerPlayer_DoesNotCallApiDeleteInvocation_WhenOverwritingStepOnRecordMode_And_InInitialDepth()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Record.ToString();
             requestHeaders.Add(ContextKeys.CallerDepth, "5");
@@ -359,7 +335,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_CallsApiGetStep_WhenOnPlayMode_And_InRootDepth()
+        public void InnerPlayer_CallsApiGetStep_WhenOnPlayMode_And_InRootDepth()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Play.ToString();
             requestHeaders.Add(ContextKeys.StepNo, "44");
@@ -376,7 +352,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_CallsApiGetStep_WhenOnPlayMode_And_InInitialDepth()
+        public void InnerPlayer_CallsApiGetStep_WhenOnPlayMode_And_InInitialDepth()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Play.ToString();
             requestHeaders.Add(ContextKeys.CallerDepth, "5");
@@ -394,7 +370,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_DoesNotCallApiGetStep_WhenOnPlayMode_And_NotInRootDepth()
+        public void InnerPlayer_DoesNotCallApiGetStep_WhenOnPlayMode_And_NotInRootDepth()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Play.ToString();
             requestHeaders.Add(ContextKeys.StepNo, "44");
@@ -412,7 +388,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
-        public void FuncPlayer_DoesNotCallsApiGetStep_WhenOnPlayMode_And_NotInInitialDepth()
+        public void InnerPlayer_DoesNotCallsApiGetStep_WhenOnPlayMode_And_NotInInitialDepth()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Play.ToString();
             requestHeaders.Add(ContextKeys.CallerDepth, "5");
