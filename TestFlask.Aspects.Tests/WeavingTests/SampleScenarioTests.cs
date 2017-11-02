@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace TestFlask.Aspects.Tests.WeaveTests
 {
     [TestFixture]
-    public class ShoppingSampleTests
+    public class SampleScenarioTests
     {
         private Assembly assembly;
         private string newAssemblyPath;

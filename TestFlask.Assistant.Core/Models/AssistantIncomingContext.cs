@@ -52,11 +52,11 @@ namespace TestFlask.Assistant.Core.Models
             }
         }
 
-        public static string InitialDepth
+        public static string CallerDepth
         {
             get
             {
-                return HttpContextFactory.Current.Request.Headers[ContextKeys.InitialDepth];
+                return HttpContextFactory.Current.Request.Headers[ContextKeys.CallerDepth];
             }
         }
 

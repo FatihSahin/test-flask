@@ -16,7 +16,7 @@ namespace TestFlask.Models.Context
 
         public const string TestMode = "TestFlask-Mode";
 
-        public const string InitialDepth = "TestFlask-InitialDepth";
+        public const string CallerDepth = "TestFlask-CallerDepth";
 
         public const string ParentInvocationInstance = "TestFlask-ParentInvocationInstance";
 

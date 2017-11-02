@@ -163,7 +163,7 @@ namespace AssemblyToProcess
         {
             FuncPlayer<SomeRequest, SomeResponse> player = new FuncPlayer<SomeRequest, SomeResponse>("SomeResponse RecorderWrapper(SomeRequest)", new SomeRequestIdentifier(), null);
 
-            player.StartInvocation(req);
+            player.BeginInvocation(req);
 
             switch (player.DetermineTestMode(req))
             {
@@ -182,7 +182,7 @@ namespace AssemblyToProcess
         {
             FuncPlayer<int, string, float, FooResponse> player = new FuncPlayer<int, string, float, FooResponse>("SomeResponse RecorderWrapper(SomeRequest)", new GetFooArgsIdentifier(), null);
 
-            player.StartInvocation(i, s, f);
+            player.BeginInvocation(i, s, f);
 
             switch (player.DetermineTestMode(i, s, f))
             {
@@ -201,7 +201,7 @@ namespace AssemblyToProcess
         {
             ActionPlayer<SomeRequest> player = new ActionPlayer<SomeRequest>("SomeResponse RecorderWrapper(SomeRequest)", new SomeRequestIdentifier());
 
-            player.StartInvocation(req);
+            player.BeginInvocation(req);
 
             switch (player.DetermineTestMode(req))
             {
@@ -222,7 +222,7 @@ namespace AssemblyToProcess
         public void DoNoArgsNoResponse_Example()
         {
             ActionPlayer playerVoid = new ActionPlayer("System.Void AssemblyToProcess.SomeClient::DoNoArgsNoResponse()", (IRequestIdentifier)null);
-            playerVoid.StartInvocation();
+            playerVoid.BeginInvocation();
             switch (playerVoid.DetermineTestMode())
             {
                 case TestModes.NoMock:

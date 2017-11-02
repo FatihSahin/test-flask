@@ -209,7 +209,7 @@ public class ModuleWeaver
         if (isPlayerGeneric)
         {
             playerCtorRef = ModuleDefinition.ImportReference(playerTypeDef.GetConstructors().First().MakeHostInstanceGeneric(reqResArray));
-            startInvocationMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "StartInvocation").MakeHostInstanceGeneric(reqResArray));
+            startInvocationMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "BeginInvocation").MakeHostInstanceGeneric(reqResArray));
             determineTestModeMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "DetermineTestMode").MakeHostInstanceGeneric(reqResArray));
             playMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "Play").MakeHostInstanceGeneric(reqResArray));
             recordMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "Record").MakeHostInstanceGeneric(reqResArray));
@@ -218,7 +218,7 @@ public class ModuleWeaver
         else //this is method with no args and no response (it is not generic at all)
         {
             playerCtorRef = ModuleDefinition.ImportReference(playerTypeDef.GetConstructors().First());
-            startInvocationMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "StartInvocation"));
+            startInvocationMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "BeginInvocation"));
             determineTestModeMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "DetermineTestMode"));
             playMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "Play"));
             recordMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "Record"));

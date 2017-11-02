@@ -30,7 +30,7 @@ namespace TestFlask.Assistant.Core.WcfExtensions
                 string scenarioNo = AssistantIncomingContext.ScenarioNo;
                 string stepNo = OutgoingHeadersHelper.ResolveStepNo();
                 string testMode = AssistantIncomingContext.TestMode;
-                string initialDepth = OutgoingHeadersHelper.ResolveInitialDepth();
+                string callerDepth = OutgoingHeadersHelper.ResolveCallerDepth();
                 string parentInvocationInstance = OutgoingHeadersHelper.ResolveParentInvocationInstanceHashCode();
                 string contextId = OutgoingHeadersHelper.ResolveContextId();
 
@@ -49,9 +49,9 @@ namespace TestFlask.Assistant.Core.WcfExtensions
                     property.Headers[ContextKeys.TestMode] = testMode;
                 }
 
-                if (!string.IsNullOrEmpty(initialDepth))
+                if (!string.IsNullOrEmpty(callerDepth))
                 {
-                    property.Headers[ContextKeys.InitialDepth] = initialDepth;
+                    property.Headers[ContextKeys.CallerDepth] = callerDepth;
                 }
 
                 if (!string.IsNullOrEmpty(parentInvocationInstance))

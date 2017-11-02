@@ -27,7 +27,7 @@ After you build your project, TestFlask will weave your code and turn it into so
 public Movie GetMovieWithStockCount(string name)
 {
     FuncPlayer<string, Movie> player = new FuncPlayer<string, Movie>("MovieRental.Models.Movie MovieRental.Business.RentalManager::GetMovieWithStockCount(System.String)", (IRequestIdentifier<string>) new MovieNameIdentifier(), (IResponseIdentifier<Movie>) null);
-    player.StartInvocation(name);
+    player.BeginInvocation(name);
     switch (player.DetermineTestMode(name))
     {
         case TestModes.NoMock:
@@ -37,7 +37,7 @@ public Movie GetMovieWithStockCount(string name)
         case TestModes.Play:
             return player.Play(name);
         default:
-            return (Movie) null;
+            throw new Exception("Invalid TestFlask test mode detected!");
     }
 }
 

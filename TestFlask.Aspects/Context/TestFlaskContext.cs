@@ -81,11 +81,11 @@ namespace TestFlask.Aspects.Context
             }
         }
 
-        public static int InitialDepth => GetInitialDepth();
+        public static int CallerDepth => GetCallerDepth();
 
         public static bool IsRootDepth => CurrentDepth == 1;
 
-        public static bool IsInitialDepth => InitialDepth > 0 && CurrentDepth == (InitialDepth + 1);
+        public static bool IsInitialDepth => CallerDepth > 0 && CurrentDepth == (CallerDepth + 1);
 
         public static bool IsOverwriteStep => bool.Parse(HttpContextFactory.Current.Items["TestFlask_OverwriteStep"].ToString() ?? "false");
 
@@ -333,11 +333,11 @@ namespace TestFlask.Aspects.Context
             return LoadedStep.Invocations.SingleOrDefault(inv => inv.InstanceHashCode == instanceHashCode);
         }
 
-        private static int GetInitialDepth()
+        private static int GetCallerDepth()
         {
             if (HttpContextFactory.Current != null)
             {
-                var initialDepth = HttpContextFactory.Current.Request.Headers[ContextKeys.InitialDepth];
+                var initialDepth = HttpContextFactory.Current.Request.Headers[ContextKeys.CallerDepth];
 
                 if (initialDepth != null)
                 {
