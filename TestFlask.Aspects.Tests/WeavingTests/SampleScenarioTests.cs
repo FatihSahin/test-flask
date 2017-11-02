@@ -1,5 +1,4 @@
-﻿using AssemblyToProcess.Samples;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
@@ -8,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TestFlask.Aspects.Context;
 using TestFlask.Aspects.Enums;
@@ -36,7 +36,7 @@ namespace TestFlask.Aspects.Tests.WeaveTests
             assemblyPath = assemblyPath.Replace("Debug", "Release");
 #endif
 
-            newAssemblyPath = assemblyPath.Replace(".dll", ".AspectsTests.dll");
+            newAssemblyPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "AssemblyToProcess.dll");
             File.Copy(assemblyPath, newAssemblyPath, true);
 
             using (var moduleDefinition = ModuleDefinition.ReadModule(assemblyPath, new ReaderParameters { AssemblyResolver = resolver }))
@@ -50,7 +50,8 @@ namespace TestFlask.Aspects.Tests.WeaveTests
                 moduleDefinition.Write(newAssemblyPath);
             }
 
-            assembly = Assembly.LoadFile(newAssemblyPath);
+            assembly = Assembly.LoadFrom(newAssemblyPath);
+            AppDomain.CurrentDomain.Load(assembly.FullName);
         }
 
         [SetUp]
@@ -63,12 +64,11 @@ namespace TestFlask.Aspects.Tests.WeaveTests
         protected override void TearDown()
         {
             base.TearDown();
-
         }
 
 
         [Test]
-        public void Record_BasicScenario1_Steps()
+        public void Record_BasicScenario1_CreatesSteps_WithDecrementStock()
         {
             //set record mode
             requestHeaders[ContextKeys.TestMode] = TestModes.Record.ToString();
@@ -77,68 +77,58 @@ namespace TestFlask.Aspects.Tests.WeaveTests
             int firstProductId = 1;
             int secondProductId = 2;
 
-            int initialStock1, initialStock2, finalStock1, finalStock2;
+            //step 1 => get product1 info
+            httpItems.Add(ContextKeys.StepNo, 1L);
+            dynamic productBiz = assembly.CreateInstance("AssemblyToProcess.Samples.ProductBiz");
+            dynamic product1 = productBiz.GetProduct(firstProductId);
+            int initialStock1 = (int)product1.Stock;
+            httpItems.Clear();
 
-            TriggerScenario1(customerId, firstProductId, secondProductId, out initialStock1, out initialStock2, out finalStock1, out finalStock2);
+            //step 2 => get product2 info
+            httpItems.Add(ContextKeys.StepNo, 2L);
+            dynamic product2 = productBiz.GetProduct(secondProductId);
+            int initialStock2 = (int)product2.Stock;
+            httpItems.Clear();
 
-            Assert.IsTrue(finalStock1 + 1 == initialStock1);
-            Assert.IsTrue(finalStock2 + 1 == initialStock2);
+            //step 3 => find a customer
+            httpItems.Add(ContextKeys.StepNo, 3L);
+            dynamic customerBiz = assembly.CreateInstance("AssemblyToProcess.Samples.CustomerBiz");
+            var customer = customerBiz.GetCustomer(customerId);
+            httpItems.Clear();
+
+            //step 4 => create a shopping cart
+            httpItems[ContextKeys.StepNo] = 4L;
+            dynamic cartBiz = assembly.CreateInstance("AssemblyToProcess.Samples.ShoppingCartBiz");
+            var cart = cartBiz.CreateCart(customerId);
+            httpItems.Clear();
+
+            //step 5 => add product to cart
+            httpItems[ContextKeys.StepNo] = 5L;
+            cartBiz.AddToCart(cart, firstProductId);
+            httpItems.Clear();
+
+            //step 6 => add another product to cart
+            httpItems[ContextKeys.StepNo] = 6L;
+            cartBiz.AddToCart(cart, secondProductId);
+            httpItems.Clear();
+
+            //assert product stocks are decremented by one.
+            Assert.IsTrue(product1.Stock + 1 == initialStock1);
+            Assert.IsTrue(product2.Stock + 1 == initialStock2);
 
             //assert everything is recorded using api in memory collections
             Assert.AreEqual(6, recordedSteps.Count);
         }
 
-        private void TriggerScenario1(int customerId, int firstProductId, int secondProductId, out int initialStock1, out int initialStock2, out int finalStock1, out int finalStock2)
-        {
-            //step 1 => get product1 info
-            httpItems.Add(ContextKeys.StepNo, 1L);
-            var productBiz = assembly.CreateInstance("AssemblyToProcess.Samples.ProductBiz");
-            var product1 = productBiz.GetType().GetMethod("GetProduct").Invoke(productBiz, new object[] { firstProductId });
-            initialStock1 = (int)product1.GetType().GetProperty("Stock").GetValue(product1);
-            httpItems.Clear();
-
-            //step 2 => get product2 info
-            httpItems.Add(ContextKeys.StepNo, 2L);
-            var product2 = productBiz.GetType().GetMethod("GetProduct").Invoke(productBiz, new object[] { secondProductId });
-            initialStock2 = (int)product2.GetType().GetProperty("Stock").GetValue(product2);
-            httpItems.Clear();
-
-            //step 3 => find a customer
-            httpItems.Add(ContextKeys.StepNo, 3L);
-            var customerBiz = assembly.CreateInstance("AssemblyToProcess.Samples.CustomerBiz");
-            var customer = customerBiz.GetType().GetMethod("GetCustomer").Invoke(customerBiz, new object[] { customerId });
-            httpItems.Clear();
-
-            //step 4 => create a shopping cart
-            httpItems[ContextKeys.StepNo] = 4L;
-            var cartBiz = assembly.CreateInstance("AssemblyToProcess.Samples.ShoppingCartBiz");
-            var cart = cartBiz.GetType().GetMethod("CreateCart").Invoke(cartBiz, new object[] { customerId });
-            httpItems.Clear();
-
-            //step 5 => add product to cart
-            httpItems[ContextKeys.StepNo] = 5L;
-            var addToCartMethod = cartBiz.GetType().GetMethod("AddToCart");
-            addToCartMethod.Invoke(cartBiz, new object[] { cart, firstProductId });
-            httpItems.Clear();
-
-            //step 6 => add another product to cart
-            httpItems[ContextKeys.StepNo] = 6L;
-            addToCartMethod.Invoke(cartBiz, new object[] { cart, secondProductId });
-            httpItems.Clear();
-
-            //assert product stocks are decremented by one.
-            finalStock1 = (int)product1.GetType().GetProperty("Stock").GetValue(product1);
-            finalStock2 = (int)product1.GetType().GetProperty("Stock").GetValue(product2);
-        }
-
         [Test]
-        [Ignore("Cannot load types from renamed assembly yet.")]
-        public void Play_BasicScenario1_Steps()
+        public void Play_BasicScenario1_AddToCartStep_DecrementsStock()
         {
             //first record steps
-            Record_BasicScenario1_Steps();
+            Record_BasicScenario1_CreatesSteps_WithDecrementStock();
 
             //manipulate invocations of recorded steps for an assertion scenario
+            recordedSteps.Values.SelectMany(s => s.Invocations).ToList().ForEach(i => i.IsReplayable = false);
+
             //update all get products for product 1 to return a 100 stock, other invocations will not be replayable to actually call original and decrement stock
             recordedSteps.Values.SelectMany(s => s.Invocations)
                 .Where(i => i.InvocationSignature.Contains("GetProduct") && i.RequestIdentifierKey == "1")
@@ -153,17 +143,66 @@ namespace TestFlask.Aspects.Tests.WeaveTests
             httpItems.Clear();
             requestHeaders[ContextKeys.TestMode] = TestModes.Play.ToString();
 
-            int customerId = 1;
             int firstProductId = 1;
-            int secondProductId = 2;
 
-            int initialStock1, initialStock2, finalStock1, finalStock2;
-            //retrigger scenario
-            TriggerScenario1(customerId, firstProductId, secondProductId, out initialStock1, out initialStock2, out finalStock1, out finalStock2);
+            //retrigger step 5
+            httpItems[ContextKeys.StepNo] = 5L;
+            dynamic cart = assembly.CreateInstance("AssemblyToProcess.Samples.ShoppingCart");
+            dynamic cartBiz = assembly.CreateInstance("AssemblyToProcess.Samples.ShoppingCartBiz");
+            cartBiz.AddToCart(cart, firstProductId);
+            httpItems.Clear();
 
-            //assert
-            Assert.AreEqual(100, initialStock1);
-            Assert.AreEqual(99, finalStock1);
+            //Assert that product stock is decremented by one
+            Assert.AreEqual(99, cart.Items[0].Stock);
         }
+
+        [Test]
+        public void Play_BasicScenario1_ZeroStockManipulation_CausesAppException()
+        {
+            //first record steps
+            Record_BasicScenario1_CreatesSteps_WithDecrementStock();
+
+            //manipulate invocations of recorded steps for an assertion scenario
+            recordedSteps.Values.SelectMany(s => s.Invocations).ToList().ForEach(i => i.IsReplayable = false);
+
+            //update all get products for product 1 to return a zero stock, other invocations will not be replayable to actually call original and decrement stock
+            recordedSteps.Values.SelectMany(s => s.Invocations)
+                .Where(i => i.InvocationSignature.Contains("GetProduct") && i.RequestIdentifierKey == "1")
+                .ToList()
+                .ForEach(i =>
+                {
+                    i.IsReplayable = true;
+                    i.Response = Regex.Replace(i.Response, "\"Stock\":\\d+","\"Stock\":0");
+                });
+
+            //set record mode to play
+            httpItems.Clear();
+            requestHeaders[ContextKeys.TestMode] = TestModes.Play.ToString();
+
+            int firstProductId = 1;
+
+            //retrigger step 5
+            httpItems[ContextKeys.StepNo] = 5L;
+            dynamic cart = assembly.CreateInstance("AssemblyToProcess.Samples.ShoppingCart");
+            dynamic cartBiz = assembly.CreateInstance("AssemblyToProcess.Samples.ShoppingCartBiz");
+
+            ApplicationException exception = null;
+
+            try
+            {
+                cartBiz.AddToCart(cart, firstProductId);
+            }
+            catch (Exception ex)
+            {
+                exception = ex as ApplicationException;
+            }
+            
+            httpItems.Clear();
+
+            //Assert that product stock is checked and threw valid exception
+            Assert.AreEqual("StockNotAvailable", exception.Message);
+        }
+
+
     }
 }

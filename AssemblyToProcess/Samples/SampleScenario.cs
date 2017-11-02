@@ -45,7 +45,20 @@ namespace AssemblyToProcess.Samples
     {
         public Guid CartId { get; set; }
         public Customer CartOwner { get; set; }
-        public List<Product> Items { get; set; }
+
+        private List<Product> items = new List<Product>();
+
+        public List<Product> Items
+        {
+            get
+            {
+                return items;
+            }
+            set
+            {
+                items = value;
+            }
+        }
     }
 
     #endregion

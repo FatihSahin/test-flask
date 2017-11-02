@@ -1,5 +1,4 @@
-﻿using AssemblyToProcess.Samples;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -24,20 +23,20 @@ namespace TestFlask.Aspects.Tests.PlayerTests
     [TestFixture]
     public class InnerPlayerTests : PlayerTestsBase
     {
-        private CustomerIdIdentifier customerIdIdentifier;
-        private CustomerResponseIdentifier customerResponseIdentifier;
-        private FuncPlayer<int, Customer> funcPlayer;
+        private FooIdIdentifier customerIdIdentifier;
+        private FooResponseIdentifier customerResponseIdentifier;
+        private FuncPlayer<int, Foo> funcPlayer;
 
         [SetUp]
         protected override void SetUp()
         {
             base.SetUp();
 
-            customerIdIdentifier = new CustomerIdIdentifier();
-            customerResponseIdentifier = new CustomerResponseIdentifier();
+            customerIdIdentifier = new FooIdIdentifier();
+            customerResponseIdentifier = new FooResponseIdentifier();
 
-            funcPlayer = new FuncPlayer<int, Customer>
-                ("AssemblyToProcess.Samples.Customer AssemblyToProcess.Samples.CustomerBiz::GetCustomer(System.Int32)",
+            funcPlayer = new FuncPlayer<int, Foo>
+                ("SomeAssembly.Foo SomeAssembly.FooBiz::GetFoo(System.Int32)",
                 customerIdIdentifier, customerResponseIdentifier);
         }
 

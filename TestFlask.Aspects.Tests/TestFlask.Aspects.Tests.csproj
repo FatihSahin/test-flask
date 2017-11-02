@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="PlayerTestsBase.cs" />
     <Compile Include="PlayerTests\InnerPlayerTests.cs" />
+    <Compile Include="PlayerTests\TestModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WeavingTests\SampleScenarioTests.cs" />
   </ItemGroup>
@@ -87,10 +88,6 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj">
-      <Project>{e97e649f-b703-47e3-b18a-0871d3498742}</Project>
-      <Name>AssemblyToProcess</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TestFlask.Aspects\TestFlask.Aspects.csproj">
       <Project>{BA64CDC3-47BD-4987-9E9E-FC1A61DDF070}</Project>
       <Name>TestFlask.Aspects</Name>
