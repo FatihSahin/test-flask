@@ -84,7 +84,7 @@ namespace TestFlask.Aspects.Context
             var api = new TestFlaskApi();
             var dbStep = api.InsertStep(autoStep);
 
-            HttpContext.Current.Items.Add(ContextKeys.StepNo, dbStep.StepNo);
+            HttpContextFactory.Current.Items.Add(ContextKeys.StepNo, dbStep.StepNo);
         }
     }
 }

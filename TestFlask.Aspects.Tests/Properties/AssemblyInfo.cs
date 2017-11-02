@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TestFlask.Aspects")]
+[assembly: AssemblyTitle("TestFlask.Aspects.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TestFlask.Aspects")]
+[assembly: AssemblyProduct("TestFlask.Aspects.Tests")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,10 +19,8 @@ using System.Runtime.InteropServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-[assembly: InternalsVisibleTo("TestFlask.Aspects.Tests")]
-
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ba64cdc3-47bd-4987-9e9e-fc1a61ddf070")]
+[assembly: Guid("b9405c8e-ad45-4fb0-93ed-76568ea254fe")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -33,6 +31,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyInformationalVersion("1.0.0")]
+// [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

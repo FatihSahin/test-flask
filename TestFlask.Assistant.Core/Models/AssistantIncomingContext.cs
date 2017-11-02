@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using TestFlask.Aspects.Context;
 using TestFlask.Aspects.Enums;
 using TestFlask.Assistant.Core.Config;
 using TestFlask.Models.Context;
@@ -15,7 +16,7 @@ namespace TestFlask.Assistant.Core.Models
         {
             get
             {
-                return HttpContext.Current.Request.Headers[ContextKeys.ProjectKey];
+                return HttpContextFactory.Current.Request.Headers[ContextKeys.ProjectKey];
             }
         }
 
@@ -23,7 +24,7 @@ namespace TestFlask.Assistant.Core.Models
         {
             get
             {
-                return HttpContext.Current.Request.Headers[ContextKeys.ScenarioNo];
+                return HttpContextFactory.Current.Request.Headers[ContextKeys.ScenarioNo];
             }
         }
 
@@ -31,7 +32,7 @@ namespace TestFlask.Assistant.Core.Models
         {
             get
             {
-                return HttpContext.Current.Request.Headers[ContextKeys.StepNo];
+                return HttpContextFactory.Current.Request.Headers[ContextKeys.StepNo];
             }
         }
 
@@ -39,7 +40,7 @@ namespace TestFlask.Assistant.Core.Models
         {
             get
             {
-                return HttpContext.Current.Request.Headers[ContextKeys.TestMode] ?? TestModes.NoMock.ToString();
+                return HttpContextFactory.Current.Request.Headers[ContextKeys.TestMode] ?? TestModes.NoMock.ToString();
             }
         }
 
@@ -47,15 +48,15 @@ namespace TestFlask.Assistant.Core.Models
         {
             get
             {
-                return HttpContext.Current.Request.Headers[ContextKeys.ParentInvocationInstance];
+                return HttpContextFactory.Current.Request.Headers[ContextKeys.ParentInvocationInstance];
             }
         }
 
-        public static string InitialDepth
+        public static string CallerDepth
         {
             get
             {
-                return HttpContext.Current.Request.Headers[ContextKeys.InitialDepth];
+                return HttpContextFactory.Current.Request.Headers[ContextKeys.CallerDepth];
             }
         }
 
@@ -63,7 +64,7 @@ namespace TestFlask.Assistant.Core.Models
         {
             get
             {
-                return HttpContext.Current.Request.Headers[ContextKeys.ContextId];
+                return HttpContextFactory.Current.Request.Headers[ContextKeys.ContextId];
             }
         }
 

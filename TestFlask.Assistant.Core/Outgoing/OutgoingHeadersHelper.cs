@@ -15,13 +15,13 @@ namespace TestFlask.Assistant.Core.Outgoing
             return TestFlaskContext.RequestedStep?.StepNo.ToString() ?? AssistantIncomingContext.StepNo;
         }
 
-        public static string ResolveInitialDepth()
+        public static string ResolveCallerDepth()
         {
             int depth = TestFlaskContext.CurrentDepth;
 
             if (depth == 0)
             {
-                depth = int.Parse(AssistantIncomingContext.InitialDepth ?? "0");
+                depth = int.Parse(AssistantIncomingContext.CallerDepth ?? "0");
             }
 
             return depth.ToString();

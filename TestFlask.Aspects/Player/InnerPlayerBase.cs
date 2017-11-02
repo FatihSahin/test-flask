@@ -24,8 +24,8 @@ namespace TestFlask.Aspects.Player
         protected readonly string methodSignature;
         protected readonly string requestDisplayInfo;
         protected readonly string requestIdentifierKey;
-        protected Invocation requestedInvocation;
-        protected TestFlaskApi api;
+        protected internal Invocation requestedInvocation;
+        protected readonly ITestFlaskApi api;
         private bool mustPersistAssertionResult;
 
         public InnerPlayerBase(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo)
@@ -33,10 +33,10 @@ namespace TestFlask.Aspects.Player
             methodSignature = pMethodSignature;
             requestIdentifierKey = pRequestIdentifierKey;
             requestDisplayInfo = pRequestDisplayInfo;
-            api = new TestFlaskApi();
+            api = TestFlaskApiFactory.TestFlaskApi;
         }
 
-        public void StartInvocation(params object[] requestArgs)
+        public void BeginInvocation(params object[] requestArgs)
         {
             InitContext();
 
@@ -100,9 +100,9 @@ namespace TestFlask.Aspects.Player
         private void InitContext()
         {
             //if it is initial for a cross request
-            if (TestFlaskContext.CurrentDepth == 0 && TestFlaskContext.InitialDepth > 0)
+            if (TestFlaskContext.CurrentDepth == 0 && TestFlaskContext.CallerDepth > 0)
             {
-                TestFlaskContext.InvocationParentTable[TestFlaskContext.InitialDepth] = TestFlaskContext.InitialParentInvocationInstance;
+                TestFlaskContext.InvocationParentTable[TestFlaskContext.CallerDepth] = TestFlaskContext.InitialParentInvocationInstance;
 
                 if (TestFlaskContext.RequestedMode != TestModes.NoMock)
                 {
@@ -113,7 +113,7 @@ namespace TestFlask.Aspects.Player
 
         private int ResolveDepth()
         {
-            return Math.Max(TestFlaskContext.CurrentDepth, TestFlaskContext.InitialDepth);
+            return Math.Max(TestFlaskContext.CurrentDepth, TestFlaskContext.CallerDepth);
         }
 
         protected void EndInvocation(object result = null)
@@ -121,7 +121,7 @@ namespace TestFlask.Aspects.Player
             TestFlaskContext.CurrentDepth--;
 
             //if it is back to initial for a cross request
-            if (TestFlaskContext.InitialDepth > 0 && TestFlaskContext.InitialDepth == TestFlaskContext.CurrentDepth)
+            if (TestFlaskContext.CallerDepth > 0 && TestFlaskContext.CallerDepth == TestFlaskContext.CurrentDepth)
             {
                 api.PostLeafTable(TestFlaskContext.ContextId, TestFlaskContext.InvocationLeafTable);
             }

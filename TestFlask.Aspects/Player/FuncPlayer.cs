@@ -13,7 +13,7 @@ namespace TestFlask.Aspects.Player
 {
     public class FuncPlayerBase<TRes>
     {
-        protected InnerFuncPlayer<TRes> innerPlayer;
+        protected internal InnerFuncPlayer<TRes> innerPlayer;
     }
 
     //A player for a method with no args, returns response
@@ -30,14 +30,14 @@ namespace TestFlask.Aspects.Player
             responseIdentifer = resIdentifer;
         }
 
-        public void StartInvocation()
+        public void BeginInvocation()
         {
             innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                 null,
                 null,
                 responseIdentifer);
 
-            innerPlayer.StartInvocation();
+            innerPlayer.BeginInvocation();
         }
 
         public TestModes DetermineTestMode()
@@ -75,14 +75,14 @@ namespace TestFlask.Aspects.Player
             responseIdentifer = resIdentifer;
         }
 
-        public void StartInvocation(TReq request)
+        public void BeginInvocation(TReq request)
         {
             innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                 requestIdentifier?.ResolveIdentifierKey(request),
                 requestIdentifier?.ResolveDisplayInfo(request),
                 responseIdentifer);
 
-            innerPlayer.StartInvocation(request);
+            innerPlayer.BeginInvocation(request);
         }
 
         public TestModes DetermineTestMode(TReq request)
@@ -119,14 +119,14 @@ namespace TestFlask.Aspects.Player
             responseIdentifer = resIdentifer;
         }
 
-        public void StartInvocation(TArg0 reqArg0, TArg1 reqArg1)
+        public void BeginInvocation(TArg0 reqArg0, TArg1 reqArg1)
         {
             innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                 requestIdentifier?.ResolveIdentifierKey(reqArg0, reqArg1),
                 requestIdentifier?.ResolveDisplayInfo(reqArg0, reqArg1),
                 responseIdentifer);
 
-            innerPlayer.StartInvocation(reqArg0, reqArg1);
+            innerPlayer.BeginInvocation(reqArg0, reqArg1);
         }
 
         public TestModes DetermineTestMode(TArg0 reqArg0, TArg1 reqArg1)
@@ -163,14 +163,14 @@ namespace TestFlask.Aspects.Player
             responseIdentifer = resIdentifer;
         }
 
-        public void StartInvocation(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2)
+        public void BeginInvocation(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2)
         {
             innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                 requestIdentifier?.ResolveIdentifierKey(reqArg0, reqArg1, reqArg2),
                 requestIdentifier?.ResolveDisplayInfo(reqArg0, reqArg1, reqArg2),
                 responseIdentifer);
 
-            innerPlayer.StartInvocation(reqArg0, reqArg1, reqArg2);
+            innerPlayer.BeginInvocation(reqArg0, reqArg1, reqArg2);
         }
 
         public TestModes DetermineTestMode(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2)
@@ -207,14 +207,14 @@ namespace TestFlask.Aspects.Player
             responseIdentifer = resIdentifer;
         }
 
-        public void StartInvocation(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2, TArg3 reqArg3)
+        public void BeginInvocation(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2, TArg3 reqArg3)
         {
             innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                requestIdentifier?.ResolveIdentifierKey(reqArg0, reqArg1, reqArg2, reqArg3),
                requestIdentifier?.ResolveDisplayInfo(reqArg0, reqArg1, reqArg2, reqArg3),
                responseIdentifer);
 
-            innerPlayer.StartInvocation(reqArg0, reqArg1, reqArg2, reqArg3);
+            innerPlayer.BeginInvocation(reqArg0, reqArg1, reqArg2, reqArg3);
         }
 
         public TestModes DetermineTestMode(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2, TArg3 reqArg3)
@@ -251,14 +251,14 @@ namespace TestFlask.Aspects.Player
             responseIdentifer = resIdentifer;
         }
 
-        public void StartInvocation(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2, TArg3 reqArg3, TArg4 reqArg4)
+        public void BeginInvocation(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2, TArg3 reqArg3, TArg4 reqArg4)
         {
             innerPlayer = new InnerFuncPlayer<TRes>(methodSignature,
                requestIdentifier?.ResolveIdentifierKey(reqArg0, reqArg1, reqArg2, reqArg3, reqArg4),
                requestIdentifier?.ResolveDisplayInfo(reqArg0, reqArg1, reqArg2, reqArg3, reqArg4),
                responseIdentifer);
 
-            innerPlayer.StartInvocation(reqArg0, reqArg1, reqArg2, reqArg3, reqArg4);
+            innerPlayer.BeginInvocation(reqArg0, reqArg1, reqArg2, reqArg3, reqArg4);
         }
 
         public TestModes DetermineTestMode(TArg0 reqArg0, TArg1 reqArg1, TArg2 reqArg2, TArg3 reqArg3, TArg4 reqArg4)

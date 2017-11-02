@@ -1,4 +1,12 @@
-﻿///This file contains some dummy code to weave and look up to generated IL to test or fix ModuleWeaver
+﻿/********************************************************************
+ *                                                                  *
+ *  This file contains some dummy classes with different request    *
+ *  response signatures and some IL Cheatsheet examples             *
+ *  to test in TestFlask ModuleWeaver. Most classes demonstrate     *
+ *  different signatures for PEVerification inside                  *
+ *  TestFlaskAddin.Tests.WeaverTests.PeVerify()                     *
+ *                                                                  *
+ * *****************************************************************/
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -122,7 +130,7 @@ namespace AssemblyToProcess
             return response;
         }
 
-        //[Playback]
+        [Playback]
         public void DoNoArgsNoResponse()
         {
             Console.WriteLine("Anooo");
@@ -155,7 +163,7 @@ namespace AssemblyToProcess
         {
             FuncPlayer<SomeRequest, SomeResponse> player = new FuncPlayer<SomeRequest, SomeResponse>("SomeResponse RecorderWrapper(SomeRequest)", new SomeRequestIdentifier(), null);
 
-            player.StartInvocation(req);
+            player.BeginInvocation(req);
 
             switch (player.DetermineTestMode(req))
             {
@@ -174,7 +182,7 @@ namespace AssemblyToProcess
         {
             FuncPlayer<int, string, float, FooResponse> player = new FuncPlayer<int, string, float, FooResponse>("SomeResponse RecorderWrapper(SomeRequest)", new GetFooArgsIdentifier(), null);
 
-            player.StartInvocation(i, s, f);
+            player.BeginInvocation(i, s, f);
 
             switch (player.DetermineTestMode(i, s, f))
             {
@@ -193,7 +201,7 @@ namespace AssemblyToProcess
         {
             ActionPlayer<SomeRequest> player = new ActionPlayer<SomeRequest>("SomeResponse RecorderWrapper(SomeRequest)", new SomeRequestIdentifier());
 
-            player.StartInvocation(req);
+            player.BeginInvocation(req);
 
             switch (player.DetermineTestMode(req))
             {
@@ -214,7 +222,7 @@ namespace AssemblyToProcess
         public void DoNoArgsNoResponse_Example()
         {
             ActionPlayer playerVoid = new ActionPlayer("System.Void AssemblyToProcess.SomeClient::DoNoArgsNoResponse()", (IRequestIdentifier)null);
-            playerVoid.StartInvocation();
+            playerVoid.BeginInvocation();
             switch (playerVoid.DetermineTestMode())
             {
                 case TestModes.NoMock:

@@ -81,30 +81,30 @@ namespace TestFlask.Aspects.Context
             }
         }
 
-        public static int InitialDepth => GetInitialDepth();
+        public static int CallerDepth => GetCallerDepth();
 
         public static bool IsRootDepth => CurrentDepth == 1;
 
-        public static bool IsInitialDepth => InitialDepth > 0 && CurrentDepth == (InitialDepth + 1);
+        public static bool IsInitialDepth => CallerDepth > 0 && CurrentDepth == (CallerDepth + 1);
 
-        public static bool IsOverwriteStep => bool.Parse(HttpContext.Current.Items["TestFlask_OverwriteStep"].ToString() ?? "false");
+        public static bool IsOverwriteStep => bool.Parse(HttpContextFactory.Current.Items["TestFlask_OverwriteStep"].ToString() ?? "false");
 
         #region NotPublic
 
         private static string GetContextId()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                if (HttpContext.Current.Items.Contains(ContextKeys.ContextId))
+                if (HttpContextFactory.Current.Items.Contains(ContextKeys.ContextId))
                 {
-                    return HttpContext.Current.Items[ContextKeys.ContextId].ToString();
+                    return HttpContextFactory.Current.Items[ContextKeys.ContextId].ToString();
                 }
 
-                string ctxId = HttpContext.Current.Request.Headers[ContextKeys.ContextId];
+                string ctxId = HttpContextFactory.Current.Request.Headers[ContextKeys.ContextId];
 
                 if (ctxId != null)
                 {
-                    HttpContext.Current.Items[ContextKeys.ContextId] = ctxId;
+                    HttpContextFactory.Current.Items[ContextKeys.ContextId] = ctxId;
                 }
 
                 return ctxId;
@@ -115,17 +115,17 @@ namespace TestFlask.Aspects.Context
 
         private static void SetContextId(string id)
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                HttpContext.Current.Items[ContextKeys.ContextId] = id;
+                HttpContextFactory.Current.Items[ContextKeys.ContextId] = id;
             }
         }
 
         private static TestModes GetRequestedMode()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                var testMode = HttpContext.Current.Request.Headers[ContextKeys.TestMode];
+                var testMode = HttpContextFactory.Current.Request.Headers[ContextKeys.TestMode];
 
                 if (testMode != null)
                 {
@@ -137,14 +137,14 @@ namespace TestFlask.Aspects.Context
         }
         private static Dictionary<string, int> GetInvocationLeafTable()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                var invocationLeafTable = HttpContext.Current.Items["TestFlask_InvocationLeafTable"] as Dictionary<string, int>;
+                var invocationLeafTable = HttpContextFactory.Current.Items["TestFlask_InvocationLeafTable"] as Dictionary<string, int>;
 
                 if (invocationLeafTable == null)
                 {
                     invocationLeafTable = new Dictionary<string, int>();
-                    HttpContext.Current.Items["TestFlask_InvocationLeafTable"] = invocationLeafTable;
+                    HttpContextFactory.Current.Items["TestFlask_InvocationLeafTable"] = invocationLeafTable;
                 }
 
                 return invocationLeafTable;
@@ -155,22 +155,22 @@ namespace TestFlask.Aspects.Context
 
         private static void SetInvocationLeafTable(Dictionary<string, int> leafTable)
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                HttpContext.Current.Items["TestFlask_InvocationLeafTable"] = leafTable;
+                HttpContextFactory.Current.Items["TestFlask_InvocationLeafTable"] = leafTable;
             }
         }
 
         private static Dictionary<int, string> GetInvocationParentTable()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                var invocationParentTable = HttpContext.Current.Items["TestFlask_InvocationParentTable"] as Dictionary<int, string>;
+                var invocationParentTable = HttpContextFactory.Current.Items["TestFlask_InvocationParentTable"] as Dictionary<int, string>;
 
                 if (invocationParentTable == null)
                 {
                     invocationParentTable = new Dictionary<int, string>();
-                    HttpContext.Current.Items["TestFlask_InvocationParentTable"] = invocationParentTable;
+                    HttpContextFactory.Current.Items["TestFlask_InvocationParentTable"] = invocationParentTable;
                 }
 
                 return invocationParentTable;
@@ -181,13 +181,13 @@ namespace TestFlask.Aspects.Context
 
         private static Step GetRequestedStep()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                var step = HttpContext.Current.Items["TestFlask_RequestedStep"] as Step;
+                var step = HttpContextFactory.Current.Items["TestFlask_RequestedStep"] as Step;
                 if (step == null)
                 {
                     step = BuildRequestedStep();
-                    HttpContext.Current.Items["TestFlask_RequestedStep"] = step;
+                    HttpContextFactory.Current.Items["TestFlask_RequestedStep"] = step;
                 }
 
                 return step;
@@ -203,9 +203,9 @@ namespace TestFlask.Aspects.Context
 
         private static Step GetLoadedStep()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                var step = HttpContext.Current.Items["TestFlask_LoadedStep"] as Step;
+                var step = HttpContextFactory.Current.Items["TestFlask_LoadedStep"] as Step;
                 return step;
             }
 
@@ -214,24 +214,24 @@ namespace TestFlask.Aspects.Context
 
         private static void SetLoadedStep(Step step)
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                HttpContext.Current.Items["TestFlask_LoadedStep"] = step;
+                HttpContextFactory.Current.Items["TestFlask_LoadedStep"] = step;
             }
         }
 
         private static int GetDepth()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                object depthObj = HttpContext.Current.Items["TestFlask_CurrentDepth"];
+                object depthObj = HttpContextFactory.Current.Items["TestFlask_CurrentDepth"];
                 if (depthObj != null)
                 {
                     return (int)depthObj;
                 }
                 else
                 {
-                    HttpContext.Current.Items["TestFlask_CurrentDepth"] = 0;
+                    HttpContextFactory.Current.Items["TestFlask_CurrentDepth"] = 0;
                     return 0;
                 }
             }
@@ -241,17 +241,17 @@ namespace TestFlask.Aspects.Context
 
         private static void SetDepth(int value)
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                HttpContext.Current.Items["TestFlask_CurrentDepth"] = value;
+                HttpContextFactory.Current.Items["TestFlask_CurrentDepth"] = value;
             }
         }
 
         private static string GetRawRequest()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                object rawRequest = HttpContext.Current.Items["TestFlask_RawRequest"];
+                object rawRequest = HttpContextFactory.Current.Items["TestFlask_RawRequest"];
                 if (rawRequest != null)
                 {
                     return (string)rawRequest;
@@ -263,17 +263,17 @@ namespace TestFlask.Aspects.Context
 
         private static void SetRawRequest(string rawRequest)
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                HttpContext.Current.Items["TestFlask_RawRequest"] = rawRequest;
+                HttpContextFactory.Current.Items["TestFlask_RawRequest"] = rawRequest;
             }
         }
 
         private static string GetInitialParentInvocationInstance()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                return HttpContext.Current.Request.Headers[ContextKeys.ParentInvocationInstance];
+                return HttpContextFactory.Current.Request.Headers[ContextKeys.ParentInvocationInstance];
             }
 
             return null;
@@ -281,7 +281,7 @@ namespace TestFlask.Aspects.Context
 
         private static Step BuildRequestedStep()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
                 return BuildStepFromHttpContext();
             }
@@ -291,7 +291,7 @@ namespace TestFlask.Aspects.Context
 
         private static Step BuildStepFromHttpContext()
         {
-            var request = HttpContext.Current.Request;
+            var request = HttpContextFactory.Current.Request;
 
             var step = new Step();
 
@@ -309,18 +309,18 @@ namespace TestFlask.Aspects.Context
 
         private static long BuildStepNo()
         {
-            HttpContext.Current.Items.Add("TestFlask_OverwriteStep", false);
+            HttpContextFactory.Current.Items.Add("TestFlask_OverwriteStep", false);
 
             //normally we expect the backend service to intercept incoming call and create a step beforehand on the fly (via httpModule or sth.) and set generated step no on http context items
-            if (HttpContext.Current.Items.Contains(ContextKeys.StepNo))
+            if (HttpContextFactory.Current.Items.Contains(ContextKeys.StepNo))
             {
-                return (long)HttpContext.Current.Items[ContextKeys.StepNo];
+                return (long)HttpContextFactory.Current.Items[ContextKeys.StepNo];
             }
-            else if (HttpContext.Current.Request.Headers[ContextKeys.StepNo] != null)
+            else if (HttpContextFactory.Current.Request.Headers[ContextKeys.StepNo] != null)
             {
-                HttpContext.Current.Items["TestFlask_OverwriteStep"] = true;
+                HttpContextFactory.Current.Items["TestFlask_OverwriteStep"] = true;
                 //but if it does not we expect step no (which created elsewhere before that service invocation) on the header
-                return long.Parse(HttpContext.Current.Request.Headers[ContextKeys.StepNo]);
+                return long.Parse(HttpContextFactory.Current.Request.Headers[ContextKeys.StepNo]);
             }
             else
             {
@@ -333,11 +333,11 @@ namespace TestFlask.Aspects.Context
             return LoadedStep.Invocations.SingleOrDefault(inv => inv.InstanceHashCode == instanceHashCode);
         }
 
-        private static int GetInitialDepth()
+        private static int GetCallerDepth()
         {
-            if (HttpContext.Current != null)
+            if (HttpContextFactory.Current != null)
             {
-                var initialDepth = HttpContext.Current.Request.Headers[ContextKeys.InitialDepth];
+                var initialDepth = HttpContextFactory.Current.Request.Headers[ContextKeys.CallerDepth];
 
                 if (initialDepth != null)
                 {
