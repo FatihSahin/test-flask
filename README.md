@@ -37,7 +37,7 @@ public Movie GetMovieWithStockCount(string name)
         case TestModes.Play:
             return player.Play(name);
         default:
-            throw new Exception("Invalid TestFlask test mode detected!");
+            return null;
     }
 }
 
