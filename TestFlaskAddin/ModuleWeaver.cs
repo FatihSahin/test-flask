@@ -277,14 +277,6 @@ public class ModuleWeaver
         MethodReference playerCtorRef, MethodReference startInvocationMethodRef, MethodReference determineTestModeMethodRef,
         MethodReference orgMethodCtorRef, MethodReference callOriginalMethodRef, MethodReference recordMethodRef, MethodReference playMethodRef)
     {
-
-        TypeReference exceptionTypeRef = ModuleDefinition.ImportReference(typeof(Exception));
-
-        //get ctor reference for ctor Exception(string message)
-        MethodReference exceptionCtorRef = ModuleDefinition.ImportReference(
-            exceptionTypeRef.Resolve()
-            .GetConstructors().Where(c => c.Parameters.Count == 1).First());
-
         //Start re-writing body
         MethodBody body = playableMethod.Body;
 
@@ -300,7 +292,8 @@ public class ModuleWeaver
         var playClause = il.Create(OpCodes.Ldloc_0);
         var recordClause = il.Create(OpCodes.Ldloc_0);
         var noMockClause = il.Create(OpCodes.Ldloc_0);
-        var defaultClause = il.Create(OpCodes.Ldstr, "Invalid TestFlask test mode detected!");
+        var defaultClause = il.Create(OpCodes.Nop);
+
         var endOfMethod = il.Create(OpCodes.Ldloc_2);
 
         body.Instructions.Clear();
@@ -376,8 +369,9 @@ public class ModuleWeaver
 
         //defaultClause
         body.Instructions.Add(defaultClause);
-        body.Instructions.Add(il.Create(OpCodes.Newobj, exceptionCtorRef));
-        body.Instructions.Add(il.Create(OpCodes.Throw));
+        DefaultValueInstructionsForType(responseType, body, il);
+        body.Instructions.Add(il.Create(OpCodes.Stloc_2));
+        body.Instructions.Add(il.Create(OpCodes.Br_S, endOfMethod));
 
         //end context
         body.Instructions.Add(endOfMethod);
@@ -482,6 +476,49 @@ public class ModuleWeaver
         for (int i = 0; i < playableMethod.Parameters.Count; i++)
         {
             body.Instructions.Add(il.Create(OpCodes.Ldarg, i + 1));
+        }
+    }
+
+    private  void DefaultValueInstructionsForType(TypeReference responseType, MethodBody body, ILProcessor il)
+    {
+        if (responseType.IsPrimitive || responseType.IsValueType)
+        {
+            Type monoType = responseType.GetMonoType();
+            
+            if (Nullable.GetUnderlyingType(monoType) != null)
+            {
+                throw new ArgumentException($"Nullable response type is not supported yet => {monoType}");
+            }
+
+            if (monoType == typeof(bool) || monoType == typeof(char) || monoType == typeof(byte)
+                || monoType == typeof(short) || monoType == typeof(int)
+                || monoType == typeof(ushort) || monoType == typeof(uint)
+                )
+            {
+                body.Instructions.Add(il.Create(OpCodes.Ldc_I4_0));
+            }
+            else if (monoType == typeof(long) || monoType == typeof(ulong))
+            {
+                body.Instructions.Add(il.Create(OpCodes.Ldc_I4_0));
+                body.Instructions.Add(il.Create(OpCodes.Conv_I8));
+            }
+            else if (monoType == typeof(float))
+            {
+                body.Instructions.Add(il.Create(OpCodes.Ldc_R4, 0.0F));
+            }
+            else if (monoType == typeof(decimal))
+            {
+                FieldReference fieldRef = ModuleDefinition.ImportReference(typeof(decimal).GetField("Zero"));
+                body.Instructions.Add(il.Create(OpCodes.Ldsfld, fieldRef));
+            }
+            else
+            {
+                throw new ArgumentException($"This response type is not supported => {monoType}");
+            }
+        }
+        else
+        {
+            body.Instructions.Add(il.Create(OpCodes.Ldnull));
         }
     }
 

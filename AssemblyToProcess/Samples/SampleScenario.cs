@@ -136,7 +136,7 @@ namespace AssemblyToProcess.Samples
         }
 
         [Playback(typeof(AddToCartIdentifier))]
-        public bool AddToCart(ShoppingCart cart, int productId)
+        public decimal AddToCart(ShoppingCart cart, int productId)
         {
             var product = productBiz.GetProduct(productId);
 
@@ -149,7 +149,7 @@ namespace AssemblyToProcess.Samples
 
             cart.Items.Add(product);
 
-            return true;
+            return 0;
         }
 
         [Playback(typeof(CustomerIdIdentifier))]

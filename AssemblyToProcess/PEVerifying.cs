@@ -153,6 +153,10 @@ namespace AssemblyToProcess
         {
             return null;
         }
+        public int? GetFooWithTooManyArgsPrimitive_ExampleClone(int a, string str, float f)
+        {
+            return null;
+        }
 
         public void DoNoArgsNoResponse_ExampleClone()
         {
@@ -190,6 +194,25 @@ namespace AssemblyToProcess
                     return player.CallOriginal(i, s, f, GetFooWithTooManyArgs_ExampleClone);
                 case TestModes.Record:
                     return player.Record(i, s, f, GetFooWithTooManyArgs_ExampleClone);
+                case TestModes.Play:
+                    return player.Play(i, s, f);
+                default:
+                    return null;
+            }
+        }
+
+        public int? RecorderWrapperWithArgsPrimitive_Example(int i, string s, float f)
+        {
+            FuncPlayer<int, string, float, int?> player = new FuncPlayer<int, string, float, int?>("SomeResponse RecorderWrapper(SomeRequest)", new GetFooArgsIdentifier(), null);
+
+            player.BeginInvocation(i, s, f);
+
+            switch (player.DetermineTestMode(i, s, f))
+            {
+                case TestModes.NoMock:
+                    return player.CallOriginal(i, s, f, GetFooWithTooManyArgsPrimitive_ExampleClone);
+                case TestModes.Record:
+                    return player.Record(i, s, f, GetFooWithTooManyArgsPrimitive_ExampleClone);
                 case TestModes.Play:
                     return player.Play(i, s, f);
                 default:
