@@ -62,6 +62,23 @@ namespace AssemblyToProcess
         public string SomeOtherProperty { get; set; }
     }
 
+    public class FooBiz : IDisposable
+    {
+        public FooResponse GetResponse()
+        {
+            return new FooResponse
+            {
+                SomeOtherProperty = "usingOther",
+                SomeProperty = 1
+            };
+        }
+
+        public void Dispose()
+        {
+            
+        }
+    }
+
     public class FooRequest
     {
         public int SomeReqProperty { get; set; }
@@ -134,6 +151,15 @@ namespace AssemblyToProcess
         public void DoNoArgsNoResponse()
         {
             Console.WriteLine("Anooo");
+        }
+
+        [Playback]
+        public FooResponse GetSomeResponseWithUsing()
+        {
+            using (var biz = new FooBiz())
+            {
+                return biz.GetResponse();
+            }
         }
 
         #region IL Copy

@@ -278,13 +278,20 @@ public class ModuleWeaver
         MethodReference orgMethodCtorRef, MethodReference callOriginalMethodRef, MethodReference recordMethodRef, MethodReference playMethodRef)
     {
         //Start re-writing body
-        MethodBody body = playableMethod.Body;
+        MethodBody body = new MethodBody(playableMethod.Body.Method);
 
+        body.SimplifyMacros();
+
+        body.Instructions.Clear();
+        body.ExceptionHandlers.Clear();
         body.Variables.Clear();
+
         body.Variables.Add(new VariableDefinition(playerTypeRef));
         body.Variables.Add(new VariableDefinition(ModuleDefinition.ImportReference(testModesDef)));
         var returnResponse = new VariableDefinition(responseType);
         body.Variables.Add(returnResponse);
+
+        body.InitLocals = true;
 
         var il = body.GetILProcessor();
 
@@ -292,11 +299,11 @@ public class ModuleWeaver
         var playClause = il.Create(OpCodes.Ldloc_0);
         var recordClause = il.Create(OpCodes.Ldloc_0);
         var noMockClause = il.Create(OpCodes.Ldloc_0);
-        var defaultClause = il.Create(OpCodes.Nop);
+        var defaultClause = il.Create(OpCodes.Ldstr, "Invalid TestFlask test mode detected!");
 
         var endOfMethod = il.Create(OpCodes.Ldloc_2);
 
-        body.Instructions.Clear();
+        
         body.Instructions.Add(il.Create(OpCodes.Nop));
 
         //create player
@@ -367,15 +374,20 @@ public class ModuleWeaver
         body.Instructions.Add(il.Create(OpCodes.Stloc_2));
         body.Instructions.Add(il.Create(OpCodes.Br_S, endOfMethod));
 
-        //defaultClause
+        //defaultClause (with =>  throw new Exception("Invalid TestFlask test mode detected!"))
         body.Instructions.Add(defaultClause);
-        DefaultValueInstructionsForType(responseType, body, il);
-        body.Instructions.Add(il.Create(OpCodes.Stloc_2));
-        body.Instructions.Add(il.Create(OpCodes.Br_S, endOfMethod));
+        TypeReference exceptionTypeRef = ModuleDefinition.ImportReference(typeof(Exception));        //get ctor reference for ctor Exception(string message)
+        MethodReference exceptionCtorRef = ModuleDefinition.ImportReference(exceptionTypeRef.Resolve().GetConstructors().Where(c => c.Parameters.Count == 1).First());
+        body.Instructions.Add(il.Create(OpCodes.Newobj, exceptionCtorRef));
+        body.Instructions.Add(il.Create(OpCodes.Throw));
 
         //end context
         body.Instructions.Add(endOfMethod);
         body.Instructions.Add(il.Create(OpCodes.Ret));
+
+        body.OptimizeMacros();
+
+        playableMethod.Body = body;
     }
 
     void DecorateAction(MethodDefinition playableMethod, MethodDefinition originalMethod,
@@ -385,9 +397,14 @@ public class ModuleWeaver
         MethodReference orgMethodCtorRef, MethodReference callOriginalMethodRef, MethodReference recordMethodRef, MethodReference playMethodRef)
     {
         //Start re-writing body
-        MethodBody body = playableMethod.Body;
+        MethodBody body = new MethodBody(playableMethod.Body.Method);
 
+        body.SimplifyMacros();
+
+        body.Instructions.Clear();
+        body.ExceptionHandlers.Clear();
         body.Variables.Clear();
+
         body.Variables.Add(new VariableDefinition(playerTypeRef));
         body.Variables.Add(new VariableDefinition(ModuleDefinition.ImportReference(testModesDef)));
 
@@ -469,6 +486,10 @@ public class ModuleWeaver
 
         //return
         body.Instructions.Add(returnMethod);
+
+        body.OptimizeMacros();
+
+        playableMethod.Body = body;
     }
 
     private static void LoadAllArgs(MethodDefinition playableMethod, MethodBody body, ILProcessor il)
@@ -477,50 +498,7 @@ public class ModuleWeaver
         {
             body.Instructions.Add(il.Create(OpCodes.Ldarg, i + 1));
         }
-    }
-
-    private  void DefaultValueInstructionsForType(TypeReference responseType, MethodBody body, ILProcessor il)
-    {
-        if (responseType.IsPrimitive || responseType.IsValueType)
-        {
-            Type monoType = responseType.GetMonoType();
-            
-            if (Nullable.GetUnderlyingType(monoType) != null)
-            {
-                throw new ArgumentException($"Nullable response type is not supported yet => {monoType}");
-            }
-
-            if (monoType == typeof(bool) || monoType == typeof(char) || monoType == typeof(byte)
-                || monoType == typeof(short) || monoType == typeof(int)
-                || monoType == typeof(ushort) || monoType == typeof(uint)
-                )
-            {
-                body.Instructions.Add(il.Create(OpCodes.Ldc_I4_0));
-            }
-            else if (monoType == typeof(long) || monoType == typeof(ulong))
-            {
-                body.Instructions.Add(il.Create(OpCodes.Ldc_I4_0));
-                body.Instructions.Add(il.Create(OpCodes.Conv_I8));
-            }
-            else if (monoType == typeof(float))
-            {
-                body.Instructions.Add(il.Create(OpCodes.Ldc_R4, 0.0F));
-            }
-            else if (monoType == typeof(decimal))
-            {
-                FieldReference fieldRef = ModuleDefinition.ImportReference(typeof(decimal).GetField("Zero"));
-                body.Instructions.Add(il.Create(OpCodes.Ldsfld, fieldRef));
-            }
-            else
-            {
-                throw new ArgumentException($"This response type is not supported => {monoType}");
-            }
-        }
-        else
-        {
-            body.Instructions.Add(il.Create(OpCodes.Ldnull));
-        }
-    }
+    } 
 
     MethodDefinition CloneOriginalMethod(MethodDefinition playableMethod)
     {
@@ -541,6 +519,11 @@ public class ModuleWeaver
         foreach (var instr in playableMethod.Body.Instructions)
         {
             clonePlayable.Body.Instructions.Add(instr);
+        }
+
+        foreach (var exhHandlers in playableMethod.Body.ExceptionHandlers)
+        {
+            clonePlayable.Body.ExceptionHandlers.Add(exhHandlers);
         }
 
         playableMethod.DeclaringType.Methods.Add(clonePlayable);
