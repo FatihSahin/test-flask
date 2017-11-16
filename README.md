@@ -7,6 +7,8 @@
 
 TestFlask is a set of components that manipulate (a.k.a. weaving) your any backend .net method call inside a WCF service or a REST API. In addition to weaving, TestFlask records your methods' requests and responses, store them inside a document database, and replay them if requested. 
 
+You can examine [Movie Rental Sample App](https://github.com/FatihSahin/test-flask-sample) to further investigate how to use TestFlask with scenarios, steps and also manage your scenarios with [TestFlask Manager](https://github.com/FatihSahin/test-flask-web). 
+
 There is a nuget package called TestFlaskAddin.Fody inside the solution. If you reference that package in your backend service, you can mark your methods with [Playback] attribute as below.
 
 ```csharp
@@ -83,8 +85,6 @@ TestFlask-Mode      | See above
 TestFlask-ProjectKey| This is the key that you created for your backend service to categorize scenarios
 TestFlask-ScenarioNo| This is the number for your test scenario
 TestFlask-StepNo    | This is optional, if you provide a step no, it will override that step. If you do not, TestFlask will create an auto step under that scenario.
-
-Please examine [Movie Rental Sample App](https://github.com/FatihSahin/test-flask-sample) to further investigate how to use TestFlask with scenarios, steps and also manage your scenarios with [TestFlask Manager](https://github.com/FatihSahin/test-flask-web). 
 
 You can also examine a SoapUI project inside that sample app to trigger your backend without UI.
 
