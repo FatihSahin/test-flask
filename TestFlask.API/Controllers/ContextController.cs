@@ -9,12 +9,10 @@ namespace TestFlask.API.Controllers
 {
     public class ContextController : ApiController
     {
-        private static MemoryCacher cacher = new MemoryCacher();
-
         [Route("api/context/leafTable/{contextId}")]
         public Dictionary<string, int> GetLeafTable(string contextId)
         {
-            var leafTable = cacher.GetValue(GetLeafTableKey(contextId)) as Dictionary<string, int>;
+            var leafTable = ApiCache.Get<Dictionary<string, int>>(GetLeafTableKey(contextId));
             return leafTable; 
         }
 
@@ -23,8 +21,8 @@ namespace TestFlask.API.Controllers
         {
             string key = GetLeafTableKey(contextId);
 
-            cacher.Delete(key);
-            cacher.Add(key, leafTable, DateTimeOffset.UtcNow.AddMinutes(15)); //fifteen minutes for caching
+            ApiCache.Delete(key);
+            ApiCache.Add(key, leafTable); //five minutes for caching
         }
 
         private static string GetLeafTableKey(string contextId)

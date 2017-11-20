@@ -131,6 +131,8 @@ public class ModuleWeaver
 
             DecorateMethod(playableMethod, clonePlayableMethod, requestIdentifierTypeDef, responseIdentifierTypeDef);
         }
+
+        AssemblyResolver?.Dispose();
     }
 
     private ModuleDefinition GetModuleForReferencedType(TypeReference typeRef)

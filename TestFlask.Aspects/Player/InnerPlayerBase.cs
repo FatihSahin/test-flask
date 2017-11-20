@@ -70,7 +70,8 @@ namespace TestFlask.Aspects.Player
 
             //set hash codes
             requestedInvocation.ParentInstanceHashCode = parentInstanceHashCode;
-            requestedInvocation.HashCode = requestedInvocation.GetInvocationHashCode();
+            requestedInvocation.SignatureHashCode = requestedInvocation.GetSignatureHashCode();
+            requestedInvocation.RequestHashCode = requestedInvocation.GetRequestHashCode();
             requestedInvocation.DeepHashCode = requestedInvocation.GetDeepHashCode();
             requestedInvocation.LeafHashCode = requestedInvocation.GetLeafHashCode();
             //set an invocation index and set instance hashcode for the leaf

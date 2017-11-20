@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TestFlask.Models.Enums;
 
 namespace TestFlask.Models.Entity
 {
@@ -51,7 +52,9 @@ namespace TestFlask.Models.Entity
 
         public int InvocationIndex { get; set; }
 
-        public string HashCode { get; set; }
+        public string SignatureHashCode { get; set; }
+
+        public string RequestHashCode { get; set; }
 
         public string DeepHashCode { get; set; }
 
@@ -61,9 +64,14 @@ namespace TestFlask.Models.Entity
 
         public string ParentInstanceHashCode { get; set; }
 
-        public string GetInvocationHashCode()
+        public string GetSignatureHashCode()
         {
-            string signatureHash = InvocationSignature.GetHashCode().ToString();
+            return InvocationSignature.GetHashCode().ToString();
+        }
+
+        public string GetRequestHashCode()
+        {
+            string signatureHash = GetSignatureHashCode(); 
             string requestIdentifierHash = !string.IsNullOrWhiteSpace(RequestIdentifierKey) ? RequestIdentifierKey.GetHashCode().ToString() : "0";
 
             StringBuilder strBuilder = new StringBuilder(signatureHash);
@@ -75,7 +83,7 @@ namespace TestFlask.Models.Entity
 
         public string GetDeepHashCode()
         {
-            string invocationHashCode = GetInvocationHashCode();
+            string invocationHashCode = GetRequestHashCode();
             return $"{StepNo}_{invocationHashCode}_{Depth}";
         }
 

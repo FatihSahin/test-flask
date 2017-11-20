@@ -18,6 +18,9 @@ namespace TestFlask.Models.Entity
         public string ProjectKey { get; set; }
 
         public List<Step> Steps { get; set; }
+
         public DateTime CreatedOn { get; set; }
+        
+        public InvocationMatch InvocationMatchStrategy { get; set; }
     }
 }
