@@ -89,7 +89,7 @@ namespace TestFlask.Aspects.Player
 
         public TRes Play(params object[] requestArgs)
         {
-            var loadedInvocation = TestFlaskContext.GetInvocation(requestedInvocation.InstanceHashCode);
+            var loadedInvocation = TestFlaskContext.GetLoadedInvocation(requestedInvocation.InstanceHashCode);
 
             if (!loadedInvocation.IsFaulted)
             {

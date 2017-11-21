@@ -27,13 +27,5 @@ namespace TestFlask.Models.Entity
         public DateTime CreatedOn { get; set; }
 
         public InvocationMatch InvocationMatchStrategy { get; set; }
-
-        private InvocationMatch resolvedMatchStrategy;
-        public InvocationMatch ResolvedMatchStrategy => resolvedMatchStrategy;
-
-        public void SetResolvedMatchStrategy(InvocationMatch match)
-        {
-            resolvedMatchStrategy = match;
-        }
     }
 }

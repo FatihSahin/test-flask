@@ -83,8 +83,8 @@ namespace TestFlask.Models.Entity
 
         public string GetDeepHashCode()
         {
-            string invocationHashCode = GetRequestHashCode();
-            return $"{StepNo}_{invocationHashCode}_{Depth}";
+            string requestHashCode = GetRequestHashCode();
+            return $"{StepNo}_{requestHashCode}_{Depth}";
         }
 
         public string GetLeafHashCode()
@@ -98,6 +98,37 @@ namespace TestFlask.Models.Entity
         {
             string leafHashCode = GetLeafHashCode();
             return $"{ScenarioNo}_{leafHashCode}_{InvocationIndex}";
+        }
+
+        /// <summary>
+        /// Parses and extracts a dummy invocation instance with proper hash code parsed from instanceHashCode
+        /// </summary>
+        public static Invocation Parse(string instanceHashCode)
+        {
+            if (!string.IsNullOrWhiteSpace(instanceHashCode))
+            {
+                //scenarioNo_stepNo_signaturehash_reqKeyHash_depth_parentInstanceHashHash_invIndex
+                string[] hashParts = instanceHashCode.Split('_');
+
+                if (hashParts.Length == 7)
+                {
+                    Invocation parsed = new Invocation();
+
+                    parsed.ScenarioNo = long.Parse(hashParts[0]);
+                    parsed.StepNo = long.Parse(hashParts[1]);
+                    parsed.SignatureHashCode = hashParts[2];
+                    parsed.RequestHashCode = $"{parsed.SignatureHashCode}_{hashParts[3]}";
+                    parsed.Depth = int.Parse(hashParts[4]);
+                    parsed.DeepHashCode = $"{parsed.StepNo}_{parsed.RequestHashCode}_{parsed.Depth}";
+                    parsed.LeafHashCode = $"{parsed.DeepHashCode}_{hashParts[5]}";
+                    parsed.InvocationIndex = int.Parse(hashParts[6]);
+                    parsed.InstanceHashCode = instanceHashCode;
+
+                    return parsed;
+                }
+            }
+
+            return null;
         }
     }
 }

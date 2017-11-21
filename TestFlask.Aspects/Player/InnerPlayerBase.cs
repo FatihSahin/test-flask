@@ -152,10 +152,10 @@ namespace TestFlask.Aspects.Player
             {
                 if (TestFlaskContext.LoadedStep == null && (TestFlaskContext.IsRootDepth || TestFlaskContext.IsInitialDepth))
                 {
-                    TestFlaskContext.LoadedStep = api.GetStep(requestedInvocation.StepNo);
+                    TestFlaskContext.LoadedStep = api.LoadStep(requestedInvocation.StepNo);
                 }
 
-                Invocation existingInvocation = TestFlaskContext.GetInvocation(requestedInvocation.InstanceHashCode);
+                Invocation existingInvocation = TestFlaskContext.GetLoadedInvocation(requestedInvocation.InstanceHashCode);
 
                 if (existingInvocation != null)
                 {

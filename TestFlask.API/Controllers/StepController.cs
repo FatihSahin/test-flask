@@ -4,8 +4,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using TestFlask.API.Cache;
+using TestFlask.API.InvocationMatcher;
 using TestFlask.Data.Repos;
 using TestFlask.Models.Entity;
+using TestFlask.Models.Enums;
 
 namespace TestFlask.API.Controllers
 {
@@ -25,6 +28,34 @@ namespace TestFlask.API.Controllers
         public Step Get(long stepNo)
         {
             return scenarioRepo.GetStep(stepNo);
+        }
+
+        /// <summary>
+        /// Loads a step and mainpulates invocation responses using a matching strategy
+        /// It also caches scenario to optimize assertion performance
+        /// </summary>
+        [Route("api/step/load/{stepNo}")]
+        public Step GetLoad(long stepNo)
+        {
+            var step = scenarioRepo.GetStep(stepNo);
+
+            //get cached scenario instance, if not cached fetch and cache
+            var scenario = ApiCache.GetScenario(step.ScenarioNo);
+
+            if (scenario == null)
+            {
+                scenario = scenarioRepo.GetScenarioFlat(step.ScenarioNo);
+
+                if (scenario != null)
+                {
+                    ApiCache.AddScenario(scenario);
+                }
+            }
+
+            MatcherStrategy matcher = new MatcherStrategyFactory(scenario, step).ProvideStrategy();
+            matcher.Match();
+
+            return step;
         }
 
         [Route("api/step/invocations/complete")]
@@ -74,6 +105,9 @@ namespace TestFlask.API.Controllers
             scenarioRepo.UpdateInvocation(invocation);
         }
 
+        /// <summary>
+        /// Matches an invocation by supplied invocation strategy
+        /// </summary>
         [Route("api/step/invocation/{instanceHashCode}")]
         public Invocation GetInvocation(string instanceHashCode)
         {

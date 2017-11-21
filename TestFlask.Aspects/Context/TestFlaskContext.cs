@@ -328,7 +328,7 @@ namespace TestFlask.Aspects.Context
             }
         }
 
-        public static Invocation GetInvocation(string instanceHashCode)
+        public static Invocation GetLoadedInvocation(string instanceHashCode)
         {
             return LoadedStep.Invocations.SingleOrDefault(inv => inv.InstanceHashCode == instanceHashCode);
         }

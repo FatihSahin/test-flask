@@ -49,7 +49,7 @@ namespace TestFlask.Aspects.Tests
                 recordedSteps.Add(step.StepNo, step);
             });
 
-            mockTestFlaskApi.Setup(api => api.GetStep(It.IsAny<long>())).Returns<long>(stepNo => recordedSteps[stepNo]);
+            mockTestFlaskApi.Setup(api => api.LoadStep(It.IsAny<long>())).Returns<long>(stepNo => recordedSteps[stepNo]);
 
             HttpContextFactory.Current = mockHttpContext.Object;
             TestFlaskApiFactory.TestFlaskApi = mockTestFlaskApi.Object;

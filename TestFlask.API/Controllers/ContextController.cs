@@ -22,7 +22,7 @@ namespace TestFlask.API.Controllers
             string key = GetLeafTableKey(contextId);
 
             ApiCache.Delete(key);
-            ApiCache.Add(key, leafTable); //five minutes for caching
+            ApiCache.Add(key, leafTable);
         }
 
         private static string GetLeafTableKey(string contextId)

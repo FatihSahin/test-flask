@@ -343,11 +343,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
 
             Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { invocation } };
-            mockTestFlaskApi.Setup(api => api.GetStep(44L)).Returns(dummyLoadedStep);
+            mockTestFlaskApi.Setup(api => api.LoadStep(44L)).Returns(dummyLoadedStep);
 
             var testMode = funcPlayer.DetermineTestMode(1);
 
-            mockTestFlaskApi.Verify(api => api.GetStep(44L), Times.Once);
+            mockTestFlaskApi.Verify(api => api.LoadStep(44L), Times.Once);
         }
 
         [Test]
@@ -361,11 +361,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
 
             Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { invocation } };
-            mockTestFlaskApi.Setup(api => api.GetStep(44L)).Returns(dummyLoadedStep);
+            mockTestFlaskApi.Setup(api => api.LoadStep(44L)).Returns(dummyLoadedStep);
 
             var testMode = funcPlayer.DetermineTestMode(1);
 
-            mockTestFlaskApi.Verify(api => api.GetStep(44L), Times.Once);
+            mockTestFlaskApi.Verify(api => api.LoadStep(44L), Times.Once);
         }
 
         [Test]
@@ -383,7 +383,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
 
             var testMode = funcPlayer.DetermineTestMode(1);
 
-            mockTestFlaskApi.Verify(api => api.GetStep(44L), Times.Never);
+            mockTestFlaskApi.Verify(api => api.LoadStep(44L), Times.Never);
         }
 
         [Test]
@@ -402,7 +402,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
 
             var testMode = funcPlayer.DetermineTestMode(1);
 
-            mockTestFlaskApi.Verify(api => api.GetStep(44L), Times.Never);
+            mockTestFlaskApi.Verify(api => api.LoadStep(44L), Times.Never);
         }
     }
 }
