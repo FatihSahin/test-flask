@@ -79,9 +79,12 @@ namespace TestFlask.Data.Repos
             Collection.FindOneAndUpdate(
                Builders<Scenario>.Filter.And(
                     Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, step.ScenarioNo),
-                    Builders<Scenario>.Filter.Eq("Steps.StepNo", step.StepNo)),
+                    Builders<Scenario>.Filter.Eq("Steps.StepNo", step.StepNo)
+               ),
                Builders<Scenario>.Update.Combine(
-                   Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName)));
+                   Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName)
+               )
+            );
 
             return step;
         }
@@ -116,13 +119,16 @@ namespace TestFlask.Data.Repos
 
         public Scenario Update(Scenario scenario)
         {
-            return Collection.FindOneAndUpdate(
+            Collection.FindOneAndUpdate(
                 Builders<Scenario>.Filter.Eq(s => s.Id, scenario.Id),
                 Builders<Scenario>.Update.Combine(
                     Builders<Scenario>.Update.Set(s => s.ScenarioName, scenario.ScenarioName),
-                    Builders<Scenario>.Update.Set(s => s.ScenarioDescription, scenario.ScenarioDescription)
+                    Builders<Scenario>.Update.Set(s => s.ScenarioDescription, scenario.ScenarioDescription),
+                    Builders<Scenario>.Update.Set(s => s.InvocationMatchStrategy, scenario.InvocationMatchStrategy)
                 )
             );
+
+            return scenario;
         }
 
         public void InsertInvocationsForStep(Step step)

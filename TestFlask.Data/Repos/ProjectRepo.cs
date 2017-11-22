@@ -13,6 +13,7 @@ namespace TestFlask.Data.Repos
         Project Insert(Project project);
         IEnumerable<Project> GetAll();
         Project Get(string projectKey);
+        Project Update(Project project);
     }
 
     public class ProjectRepo : MongoRepo<Project>, IProjectRepo
@@ -41,6 +42,20 @@ namespace TestFlask.Data.Repos
             project.ProjectNo = counterRepo.GetNextCounter("project").CounterValue;
             project.CreatedOn = DateTime.Now;
             Collection.InsertOne(project);
+
+            return project;
+        }
+
+        public Project Update(Project project)
+        {
+            Collection.FindOneAndUpdate(
+                Builders<Project>.Filter.Eq(p => p.ProjectKey, project.ProjectKey),
+                Builders<Project>.Update.Combine(
+                    Builders<Project>.Update.Set(p => p.ProjectName, project.ProjectName),
+                    Builders<Project>.Update.Set(p => p.ProjectDescription, project.ProjectDescription),
+                    Builders<Project>.Update.Set(p => p.InvocationMatchStrategy, project.InvocationMatchStrategy)
+                )
+            );
 
             return project;
         }

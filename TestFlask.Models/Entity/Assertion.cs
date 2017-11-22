@@ -4,16 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+using TestFlask.Models.Enums;
 
 namespace TestFlask.Models.Entity
 {    
-    public enum AssertionStatus
-    {
-        NotAsserted = 0,
-        Success = 1,
-        Fail = 2
-    }
-
     public class Assertion : MongoEntity
     {
         public string ProjectKey { get; set; }

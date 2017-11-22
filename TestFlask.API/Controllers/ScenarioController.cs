@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using TestFlask.API.Cache;
 using TestFlask.Data.Repos;
 using TestFlask.Models.Entity;
 
@@ -31,6 +32,16 @@ namespace TestFlask.API.Controllers
         public Scenario Post(Scenario scenario)
         {
             var result = scenarioRepo.Insert(scenario);
+            return result;
+        }
+
+        [Route("api/scenario")]
+        public Scenario Put(Scenario scenario)
+        {
+            var result = scenarioRepo.Update(scenario);
+
+            ApiCache.DeleteScenario(result.ScenarioNo);
+
             return result;
         }
     }
