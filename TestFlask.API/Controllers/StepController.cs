@@ -91,7 +91,7 @@ namespace TestFlask.API.Controllers
         {            
             var dbStep = scenarioRepo.GetStep(step.StepNo);
 
-            dbStep.Invocations.AddRange(step.Invocations);
+            dbStep.Invocations.AddRange(step.Invocations.OrderBy(i => i.Depth).ThenBy(i => i.InvocationIndex).ThenBy(i => i.RecordedOn));
 
             scenarioRepo.InsertInvocationsForStep(dbStep);
         }

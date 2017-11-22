@@ -77,6 +77,8 @@ namespace TestFlask.Aspects.Player
             //set an invocation index and set instance hashcode for the leaf
             SetInstanceHashCode();
 
+            requestedInvocation.RecordedOn = DateTime.UtcNow;
+
             //make this invocation latest parent for the current depth
             TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.InstanceHashCode;
         }

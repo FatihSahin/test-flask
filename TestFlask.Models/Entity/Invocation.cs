@@ -64,6 +64,8 @@ namespace TestFlask.Models.Entity
 
         public string ParentInstanceHashCode { get; set; }
 
+        public DateTime RecordedOn { get; set; }
+
         public string GetSignatureHashCode()
         {
             return InvocationSignature.GetHashCode().ToString();

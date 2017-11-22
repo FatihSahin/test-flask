@@ -26,6 +26,7 @@ namespace TestFlask.API.Controllers
         [Route("api/step/assertion/{stepNo}")]
         public Assertion Put(Assertion assertion)
         {
+            assertion.LastAssertedOn = DateTime.UtcNow;
             return assertionRepo.InsertOrUpdate(assertion);
         }
 

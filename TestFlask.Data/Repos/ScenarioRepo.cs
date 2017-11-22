@@ -46,7 +46,7 @@ namespace TestFlask.Data.Repos
         public Step InsertStep(Step step)
         {
             step.StepNo = counterRepo.GetNextCounter("step").CounterValue;
-            step.CreatedOn = DateTime.Now;
+            step.CreatedOn = DateTime.UtcNow;
 
             if (step.Invocations == null)
             {
@@ -92,7 +92,7 @@ namespace TestFlask.Data.Repos
         public Scenario Insert(Scenario scenario)
         {
             scenario.ScenarioNo = counterRepo.GetNextCounter("scenario").CounterValue;
-            scenario.CreatedOn = DateTime.Now;
+            scenario.CreatedOn = DateTime.UtcNow;
 
             if (scenario.Steps != null)
             {
@@ -166,7 +166,7 @@ namespace TestFlask.Data.Repos
 
             var compositeFilter = Builders<Scenario>.Filter.And(scenarioFilter, stepFilter);
 
-            var addInvocations = Builders<Scenario>.Update.PushEach("Steps.$.Invocations", step.Invocations);
+            var addInvocations = Builders<Scenario>.Update.PushEach("Steps.$.Invocations", step.Invocations.OrderBy(i => i.Depth).ThenBy(i => i.InvocationIndex).ThenBy(i => i.RecordedOn));
 
             Collection.FindOneAndUpdate(compositeFilter, addInvocations);
         }

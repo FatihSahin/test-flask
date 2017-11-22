@@ -17,13 +17,14 @@ namespace TestFlask.API.InvocationMatcher
         public Matcher(Step step)
         {
             this.step = step;
+            matches = new Dictionary<string, Invocation>();
         }
 
         public void Match()
         {
             if (KeyFunc != null)
             {
-                var ordered = step.Invocations.Where(i => i.Depth > 1).OrderBy(i => i.Depth).ThenBy(i => i.InvocationIndex);
+                var ordered = step.Invocations.Where(i => i.Depth > 1).OrderBy(i => i.Depth).ThenBy(i => i.InvocationIndex).ThenBy(i => i.RecordedOn);
 
                 foreach (var invocation in ordered)
                 {
