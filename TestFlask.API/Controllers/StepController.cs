@@ -18,10 +18,12 @@ namespace TestFlask.API.Controllers
     public class StepController : ApiController
     {
         private readonly IScenarioRepo scenarioRepo;
+        private readonly IProjectRepo projectRepo;
 
-        public StepController(IScenarioRepo pScenarioRepo)
+        public StepController(IScenarioRepo pScenarioRepo, IProjectRepo pProjectRepo)
         {
             scenarioRepo = pScenarioRepo;
+            projectRepo = pProjectRepo;
         }
 
         [Route("api/step/{stepNo}")]
@@ -39,7 +41,19 @@ namespace TestFlask.API.Controllers
         {
             var step = scenarioRepo.GetStep(stepNo);
 
+            //get cached project instance, if not cached fetch and cache
+            Project project = GetCachedProject(step);
             //get cached scenario instance, if not cached fetch and cache
+            Scenario scenario = GetCachedScenario(step);
+
+            Matcher matcher = new MatcherProvider(project, scenario, step).Provide();
+            matcher.Match();
+
+            return step;
+        }
+
+        private Scenario GetCachedScenario(Step step)
+        {
             var scenario = ApiCache.GetScenario(step.ScenarioNo);
 
             if (scenario == null)
@@ -52,10 +66,24 @@ namespace TestFlask.API.Controllers
                 }
             }
 
-            MatcherStrategy matcher = new MatcherStrategyFactory(scenario, step).ProvideStrategy();
-            matcher.Match();
+            return scenario;
+        }
 
-            return step;
+        private Project GetCachedProject(Step step)
+        {
+            var project = ApiCache.GetProject(step.ProjectKey);
+
+            if (project == null)
+            {
+                project = projectRepo.Get(step.ProjectKey);
+
+                if (project != null)
+                {
+                    ApiCache.AddProject(project);
+                }
+            }
+
+            return project;
         }
 
         [Route("api/step/invocations/complete")]

@@ -12,6 +12,7 @@ namespace TestFlask.Data.Repos
     {
         Project Insert(Project project);
         IEnumerable<Project> GetAll();
+        Project Get(string projectKey);
     }
 
     public class ProjectRepo : MongoRepo<Project>, IProjectRepo
@@ -21,6 +22,12 @@ namespace TestFlask.Data.Repos
         public ProjectRepo(IMongoDatabase mongoDb, ICounterRepo pCounterRepo) : base(mongoDb, "projects")
         {
             counterRepo = pCounterRepo;
+        }
+
+        public Project Get(string projectKey)
+        {
+            return Collection
+                .Find(Builders<Project>.Filter.Eq(p => p.ProjectKey, projectKey)).SingleOrDefault();
         }
 
         public IEnumerable<Project> GetAll()
