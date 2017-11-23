@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TestFlask.Models.Enums;
 
 namespace TestFlask.Models.Entity
 {
@@ -17,5 +18,6 @@ namespace TestFlask.Models.Entity
         public string ProjectName { get; set; }
         public string ProjectDescription { get; set; }
         public DateTime CreatedOn { get; set; }
+        public InvocationMatch InvocationMatchStrategy { get; set; }
     }
 }

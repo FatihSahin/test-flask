@@ -70,11 +70,14 @@ namespace TestFlask.Aspects.Player
 
             //set hash codes
             requestedInvocation.ParentInstanceHashCode = parentInstanceHashCode;
-            requestedInvocation.HashCode = requestedInvocation.GetInvocationHashCode();
+            requestedInvocation.SignatureHashCode = requestedInvocation.GetSignatureHashCode();
+            requestedInvocation.RequestHashCode = requestedInvocation.GetRequestHashCode();
             requestedInvocation.DeepHashCode = requestedInvocation.GetDeepHashCode();
             requestedInvocation.LeafHashCode = requestedInvocation.GetLeafHashCode();
             //set an invocation index and set instance hashcode for the leaf
             SetInstanceHashCode();
+
+            requestedInvocation.RecordedOn = DateTime.UtcNow;
 
             //make this invocation latest parent for the current depth
             TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.InstanceHashCode;
@@ -151,10 +154,10 @@ namespace TestFlask.Aspects.Player
             {
                 if (TestFlaskContext.LoadedStep == null && (TestFlaskContext.IsRootDepth || TestFlaskContext.IsInitialDepth))
                 {
-                    TestFlaskContext.LoadedStep = api.GetStep(requestedInvocation.StepNo);
+                    TestFlaskContext.LoadedStep = api.LoadStep(requestedInvocation.StepNo);
                 }
 
-                Invocation existingInvocation = TestFlaskContext.GetInvocation(requestedInvocation.InstanceHashCode);
+                Invocation existingInvocation = TestFlaskContext.GetLoadedInvocation(requestedInvocation.InstanceHashCode);
 
                 if (existingInvocation != null)
                 {

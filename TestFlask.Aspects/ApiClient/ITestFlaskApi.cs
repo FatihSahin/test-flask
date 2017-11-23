@@ -9,7 +9,7 @@ namespace TestFlask.Aspects.ApiClient
         void AppendStepInvocations(Step step);
         void DeleteStepInvocations(Step step);
         Dictionary<string, int> GetLeafTable(string contextId);
-        Step GetStep(long stepNo);
+        Step LoadStep(long stepNo);
         void PutInvocation(Invocation invocation);
         Step InsertStep(Step step);
         void PostLeafTable(string contextId, Dictionary<string, int> leafTable);

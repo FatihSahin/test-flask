@@ -46,7 +46,7 @@ namespace TestFlask.Data.Repos
         public Step InsertStep(Step step)
         {
             step.StepNo = counterRepo.GetNextCounter("step").CounterValue;
-            step.CreatedOn = DateTime.Now;
+            step.CreatedOn = DateTime.UtcNow;
 
             if (step.Invocations == null)
             {
@@ -79,9 +79,12 @@ namespace TestFlask.Data.Repos
             Collection.FindOneAndUpdate(
                Builders<Scenario>.Filter.And(
                     Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, step.ScenarioNo),
-                    Builders<Scenario>.Filter.Eq("Steps.StepNo", step.StepNo)),
+                    Builders<Scenario>.Filter.Eq("Steps.StepNo", step.StepNo)
+               ),
                Builders<Scenario>.Update.Combine(
-                   Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName)));
+                   Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName)
+               )
+            );
 
             return step;
         }
@@ -89,7 +92,7 @@ namespace TestFlask.Data.Repos
         public Scenario Insert(Scenario scenario)
         {
             scenario.ScenarioNo = counterRepo.GetNextCounter("scenario").CounterValue;
-            scenario.CreatedOn = DateTime.Now;
+            scenario.CreatedOn = DateTime.UtcNow;
 
             if (scenario.Steps != null)
             {
@@ -116,13 +119,16 @@ namespace TestFlask.Data.Repos
 
         public Scenario Update(Scenario scenario)
         {
-            return Collection.FindOneAndUpdate(
+            Collection.FindOneAndUpdate(
                 Builders<Scenario>.Filter.Eq(s => s.Id, scenario.Id),
                 Builders<Scenario>.Update.Combine(
                     Builders<Scenario>.Update.Set(s => s.ScenarioName, scenario.ScenarioName),
-                    Builders<Scenario>.Update.Set(s => s.ScenarioDescription, scenario.ScenarioDescription)
+                    Builders<Scenario>.Update.Set(s => s.ScenarioDescription, scenario.ScenarioDescription),
+                    Builders<Scenario>.Update.Set(s => s.InvocationMatchStrategy, scenario.InvocationMatchStrategy)
                 )
             );
+
+            return scenario;
         }
 
         public void InsertInvocationsForStep(Step step)
@@ -160,7 +166,7 @@ namespace TestFlask.Data.Repos
 
             var compositeFilter = Builders<Scenario>.Filter.And(scenarioFilter, stepFilter);
 
-            var addInvocations = Builders<Scenario>.Update.PushEach("Steps.$.Invocations", step.Invocations);
+            var addInvocations = Builders<Scenario>.Update.PushEach("Steps.$.Invocations", step.Invocations.OrderBy(i => i.Depth).ThenBy(i => i.InvocationIndex).ThenBy(i => i.RecordedOn));
 
             Collection.FindOneAndUpdate(compositeFilter, addInvocations);
         }

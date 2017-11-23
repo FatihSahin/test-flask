@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+using TestFlask.Models.Enums;
 
 namespace TestFlask.Models.Entity
 {
-    public class Step 
+    public class Step
     {
         //auto increment (unique)
         public long StepNo { get; set; }
@@ -24,5 +25,7 @@ namespace TestFlask.Models.Entity
         public List<Invocation> Invocations { get; set; }
 
         public DateTime CreatedOn { get; set; }
+
+        public InvocationMatch InvocationMatchStrategy { get; set; }
     }
 }

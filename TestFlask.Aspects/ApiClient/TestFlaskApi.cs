@@ -68,11 +68,11 @@ namespace TestFlask.Aspects.ApiClient
             return null;
         }
 
-        public Step GetStep(long stepNo)
+        public Step LoadStep(long stepNo)
         {
             var httpClient = PrepareClient();
 
-            var response = httpClient.GetAsync($"api/step/{stepNo}").Result;
+            var response = httpClient.GetAsync($"api/step/load/{stepNo}").Result;
 
             if (response.IsSuccessStatusCode)
             {
