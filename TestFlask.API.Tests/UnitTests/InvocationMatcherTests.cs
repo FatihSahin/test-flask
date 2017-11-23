@@ -49,6 +49,8 @@ namespace TestFlask.API.Tests.UnitTests
                 Steps = new List<Step> { step }
             };
 
+            var now = DateTime.UtcNow;
+
             i1_d1 = new Invocation
             {
                 ProjectKey = "testMatcher",
@@ -61,7 +63,8 @@ namespace TestFlask.API.Tests.UnitTests
                 DeepHashCode = "d1",
                 LeafHashCode = "l1",
                 InstanceHashCode = "i1",
-                Response = "response_i1"
+                Response = "response_i1",
+                RecordedOn = now,
             };
 
             i2_d2_0 = new Invocation
@@ -76,7 +79,8 @@ namespace TestFlask.API.Tests.UnitTests
                 DeepHashCode = "d2",
                 LeafHashCode = "l2",
                 InstanceHashCode = "i2",
-                Response = "response_i2"
+                Response = "response_i2",
+                RecordedOn = now.AddSeconds(1)
             };
 
             i3_d2_1 = new Invocation
@@ -91,7 +95,8 @@ namespace TestFlask.API.Tests.UnitTests
                 DeepHashCode = "d2",
                 LeafHashCode = "l2",
                 InstanceHashCode = "i3",
-                Response = "response_i3"
+                Response = "response_i3",
+                RecordedOn = now.AddSeconds(2)
             };
 
             i4_dx2_0 = new Invocation
@@ -106,7 +111,8 @@ namespace TestFlask.API.Tests.UnitTests
                 DeepHashCode = "dx2",
                 LeafHashCode = "lx2",
                 InstanceHashCode = "i4",
-                Response = "response_i4"
+                Response = "response_i4",
+                RecordedOn = now.AddSeconds(3)
             };
 
             i5_d3_0 = new Invocation
@@ -121,7 +127,8 @@ namespace TestFlask.API.Tests.UnitTests
                 DeepHashCode = "d3",
                 LeafHashCode = "l3",
                 InstanceHashCode = "i5",
-                Response = "response_i5"
+                Response = "response_i5",
+                RecordedOn = now.AddSeconds(4)
             };
 
             i6_d3_1 = new Invocation
@@ -136,7 +143,8 @@ namespace TestFlask.API.Tests.UnitTests
                 DeepHashCode = "d3",
                 LeafHashCode = "l3",
                 InstanceHashCode = "i6",
-                Response = "response_i6"
+                Response = "response_i6",
+                RecordedOn = now.AddSeconds(5)
             };
 
             i7_dx3_1 = new Invocation
@@ -151,7 +159,8 @@ namespace TestFlask.API.Tests.UnitTests
                 DeepHashCode = "dx3",
                 LeafHashCode = "lx3",
                 InstanceHashCode = "i7",
-                Response = "response_i7"
+                Response = "response_i7",
+                RecordedOn = now.AddSeconds(6)
             };
 
             i8_d3_0 = new Invocation
@@ -164,9 +173,10 @@ namespace TestFlask.API.Tests.UnitTests
                 Depth = 3,
                 InvocationIndex = 0,
                 DeepHashCode = "d3",
-                LeafHashCode = "lx3",
+                LeafHashCode = "lxx3",
                 InstanceHashCode = "i8",
-                Response = "response_i8"
+                Response = "response_i8",
+                RecordedOn = now.AddSeconds(7)
             };
 
             step.Invocations = new List<Invocation>
@@ -230,14 +240,6 @@ namespace TestFlask.API.Tests.UnitTests
             matcher.Match();
 
             Assert.IsTrue(matcher is SignatureMatcher);
-            Assert.AreEqual("response_i1", i1_d1.Response);
-            Assert.AreEqual("response_i2", i2_d2_0.Response);
-            Assert.AreEqual("response_i2", i3_d2_1.Response);
-            Assert.AreEqual("response_i4", i4_dx2_0.Response);
-            Assert.AreEqual("response_i5", i5_d3_0.Response);
-            Assert.AreEqual("response_i5", i6_d3_1.Response);
-            Assert.AreEqual("response_i5", i7_dx3_1.Response);
-            Assert.AreEqual("response_i5", i8_d3_0.Response);
         }
 
         [Test]
@@ -252,14 +254,6 @@ namespace TestFlask.API.Tests.UnitTests
             matcher.Match();
 
             Assert.IsTrue(matcher is SignatureMatcher);
-            Assert.AreEqual("response_i1", i1_d1.Response);
-            Assert.AreEqual("response_i2", i2_d2_0.Response);
-            Assert.AreEqual("response_i2", i3_d2_1.Response);
-            Assert.AreEqual("response_i4", i4_dx2_0.Response);
-            Assert.AreEqual("response_i5", i5_d3_0.Response);
-            Assert.AreEqual("response_i5", i6_d3_1.Response);
-            Assert.AreEqual("response_i5", i7_dx3_1.Response);
-            Assert.AreEqual("response_i5", i8_d3_0.Response);
         }
 
         [Test]
@@ -280,6 +274,47 @@ namespace TestFlask.API.Tests.UnitTests
             Assert.AreEqual("response_i5", i6_d3_1.Response);
             Assert.AreEqual("response_i7", i7_dx3_1.Response);
             Assert.AreEqual("response_i5", i8_d3_0.Response);
+        }
+
+
+        [Test]
+        public void Matcher_ReturnsDepthMatches_WhenSetExplicit()
+        {
+            project.InvocationMatchStrategy = InvocationMatch.Depth;
+
+            Matcher matcher = new MatcherProvider(project, scenario, step).Provide();
+
+            matcher.Match();
+
+            Assert.IsTrue(matcher is DepthMatcher);
+            Assert.AreEqual("response_i1", i1_d1.Response);
+            Assert.AreEqual("response_i2", i2_d2_0.Response);
+            Assert.AreEqual("response_i2", i3_d2_1.Response);
+            Assert.AreEqual("response_i4", i4_dx2_0.Response);
+            Assert.AreEqual("response_i5", i5_d3_0.Response);
+            Assert.AreEqual("response_i5", i6_d3_1.Response);
+            Assert.AreEqual("response_i7", i7_dx3_1.Response);
+            Assert.AreEqual("response_i5", i8_d3_0.Response);
+        }
+
+        [Test]
+        public void Matcher_ReturnsSiblingMatches_WhenSetExplicit()
+        {
+            project.InvocationMatchStrategy = InvocationMatch.Sibling;
+
+            Matcher matcher = new MatcherProvider(project, scenario, step).Provide();
+
+            matcher.Match();
+
+            Assert.IsTrue(matcher is SiblingMatcher);
+            Assert.AreEqual("response_i1", i1_d1.Response);
+            Assert.AreEqual("response_i2", i2_d2_0.Response);
+            Assert.AreEqual("response_i2", i3_d2_1.Response);
+            Assert.AreEqual("response_i4", i4_dx2_0.Response);
+            Assert.AreEqual("response_i5", i5_d3_0.Response);
+            Assert.AreEqual("response_i5", i6_d3_1.Response);
+            Assert.AreEqual("response_i7", i7_dx3_1.Response);
+            Assert.AreEqual("response_i8", i8_d3_0.Response);
         }
     }
 }
