@@ -66,7 +66,11 @@ namespace TestFlask.Aspects.Player
             requestedInvocation.InvocationSignature = methodSignature;
             requestedInvocation.RequestDisplayInfo = requestDisplayInfo;
             requestedInvocation.RequestIdentifierKey = requestIdentifierKey;
-            requestedInvocation.Request = JsonConvert.SerializeObject(requestArgs);
+            requestedInvocation.Request = JsonConvert.SerializeObject(requestArgs, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+            });
 
             //set hash codes
             requestedInvocation.ParentInstanceHashCode = parentInstanceHashCode;
@@ -132,7 +136,11 @@ namespace TestFlask.Aspects.Player
             if (mustPersistAssertionResult && result != null)
             {
                 Invocation rootInvocation = TestFlaskContext.GetRootInvocation();
-                rootInvocation.AssertionResult = JsonConvert.SerializeObject(result);
+                rootInvocation.AssertionResult = JsonConvert.SerializeObject(result, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All,
+                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                });
                 api.PutInvocation(rootInvocation); //persist assertion result
             }
         }
@@ -212,7 +220,11 @@ namespace TestFlask.Aspects.Player
         {
             requestedInvocation.IsFaulted = true;
             requestedInvocation.ExceptionType = ex.GetType().ToString();
-            requestedInvocation.Exception = JsonConvert.SerializeObject(ex);
+            requestedInvocation.Exception = JsonConvert.SerializeObject(ex, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+            });
 
             requestedInvocation.Duration = duration;
 

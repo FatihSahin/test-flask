@@ -53,12 +53,15 @@ namespace TestFlask.Aspects.Player
                 TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
                 requestedInvocation.Duration = sw.ElapsedMilliseconds;
 
-                requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
-                requestedInvocation.Response = JsonConvert.SerializeObject(response);
-
                 //if response is not null, use its type (as it may me a derived type, if null we have no choice to use declared generic type
                 //Does not support proxified entities
-                var responseType = response != null ? response.GetType() : typeof(TRes); 
+                var responseType = response != null ? response.GetType() : typeof(TRes);
+
+                requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
+                requestedInvocation.Response = JsonConvert.SerializeObject(response, new JsonSerializerSettings {
+                    TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
+                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                });
 
                 var regex = new Regex(@"(, PublicKeyToken=(null|\w{16}))|(, Version=[^,]+)|(, Culture=[^,]+)");
 

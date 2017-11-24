@@ -46,7 +46,7 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             funcPlayer.BeginInvocation(1);
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
 
-            Assert.AreEqual("[1]", invocation.Request);
+            Assert.AreEqual("{\"$type\":\"System.Object[], mscorlib\",\"$values\":[1]}", invocation.Request);
             Assert.AreEqual(customerIdIdentifier.ResolveIdentifierKey(1) , invocation.RequestIdentifierKey);
             Assert.AreEqual(customerIdIdentifier.ResolveDisplayInfo(1), invocation.RequestDisplayInfo);
 
