@@ -106,5 +106,19 @@ namespace TestFlask.Aspects.ApiClient
             var httpClient = PrepareClient();
             var response = httpClient.PostAsJsonAsync($"api/context/leafTable/{contextId}", leafTable).Result;
         }
+
+        public Assertion GetAssertion(long stepNo)
+        {
+            var httpClient = PrepareClient();
+
+            var response = httpClient.GetAsync($"api/step/assertion/{stepNo}").Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<Assertion>().Result;
+            }
+
+            return null;
+        }
     }
 }

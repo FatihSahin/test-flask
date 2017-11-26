@@ -13,5 +13,6 @@ namespace TestFlask.Aspects.ApiClient
         void PutInvocation(Invocation invocation);
         Step InsertStep(Step step);
         void PostLeafTable(string contextId, Dictionary<string, int> leafTable);
+        Assertion GetAssertion(long stepNo);
     }
 }
