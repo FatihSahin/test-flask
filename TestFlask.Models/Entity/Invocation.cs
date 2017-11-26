@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TestFlask.Models.Enums;
+using TestFlask.Models.Utils;
 
 namespace TestFlask.Models.Entity
 {
@@ -68,13 +69,13 @@ namespace TestFlask.Models.Entity
 
         public string GetSignatureHashCode()
         {
-            return InvocationSignature.GetHashCode().ToString();
+            return HashUtil.Crc32Hash(InvocationSignature);
         }
 
         public string GetRequestHashCode()
         {
             string signatureHash = GetSignatureHashCode(); 
-            string requestIdentifierHash = !string.IsNullOrWhiteSpace(RequestIdentifierKey) ? RequestIdentifierKey.GetHashCode().ToString() : "0";
+            string requestIdentifierHash = !string.IsNullOrWhiteSpace(RequestIdentifierKey) ? HashUtil.Crc32Hash(RequestIdentifierKey) : "0";
 
             StringBuilder strBuilder = new StringBuilder(signatureHash);
 
@@ -92,7 +93,7 @@ namespace TestFlask.Models.Entity
         public string GetLeafHashCode()
         {
             string deepHashCode = GetDeepHashCode();
-            int parentInstanceHashCodeHashCode = (ParentInstanceHashCode ?? "null").GetHashCode();
+            string parentInstanceHashCodeHashCode = HashUtil.Crc32Hash(ParentInstanceHashCode ?? "null");
             return $"{deepHashCode}_{parentInstanceHashCodeHashCode}";
         }
 

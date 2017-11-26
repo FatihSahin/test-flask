@@ -81,7 +81,11 @@ namespace TestFlask.Aspects.Player
             }
             else
             {
-                var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType));
+                var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType), new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
+                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                });
                 EndInvocation(exception);
                 throw exception;
             }

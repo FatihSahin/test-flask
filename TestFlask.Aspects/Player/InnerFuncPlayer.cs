@@ -96,13 +96,21 @@ namespace TestFlask.Aspects.Player
 
             if (!loadedInvocation.IsFaulted)
             {
-                var response = (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType));
+                var response = (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType), new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
+                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                });
                 EndInvocation(response);
                 return response;
             }
             else
             {
-                var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType));
+                var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType), new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
+                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                });
                 EndInvocation(exception);
                 throw exception;
             }
