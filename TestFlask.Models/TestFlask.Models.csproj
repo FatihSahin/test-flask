@@ -52,7 +52,9 @@
     <Compile Include="Entity\Project.cs" />
     <Compile Include="Entity\Step.cs" />
     <Compile Include="Context\ContextKeys.cs" />
+    <Compile Include="Entity\Variable.cs" />
     <Compile Include="Enums\AssertionStatus.cs" />
+    <Compile Include="Enums\VariableLevel.cs" />
     <Compile Include="Enums\InvocationMatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entity\Scenario.cs" />

@@ -13,6 +13,7 @@ namespace TestFlask.API.Cache
 
         private const string scenarioPrefix = "Scenario";
         private const string projectPrefix = "Project";
+        private const string variablePrefix = "Variable";
 
         public static T Get<T>(string key)
         {
@@ -82,5 +83,23 @@ namespace TestFlask.API.Cache
             string key = GetScenarioKey(scenarioNo);
             Delete(key);
         }
+
+
+
+        public static List<Variable> GetVariableByProject(string projectKey)
+        {
+            return Get<List<Variable>>($"{variablePrefix}-{projectKey}");
+        }
+
+        public static void AddVariableByProject(string projectKey, List<Variable> variables)
+        {
+            Add($"{variablePrefix}-{projectKey}", variables);
+        }
+
+        public static void DeleteVariableByProject(string projectKey)
+        {
+            Delete($"{variablePrefix}-{projectKey}");
+        }
+
     }
 }

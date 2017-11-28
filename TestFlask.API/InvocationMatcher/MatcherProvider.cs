@@ -35,7 +35,7 @@ namespace TestFlask.API.InvocationMatcher
                 stepMatchStrategy = InvocationMatch.Exact; //Exact is the default strategy if not set in any level
             }
 
-            switch (stepMatchStrategy)
+            switch (stepMatchStrategy)  
             {
                 case InvocationMatch.Signature:
                     return new SignatureMatcher(step);
