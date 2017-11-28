@@ -27,7 +27,18 @@ namespace TestFlask.API.Tests.UnitTests
                 Value="sahinnunlu@gmail.com",
                 InvocationVariableRegex=@"([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)"
 
+            },new Variable
+            {
+                Id = "var2",
+                IsEnabled=true,
+                Name="mailAddress1",
+                ProjectKey="1",
+                ScenarioNo=1,
+                StepNo=1,
+                Value="sahinnunlu@gmail.com",
             } };
+
+            
 
             repo.Setup<IEnumerable<Variable>>(p => p.GetByProject(It.IsAny<string>())).Returns(vars);
             InvocationVariableProcessor processor = new InvocationVariableProcessor(repo.Object);

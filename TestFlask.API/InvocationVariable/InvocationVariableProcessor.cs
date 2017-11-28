@@ -13,7 +13,9 @@ namespace TestFlask.API.InvocationVariable
     public class InvocationVariableProcessor : IInvocationVariableProcessor
     {
         private const string variableRegexPattern = @"{{\s*[\w\.]+\s*}}";
+
         private const string variableOpeningTag = "{{";
+
         private const string variableClosingTag = "}}";
 
         private readonly IVariableRepo variableRepo;
