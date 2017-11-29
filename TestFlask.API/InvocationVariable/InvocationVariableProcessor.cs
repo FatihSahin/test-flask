@@ -13,9 +13,7 @@ namespace TestFlask.API.InvocationVariable
     public class InvocationVariableProcessor : IInvocationVariableProcessor
     {
         private const string variableRegexPattern = @"{{\s*[\w\.]+\s*}}";
-
         private const string variableOpeningTag = "{{";
-
         private const string variableClosingTag = "}}";
 
         private readonly IVariableRepo variableRepo;
@@ -79,9 +77,9 @@ namespace TestFlask.API.InvocationVariable
             return null;
         }
 
-        private List<Variable> GetProjectVariables(string projectKey)
+        private IList<Variable> GetProjectVariables(string projectKey)
         {
-            IList<Variable> variables = ApiCache.GetVariableByProject(projectKey);
+            var variables = ApiCache.GetVariableByProject(projectKey);
             if (variables == null)
             {
                 variables = variableRepo.GetByProject(projectKey).Where(p => p.IsEnabled == true).ToList();
@@ -89,7 +87,7 @@ namespace TestFlask.API.InvocationVariable
                 ApiCache.AddVariableByProject(projectKey, variables.ToList());
             }
 
-            return variables.ToList();
+            return variables;
         }
 
         private IList<string> Find(string input, string regexPattern)
