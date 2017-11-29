@@ -100,12 +100,12 @@ namespace TestFlask.API.Cache
             Delete($"{variablePrefix}-{projectKey}");
         }
 
-        public static string GetVariableKey(string projectKey, long scenarioNo, long stepNo, string name)
+        private static string GetVariableKey(string projectKey, long scenarioNo, long stepNo, string name)
         {
             return $"{variablePrefix}-{projectKey}-{scenarioNo}-{name}";
         }
 
-        public static string GetVariableKey(Variable variable)
+        private static string GetVariableKey(Variable variable)
         {
             return $"{variablePrefix}-{variable.ProjectKey}-{variable.ScenarioNo}-{variable.Name}";
         }

@@ -247,5 +247,53 @@ namespace TestFlask.API.Tests.UnitTests
             var actual = step.Invocations[0].RequestRaw;
             Assert.AreEqual("Mails {{mailAddress}} {{url}}", actual);
         }
+
+        [TestMethod]
+        public void Should_apply_step_variable()
+        {
+            Mock<IVariableRepo> repo = new Mock<IVariableRepo>();
+            var vars = new List<Variable>{new Variable
+            {
+                Id = "stepVar",
+                IsEnabled=true,
+                Name="mailAddress",
+                ProjectKey="1",
+                ScenarioNo=1,
+                StepNo=1,
+                Value="xxxyyy@gmail.com",
+                InvocationVariableRegex=@"([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)"
+
+            },new Variable
+            {
+                Id = "scenVar",
+                IsEnabled=true,
+                Name="mailAddress1",
+                ProjectKey="1",
+                ScenarioNo=1,
+                StepNo=0,
+                Value="xxxyyy@gmail.com",
+                InvocationVariableRegex=@"([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)"
+
+            }};
+
+            repo.Setup<IEnumerable<Variable>>(p => p.GetByProject(It.IsAny<string>())).Returns(vars);
+            InvocationVariableProcessor processor = new InvocationVariableProcessor(repo.Object);
+
+            var step = processor.ValueToVariable("1", new Step
+            {
+                Invocations = new List<Invocation>
+                {
+                    new Invocation
+                    {
+                        RequestRaw = "Mails xxxyyy@gmail.com",
+                        Depth = 1
+                    }
+                }
+            });
+
+
+            var actual = step.Invocations[0].RequestRaw;
+            Assert.AreEqual("Mails {{mailAddress}}", actual);
+        }
     }
 }

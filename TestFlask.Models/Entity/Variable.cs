@@ -19,7 +19,7 @@ namespace TestFlask.Models.Entity
 
         public VariableLevel GetLevel()
         {
-            var level = VariableLevel.Project;
+            VariableLevel level = VariableLevel.Project;
 
             if (ScenarioNo != 0)
             {

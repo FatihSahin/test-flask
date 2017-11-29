@@ -27,7 +27,7 @@ namespace TestFlask.API.InvocationVariable
         {
             foreach (var invocation in step.Invocations.Where(p => p.Depth == 1))
             {
-                var inputVariables = Find(invocation.RequestRaw, variableRegexPattern);
+                var inputVariables = FindVariables(invocation.RequestRaw, variableRegexPattern);
 
                 if (inputVariables != null)
                 {
@@ -50,7 +50,7 @@ namespace TestFlask.API.InvocationVariable
 
         public Step ValueToVariable(string projectKey, Step step)
         {
-            var variables = GetProjectVariables(projectKey).Where(p => !string.IsNullOrEmpty(p.InvocationVariableRegex)).OrderBy(p => p.GetLevel());
+            var variables = GetProjectVariables(projectKey).Where(p => !string.IsNullOrEmpty(p.InvocationVariableRegex)).OrderByDescending(p => p.GetLevel());
 
             if (variables != null)
             {
@@ -71,7 +71,7 @@ namespace TestFlask.API.InvocationVariable
             var variableName = name.Replace(variableOpeningTag, "").Replace(variableClosingTag, "");
             if (variables != null)
             {
-                return variables.Where(p => p.Name == variableName).OrderBy(p => p.GetLevel()).FirstOrDefault();
+                return variables.Where(p => p.Name == variableName).OrderByDescending(p => p.GetLevel()).FirstOrDefault();
             }
 
             return null;
@@ -90,7 +90,7 @@ namespace TestFlask.API.InvocationVariable
             return variables;
         }
 
-        private IList<string> Find(string input, string regexPattern)
+        private IList<string> FindVariables(string input, string regexPattern)
         {
             var variables = new List<string>();
             var matches = Regex.Matches(input, regexPattern);
