@@ -12,7 +12,7 @@ namespace TestFlask.API.Controllers
 
 
     /// <summary>
-    /// Will provide variable management interface
+    // Will provide variable management interface
     /// </summary>
     public class VariableController : ApiController
     {
@@ -29,7 +29,7 @@ namespace TestFlask.API.Controllers
             return variableRepo.GetByStep(stepNo);
         }
 
-        [Route("api/step/Variable/{stepNo}")]
+        [Route("api/Variable")]
         public Variable Put(Variable variable)
         {
             return variableRepo.InsertOrUpdate(variable);
@@ -46,5 +46,6 @@ namespace TestFlask.API.Controllers
         {
             return variableRepo.GetByProject(projectKey);
         }
+
     }
 }

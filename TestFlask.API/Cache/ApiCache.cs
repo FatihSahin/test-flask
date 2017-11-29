@@ -84,12 +84,11 @@ namespace TestFlask.API.Cache
             Delete(key);
         }
 
-
-
         public static List<Variable> GetVariableByProject(string projectKey)
         {
             return Get<List<Variable>>($"{variablePrefix}-{projectKey}");
         }
+
 
         public static void AddVariableByProject(string projectKey, List<Variable> variables)
         {
@@ -101,5 +100,29 @@ namespace TestFlask.API.Cache
             Delete($"{variablePrefix}-{projectKey}");
         }
 
+        public static string GetVariableKey(string projectKey, long scenarioNo, long stepNo, string name)
+        {
+            return $"{variablePrefix}-{projectKey}-{scenarioNo}-{name}";
+        }
+
+        public static string GetVariableKey(Variable variable)
+        {
+            return $"{variablePrefix}-{variable.ProjectKey}-{variable.ScenarioNo}-{variable.Name}";
+        }
+
+        public static void AddVariable(Variable variable)
+        {
+            Add(GetVariableKey(variable), variable);
+        }
+
+        public static void DeleteVariable(Variable variable)
+        {
+            Delete(GetVariableKey(variable));
+        }
+
+        public static Variable GetVariable(string projectKey, long scenarioNo, long stepNo, string name)
+        {
+            return Get<Variable>(GetVariableKey(projectKey, scenarioNo, stepNo, name));
+        }
     }
 }
