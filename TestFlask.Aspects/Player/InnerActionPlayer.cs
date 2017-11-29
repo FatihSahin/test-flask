@@ -41,6 +41,8 @@ namespace TestFlask.Aspects.Player
 
         public void Record(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
         {
+            ResolveReflectedInterfaceType(originalMethodInfo);
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
             try

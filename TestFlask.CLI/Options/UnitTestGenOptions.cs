@@ -13,7 +13,7 @@ namespace TestFlask.CLI.Options
         [Option('t', "testfw", Default = "mstest", HelpText = "Unit test framework [mstest|nunit]")]
         public string UnitTestFramework { get; set; }
 
-        [Option('a', "api", Required = true, HelpText = "TestFlask api host url that holds scenarios for which unit test will be generated.")]
+        [Option('a', "api", Required = true, HelpText = "TestFlask api host url that holds scenarios for which unit test will be generated")]
         public string ApiUrl { get; set; }
 
         [Option('p', "project", Required = true, HelpText = "TestFlask project key that owns the scenarios")]
@@ -21,5 +21,8 @@ namespace TestFlask.CLI.Options
 
         [Option('f', "filename", Default = "TestFlaskTests_Auto.cs", HelpText= "Output file name")]
         public string FileName { get; set; }
+
+        [Option('n', "namespace", Default = "TestFlaskAutoTests", HelpText="Namespace for your generated test class")]
+        public string Namespace { get; set; }
     }
 }

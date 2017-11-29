@@ -46,8 +46,11 @@ namespace TestFlask.Aspects.Player
 
         public TRes Record(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
         {
+            ResolveReflectedInterfaceType(originalMethodInfo);
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
+
             try
             {
                 TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
@@ -65,8 +68,6 @@ namespace TestFlask.Aspects.Player
                 });
                 
                 requestedInvocation.ResponseType = typeNameSimplifierRegex.Replace(responseType.AssemblyQualifiedName, string.Empty); //save without version, public key token, culture
-
-                ResolveReflectedInterfaceType(originalMethodInfo);
 
                 if (requestedInvocation.Depth == 1)    //root invocation
                 {
