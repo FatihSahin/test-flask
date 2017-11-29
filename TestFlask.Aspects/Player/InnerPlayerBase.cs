@@ -26,7 +26,9 @@ namespace TestFlask.Aspects.Player
         protected readonly string requestIdentifierKey;
         protected internal Invocation requestedInvocation;
         protected readonly ITestFlaskApi api;
+
         private bool mustPersistAssertionResult;
+        protected Regex typeNameSimplifierRegex = new Regex(@"(, PublicKeyToken=(null|\w{16}))|(, Version=[^,]+)|(, Culture=[^,]+)");
 
         public InnerPlayerBase(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo)
         {
@@ -236,6 +238,49 @@ namespace TestFlask.Aspects.Player
             TryPersistStepInvocations();
 
             EndInvocation(ex);
+        }
+
+        protected void ResolveReflectedInterfaceType(MethodInfo originalMethodInfo)
+        {
+            MethodInfo methodInterface = GetInterfaceMethod(originalMethodInfo);
+            requestedInvocation.ReflectedType = typeNameSimplifierRegex.Replace(methodInterface.ReflectedType.AssemblyQualifiedName, string.Empty);
+        }
+
+        protected static MethodInfo GetInterfaceMethod(MethodInfo concreteMethod)
+        {
+            // get the type that the method is defined in
+            MethodInfo weavedMethod = concreteMethod.DeclaringType.GetMethod(concreteMethod.Name.Replace("__Original", string.Empty),
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static,
+                null,
+                concreteMethod.GetParameters().Select(pi => pi.ParameterType).ToArray(),
+                null);
+
+            Type classType = weavedMethod.ReflectedType;
+
+            // get the interfaces that the type implements
+            Type[] interfaces = classType.GetInterfaces();
+
+            // iterate through each interface creating mappings,
+            // looking for a match to our MethodInfo
+            foreach (Type interfaceType in interfaces)
+            {
+                // get the mapping for the interface.
+                InterfaceMapping map = classType.GetInterfaceMap(interfaceType);
+
+                // iterate through the MethodInfos
+                for (int i = 0; i < map.TargetMethods.Length; i++)
+                {
+                    // look for a match to the passed in MethodInfo
+                    if (map.TargetMethods[i] == weavedMethod)
+                    {
+                        // return the corresponding interface method.
+                        return map.InterfaceMethods[i];
+                    }
+                }
+            }
+
+            // return concrete method info if no interfaces found
+            return weavedMethod;
         }
     }
 }

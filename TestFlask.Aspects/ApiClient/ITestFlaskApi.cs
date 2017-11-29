@@ -14,5 +14,7 @@ namespace TestFlask.Aspects.ApiClient
         Step InsertStep(Step step);
         void PostLeafTable(string contextId, Dictionary<string, int> leafTable);
         Assertion GetAssertion(long stepNo);
+        IEnumerable<Scenario> GetScenarios();
+        Scenario GetScenarioDeep(long scenarioNo);
     }
 }

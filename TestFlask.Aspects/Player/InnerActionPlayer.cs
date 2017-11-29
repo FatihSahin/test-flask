@@ -50,6 +50,8 @@ namespace TestFlask.Aspects.Player
 
                 requestedInvocation.ResponseType = "System.Void";
 
+                ResolveReflectedInterfaceType(originalMethodInfo);
+
                 if (requestedInvocation.Depth == 1)    //root invocation
                 {
                     requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;

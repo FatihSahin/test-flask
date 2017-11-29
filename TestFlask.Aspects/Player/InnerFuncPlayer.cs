@@ -23,7 +23,7 @@ namespace TestFlask.Aspects.Player
     {
         private readonly IResponseIdentifier<TRes> responseIdentifier;
 
-        public InnerFuncPlayer(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo, IResponseIdentifier<TRes> pResponseIdentifier) 
+        public InnerFuncPlayer(string pMethodSignature, string pRequestIdentifierKey, string pRequestDisplayInfo, IResponseIdentifier<TRes> pResponseIdentifier)
             : base(pMethodSignature, pRequestIdentifierKey, pRequestDisplayInfo)
         {
             responseIdentifier = pResponseIdentifier;
@@ -58,15 +58,16 @@ namespace TestFlask.Aspects.Player
                 var responseType = response != null ? response.GetType() : typeof(TRes);
 
                 requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
-                requestedInvocation.Response = JsonConvert.SerializeObject(response, new JsonSerializerSettings {
+                requestedInvocation.Response = JsonConvert.SerializeObject(response, new JsonSerializerSettings
+                {
                     TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
                     TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
                 });
-
-                var regex = new Regex(@"(, PublicKeyToken=(null|\w{16}))|(, Version=[^,]+)|(, Culture=[^,]+)");
-
-                requestedInvocation.ResponseType = regex.Replace(responseType.AssemblyQualifiedName, string.Empty); //save without version, public key token, culture
                 
+                requestedInvocation.ResponseType = typeNameSimplifierRegex.Replace(responseType.AssemblyQualifiedName, string.Empty); //save without version, public key token, culture
+
+                ResolveReflectedInterfaceType(originalMethodInfo);
+
                 if (requestedInvocation.Depth == 1)    //root invocation
                 {
                     requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;

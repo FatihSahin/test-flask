@@ -28,6 +28,12 @@ namespace TestFlask.API.Controllers
             return scenarioRepo.GetScenarioFlat(scenarioNo);
         }
 
+        [Route("api/scenario/deep/{scenarioNo}")]
+        public Scenario GetDeep(long scenarioNo)
+        {
+            return scenarioRepo.GetScenario(scenarioNo);
+        }
+
         [Route("api/scenario")]
         public Scenario Post(Scenario scenario)
         {

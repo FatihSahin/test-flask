@@ -27,5 +27,7 @@ namespace TestFlask.Models.Entity
         public DateTime CreatedOn { get; set; }
 
         public InvocationMatch InvocationMatchStrategy { get; set; }
+
+        public string RootInvocationReflectedType { get; set; }
     }
 }
