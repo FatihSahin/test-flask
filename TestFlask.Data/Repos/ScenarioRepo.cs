@@ -23,6 +23,7 @@ namespace TestFlask.Data.Repos
         Invocation GetInvocation(string instanceHashCode);
         void AppendInvocationsForStep(Step step);
         void DeleteInvocationsForStep(long scenarioNo, long stepNo);
+        Scenario GetScenario(long scenarioNo);
     }
 
     public class ScenarioRepo : MongoRepo<Scenario>, IScenarioRepo
@@ -82,7 +83,8 @@ namespace TestFlask.Data.Repos
                     Builders<Scenario>.Filter.Eq("Steps.StepNo", step.StepNo)
                ),
                Builders<Scenario>.Update.Combine(
-                   Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName)
+                   Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName),
+                   Builders<Scenario>.Update.Set("Steps.$.RootInvocationReflectedType", step.RootInvocationReflectedType)
                )
             );
 
@@ -133,6 +135,13 @@ namespace TestFlask.Data.Repos
 
         public void InsertInvocationsForStep(Step step)
         {
+            //set rootinvocation container type info in step level
+            var root = step.Invocations.SingleOrDefault(i => i.Depth == 1);
+            if (root != null)
+            {
+                step.RootInvocationReflectedType = root.ReflectedType;
+            }
+
             var scenarioFilter = Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, step.ScenarioNo);
             var stepFilter = Builders<Scenario>.Filter.Eq("Steps.StepNo", step.StepNo);
 
@@ -145,6 +154,8 @@ namespace TestFlask.Data.Repos
             var addInvocations = Builders<Scenario>.Update.PushEach("Steps.$.Invocations", step.Invocations);
 
             Collection.FindOneAndUpdate(compositeFilter, addInvocations);
+
+            UpdateStepShallow(step);
         }
 
         public void DeleteInvocationsForStep(long scenarioNo, long stepNo)
@@ -184,6 +195,13 @@ namespace TestFlask.Data.Repos
             return Collection
                .Find(Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, scenarioNo))
                .Project<Scenario>(Builders<Scenario>.Projection.Exclude("Steps.Invocations"))
+               .SingleOrDefault();
+        }
+
+        public Scenario GetScenario(long scenarioNo)
+        {
+            return Collection
+               .Find(Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, scenarioNo))
                .SingleOrDefault();
         }
 

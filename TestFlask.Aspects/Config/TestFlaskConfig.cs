@@ -39,11 +39,15 @@ namespace TestFlask.Aspects.Config
 
                 return instance;
             }
+            set
+            {
+                instance = value;
+            }
         }
 
-        public ProjectConfig Project { get; private set; }
+        public ProjectConfig Project { get; set; }
 
-        public ApiConfig Api { get; private set; }
+        public ApiConfig Api { get; set; }
     }
 
     public class ProjectConfig

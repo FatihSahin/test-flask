@@ -120,5 +120,31 @@ namespace TestFlask.Aspects.ApiClient
 
             return null;
         }
+
+        public IEnumerable<Scenario> GetScenarios()
+        {
+            var httpClient = PrepareClient();
+            var response = httpClient.GetAsync($"api/project/scenarios/{config.Project.Key}").Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<Scenario[]>().Result;
+            }
+
+            return null;
+        }
+
+        public Scenario GetScenarioDeep(long scenarioNo)
+        {
+            var httpClient = PrepareClient();
+            var response = httpClient.GetAsync($"api/scenario/deep/{scenarioNo}").Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<Scenario>().Result;
+            }
+
+            return null;
+        }
     }
 }
