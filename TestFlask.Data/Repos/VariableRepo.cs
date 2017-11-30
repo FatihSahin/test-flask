@@ -15,6 +15,7 @@ namespace TestFlask.Data.Repos
         IEnumerable<Variable> GetByScenario(long scenarioNo);
         IEnumerable<Variable> GetByStep(long stepNo);
         Variable InsertOrUpdate(Variable assertion);
+        Variable GetByKey(string projectKey, long scenario, long stepNo, string name);
     }
 
     public class VariableRepo : MongoRepo<Variable>, IVariableRepo
@@ -39,10 +40,6 @@ namespace TestFlask.Data.Repos
             return Collection.Find(Builders<Variable>.Filter.Eq(a => a.StepNo, stepNo)).ToList();
         }
 
-        public Variable GetById(string Id)
-        {
-            return Collection.Find(Builders<Variable>.Filter.Eq(a => a.Id, Id)).SingleOrDefault();
-        }
 
         public Variable Insert(Variable variable)
         {
@@ -53,7 +50,7 @@ namespace TestFlask.Data.Repos
 
         public Variable InsertOrUpdate(Variable variable)
         {
-            var existing = GetById(variable.GetKey());
+            var existing = GetByKey(variable.ProjectKey, variable.ScenarioNo, variable.StepNo, variable.Name);
 
             if (existing != null)
             {
@@ -65,5 +62,11 @@ namespace TestFlask.Data.Repos
                 return Insert(variable);
             }
         }
+
+        public Variable GetByKey(string projectKey, long scenario, long stepNo, string name)
+        {
+            return Collection.Find(Builders<Variable>.Filter.Where(a => a.ProjectKey == projectKey && a.ScenarioNo == scenario && a.StepNo == stepNo && a.Name == name)).SingleOrDefault();
+        }
+
     }
 }
