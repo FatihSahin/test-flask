@@ -23,61 +23,92 @@ namespace TestFlask.API.InvocationVariable
             variableRepo = pVariableRepo;
         }
 
-        public Step VariableToValue(string projectKey, Step step)
+        public void ResolveVariables(Step step)
         {
-            foreach (var invocation in step.Invocations.Where(p => p.Depth == 1))
+            var invocation = step.Invocations.SingleOrDefault(p => p.Depth == 1);
+            var inputVariables = FindVariables(invocation.RequestRaw, variableRegexPattern);
+
+            if (inputVariables != null)
             {
-                var inputVariables = FindVariables(invocation.RequestRaw, variableRegexPattern);
-
-                if (inputVariables != null)
+                foreach (var inputVariable in inputVariables)
                 {
-                    foreach (var inputVariable in inputVariables)
+                    string value = GetVariable(step, inputVariable)?.Value;
+
+                    if (string.IsNullOrEmpty(value))
                     {
-                        string value = GetVariable(projectKey, inputVariable)?.Value;
-
-                        if (string.IsNullOrEmpty(value))
-                        {
-                            continue;
-                        }
-
-                        invocation.RequestRaw = invocation.RequestRaw.Replace(inputVariable, GetVariable(projectKey, inputVariable).Value);
+                        continue;
                     }
+
+                    invocation.RequestRaw = invocation.RequestRaw.Replace(inputVariable, value);
                 }
             }
-
-            return step;
         }
 
-        public Step ValueToVariable(string projectKey, Step step)
+        public void GenerateVariables(Step step)
         {
-            var variables = GetProjectVariables(projectKey).Where(p => !string.IsNullOrEmpty(p.InvocationVariableRegex)).OrderByDescending(p => p.GetLevel());
+            var variables = GetStepVariables(step).Where(p => !string.IsNullOrEmpty(p.GeneratorRegex));
 
             if (variables != null)
             {
                 foreach (var variable in variables)
                 {
-                    foreach (var invocation in step.Invocations.Where(p => p.Depth == 1))
-                    {
-                        invocation.RequestRaw = Regex.Replace(invocation.RequestRaw, variable.InvocationVariableRegex, $"{variableOpeningTag}{variable.Name}{variableClosingTag}");
-                    }
+                    var invocation = step.Invocations.SingleOrDefault(p => p.Depth == 1);
+                    invocation.RequestRaw = Regex.Replace(invocation.RequestRaw, variable.GeneratorRegex, $"{variableOpeningTag}{variable.Name}{variableClosingTag}");
                 }
             }
-            return step;
         }
 
-        private Variable GetVariable(string projectKey, string name)
+        private Variable GetVariable(Step step, string name)
         {
-            var variables = GetProjectVariables(projectKey);
-            var variableName = name.Replace(variableOpeningTag, "").Replace(variableClosingTag, "");
-            if (variables != null)
+            var variables = GetVariableByProject(step.ProjectKey);
+
+            if (variables == null)
             {
-                return variables.Where(p => p.Name == variableName).OrderByDescending(p => p.GetLevel()).FirstOrDefault();
+                return null;
             }
 
-            return null;
+            name = name.Replace(variableOpeningTag, "").Replace(variableClosingTag, "");
+            string variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, step.StepNo, name);
+
+            var variable = variables.SingleOrDefault(p => p.GetKey() == variableKey);
+            if (variable == null)
+            {
+                variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, 0, name);
+                variable = variables.SingleOrDefault(p => p.GetKey() == variableKey);
+                if (variable == null)
+                {
+                    variableKey = Variable.CreateKey(step.ProjectKey, 0, 0, name);
+                    variable = variables.SingleOrDefault(p => p.GetKey() == variableKey);
+                }
+            }
+
+            return variable;
         }
 
-        private IList<Variable> GetProjectVariables(string projectKey)
+        private IList<Variable> GetStepVariables(Step step)
+        {
+            var variables = GetVariableByProject(step.ProjectKey);
+
+            if (variables == null)
+            {
+                return null;
+            }
+
+            var result = new List<Variable>();
+
+            string variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, step.StepNo, "");
+            result.AddRange(variables.Where(p => p.GetStepKey() == variableKey));
+
+            variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, 0, "");
+            result.AddRange(variables.Where(p => p.GetStepKey() == variableKey));
+
+            variableKey = Variable.CreateKey(step.ProjectKey, 0, 0, "");
+            result.AddRange(variables.Where(p => p.GetStepKey() == variableKey));
+
+            return result;
+        }
+
+        private IList<Variable> GetVariableByProject(string projectKey)
         {
             var variables = ApiCache.GetVariableByProject(projectKey);
             if (variables == null)
@@ -89,6 +120,7 @@ namespace TestFlask.API.InvocationVariable
 
             return variables;
         }
+
 
         private IList<string> FindVariables(string input, string regexPattern)
         {
@@ -111,7 +143,7 @@ namespace TestFlask.API.InvocationVariable
 
     public interface IInvocationVariableProcessor
     {
-        Step VariableToValue(string projectKey, Step step);
-        Step ValueToVariable(string projectKey, Step step);
+        void ResolveVariables(Step step);
+        void GenerateVariables(Step step);
     }
 }

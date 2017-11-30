@@ -9,8 +9,6 @@ using TestFlask.Models.Entity;
 
 namespace TestFlask.API.Controllers
 {
-
-
     /// <summary>
     // Will provide variable management interface
     /// </summary>
@@ -23,25 +21,26 @@ namespace TestFlask.API.Controllers
             variableRepo = pVariableRepo;
         }
 
-        [Route("api/step/Variable/{stepNo}")]
+        [Route("api/step/variable/{stepNo}")]
         public IEnumerable<Variable> GetByStep(long stepNo)
         {
             return variableRepo.GetByStep(stepNo);
         }
 
-        [Route("api/Variable")]
+        [Route("api/variable")]
         public Variable Put(Variable variable)
         {
+            ApiCache.DeleteVariableByProject(variable.ProjectKey);
             return variableRepo.InsertOrUpdate(variable);
         }
 
-        [Route("api/scenario/Variable/{scenarioNo}")]
+        [Route("api/scenario/variable/{scenarioNo}")]
         public IEnumerable<Variable> GetByScenario(long scenarioNo)
         {
             return variableRepo.GetByScenario(scenarioNo);
         }
 
-        [Route("api/project/Variable/{projectKey}")]
+        [Route("api/project/variable/{projectKey}")]
         public IEnumerable<Variable> GetByProject(string projectKey)
         {
             return variableRepo.GetByProject(projectKey);

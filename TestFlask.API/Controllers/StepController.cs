@@ -6,10 +6,10 @@ using System.Net.Http;
 using System.Web.Http;
 using TestFlask.API.Cache;
 using TestFlask.API.InvocationMatcher;
+using TestFlask.API.InvocationVariable;
 using TestFlask.Data.Repos;
 using TestFlask.Models.Entity;
 using TestFlask.Models.Enums;
-using TestFlask.API.InvocationVariable;
 
 namespace TestFlask.API.Controllers
 {
@@ -52,7 +52,7 @@ namespace TestFlask.API.Controllers
             Matcher matcher = new MatcherProvider(project, scenario, step).Provide();
             matcher.Match();
 
-            step = variableProcessor.VariableToValue(project.ProjectKey, step);
+            variableProcessor.ResolveVariables(step);
 
             return step;
         }

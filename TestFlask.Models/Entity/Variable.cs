@@ -15,29 +15,20 @@ namespace TestFlask.Models.Entity
         public string Name { get; set; }
         public string Value { get; set; }
         public bool IsEnabled { get; set; }
-        public string InvocationVariableRegex { get; set; }
-
-        public VariableLevel GetLevel()
-        {
-            VariableLevel level = VariableLevel.Project;
-
-            if (ScenarioNo != 0)
-            {
-                level = VariableLevel.Scenario;
-            }
-
-            if (StepNo != 0)
-            {
-                level = VariableLevel.Step;
-            }
-
-            return level;
-        }
+        public string GeneratorRegex { get; set; }
 
         public string GetKey()
         {
-            return $"{ProjectKey}-{ScenarioNo}-{StepNo}-{Name}";
+            return CreateKey(ProjectKey, ScenarioNo, StepNo, Name);
+        }
+        public string GetStepKey()
+        {
+            return CreateKey(ProjectKey, ScenarioNo, StepNo, "");
         }
 
+        public static string CreateKey(string projectKey, long ScenarioNo, long StepNo, string Name)
+        {
+            return $"{projectKey}-{ScenarioNo}-{StepNo}-{Name}";
+        }
     }
 }

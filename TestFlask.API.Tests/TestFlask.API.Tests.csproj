@@ -83,7 +83,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTests\InvocationMatcherTests.cs" />
     <Compile Include="UnitTests\InvocationVariableProcessorTest.cs" />
-    <Compile Include="UnitTests\VariableTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TestFlask.API\TestFlask.API.csproj">

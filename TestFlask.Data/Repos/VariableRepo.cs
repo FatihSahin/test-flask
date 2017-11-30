@@ -53,7 +53,7 @@ namespace TestFlask.Data.Repos
 
         public Variable InsertOrUpdate(Variable variable)
         {
-            var existing = GetById(variable.Id);
+            var existing = GetById(variable.GetKey());
 
             if (existing != null)
             {
