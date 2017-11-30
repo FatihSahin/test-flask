@@ -95,7 +95,7 @@ namespace TestFlask.API.Controllers
         public void PutCompletedInvocations(Step step)
         {
             var dbStep = scenarioRepo.GetStep(step.StepNo);
-
+ 
             dbStep.Invocations.AddRange(step.Invocations.OrderBy(i => i.Depth).ThenBy(i => i.InvocationIndex).ThenBy(i => i.RecordedOn));
 
             scenarioRepo.InsertInvocationsForStep(dbStep);

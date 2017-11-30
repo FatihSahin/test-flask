@@ -35,6 +35,8 @@ namespace TestFlask.Models.Entity
 
         public string ResponseType { get; set; }
 
+        public string ReflectedType { get; set; }
+
         public bool IsFaulted { get; set; }
 
         public string ExceptionType { get; set; }
