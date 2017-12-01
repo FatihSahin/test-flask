@@ -222,7 +222,7 @@ namespace TestFlask.Aspects.Player
         protected void RecordException(Exception ex, long duration, params object[] requestArgs)
         {
             requestedInvocation.IsFaulted = true;
-            requestedInvocation.ExceptionType = ex.GetType().ToString();
+            requestedInvocation.ExceptionType = typeNameSimplifierRegex.Replace(ex.GetType().AssemblyQualifiedName, string.Empty);
             requestedInvocation.Exception = JsonConvert.SerializeObject(ex, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,

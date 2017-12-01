@@ -89,7 +89,8 @@ namespace TestFlask.Aspects.Player
                 var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType), new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
-                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
+                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+                    ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
                 });
                 EndInvocation(exception);
                 throw exception;
