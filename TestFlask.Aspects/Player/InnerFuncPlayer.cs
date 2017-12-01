@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -64,7 +65,7 @@ namespace TestFlask.Aspects.Player
                 requestedInvocation.Response = JsonConvert.SerializeObject(response, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
-                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
                 
                 requestedInvocation.ResponseType = typeNameSimplifierRegex.Replace(responseType.AssemblyQualifiedName, string.Empty); //save without version, public key token, culture
@@ -101,7 +102,7 @@ namespace TestFlask.Aspects.Player
                 var response = (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType), new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
-                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
                 EndInvocation(response);
                 return response;
@@ -111,7 +112,7 @@ namespace TestFlask.Aspects.Player
                 var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType), new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
-                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
                 EndInvocation(exception);
                 throw exception;

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -88,7 +89,7 @@ namespace TestFlask.Aspects.Player
                 var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType), new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
-                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
                 EndInvocation(exception);
                 throw exception;

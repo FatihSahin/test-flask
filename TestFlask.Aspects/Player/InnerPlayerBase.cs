@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -71,7 +72,7 @@ namespace TestFlask.Aspects.Player
             requestedInvocation.Request = JsonConvert.SerializeObject(requestArgs, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
-                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
             });
 
             //set hash codes
@@ -141,7 +142,7 @@ namespace TestFlask.Aspects.Player
                 rootInvocation.AssertionResult = JsonConvert.SerializeObject(result, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All,
-                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
                 api.PutInvocation(rootInvocation); //persist assertion result
             }
@@ -225,7 +226,7 @@ namespace TestFlask.Aspects.Player
             requestedInvocation.Exception = JsonConvert.SerializeObject(ex, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
-                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
             });
 
             requestedInvocation.Duration = duration;
