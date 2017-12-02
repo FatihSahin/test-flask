@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -223,7 +224,7 @@ namespace TestFlask.Aspects.Player
         {
             requestedInvocation.IsFaulted = true;
             requestedInvocation.ExceptionType = typeNameSimplifierRegex.Replace(ex.GetType().AssemblyQualifiedName, string.Empty);
-            requestedInvocation.Exception = JsonConvert.SerializeObject(ex, new JsonSerializerSettings
+            requestedInvocation.Exception = JsonConvert.SerializeObject(ex, Type.GetType(requestedInvocation.ExceptionType), new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple

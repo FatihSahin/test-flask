@@ -64,7 +64,7 @@ namespace TestFlask.Aspects.Player
                 requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
                 requestedInvocation.Response = JsonConvert.SerializeObject(response, new JsonSerializerSettings
                 {
-                    TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
+                    TypeNameHandling = TypeNameHandling.All,
                     TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
                 
@@ -101,7 +101,7 @@ namespace TestFlask.Aspects.Player
             {
                 var response = (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType), new JsonSerializerSettings
                 {
-                    TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
+                    TypeNameHandling = TypeNameHandling.All,
                     TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
                 EndInvocation(response);
@@ -111,7 +111,7 @@ namespace TestFlask.Aspects.Player
             {
                 var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType), new JsonSerializerSettings
                 {
-                    TypeNameHandling = TypeNameHandling.All, //Auto could be better? as we already know response type in advance
+                    TypeNameHandling = TypeNameHandling.None,
                     TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
                 EndInvocation(exception);

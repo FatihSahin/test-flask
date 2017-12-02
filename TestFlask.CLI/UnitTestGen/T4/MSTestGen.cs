@@ -37,7 +37,7 @@ namespace TestFlask.CLI.UnitTestGen.T4
             
             #line default
             #line hidden
-            this.Write(@"	*
+            this.Write(@"	    *
 *	https://github.com/FatihSahin/test-flask                                *
 *	Implement provider methods and step assertions inside another file.		*
 *																		 	*
