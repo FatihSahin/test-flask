@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using NUnit.Framework;
 using TestFlask.API.Cache;
 using TestFlask.API.InvocationVariable;
 using TestFlask.Data.Repos;
@@ -10,12 +10,12 @@ using TestFlask.Models.Entity;
 
 namespace TestFlask.API.Tests.UnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class InvocationVariableProcessorTest
     {
         string ProjectKey = "testProject";
 
-        [TestMethod]
+        [Test]
         public void Should_replace_mail_address_with_variable()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
@@ -81,7 +81,7 @@ namespace TestFlask.API.Tests.UnitTests
             Assert.AreEqual("Mails {{mailAddress}}", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_replace_variable_with_mail_address()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
@@ -126,7 +126,7 @@ namespace TestFlask.API.Tests.UnitTests
             Assert.AreEqual("mails xxxyyy@gmail.com", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_replace_url_with_variable()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
@@ -171,7 +171,7 @@ namespace TestFlask.API.Tests.UnitTests
             Assert.AreEqual("urls {{url}}", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_replace_variable_with_url()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
@@ -214,7 +214,7 @@ namespace TestFlask.API.Tests.UnitTests
             Assert.AreEqual("url https://www.google.com", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_replace_variables_with_url_and_mail()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
@@ -267,7 +267,7 @@ namespace TestFlask.API.Tests.UnitTests
             Assert.AreEqual("url https://www.google.com xxxyyy@gmail.com", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_replace_mail_address_and_url_with_variables()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
@@ -322,7 +322,7 @@ namespace TestFlask.API.Tests.UnitTests
             Assert.AreEqual("Mails {{mailAddress}} {{url}}", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_apply_step_variable()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
