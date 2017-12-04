@@ -16,7 +16,7 @@ namespace TestFlask.API.Tests.UnitTests
         string ProjectKey = "testProject";
 
         [Test]
-        public void Should_replace_mail_address_with_variable()
+        public void VariableProcessor_should_replace_mail_address_with_mail_address_variable()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
 
@@ -82,7 +82,7 @@ namespace TestFlask.API.Tests.UnitTests
         }
 
         [Test]
-        public void Should_replace_variable_with_mail_address()
+        public void VariableProcessor_should_replace_mail_address_variable_with_mail_address()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
 
@@ -127,7 +127,7 @@ namespace TestFlask.API.Tests.UnitTests
         }
 
         [Test]
-        public void Should_replace_url_with_variable()
+        public void VariableProcessor_should_replace_url_with_url_variable()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
 
@@ -172,7 +172,7 @@ namespace TestFlask.API.Tests.UnitTests
         }
 
         [Test]
-        public void Should_replace_variable_with_url()
+        public void VariableProcessor_should_replace_variable_with_url()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
 
@@ -215,7 +215,7 @@ namespace TestFlask.API.Tests.UnitTests
         }
 
         [Test]
-        public void Should_replace_variables_with_url_and_mail()
+        public void VariableProcessor_should_replace_url_and_mail_variables_with_url_and_mail()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
 
@@ -268,7 +268,7 @@ namespace TestFlask.API.Tests.UnitTests
         }
 
         [Test]
-        public void Should_replace_mail_address_and_url_with_variables()
+        public void VariableProcessor_should_replace_mail_address_and_url_with_url_and_mail_variables()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
 
@@ -323,7 +323,7 @@ namespace TestFlask.API.Tests.UnitTests
         }
 
         [Test]
-        public void Should_apply_step_variable()
+        public void VariableProcessor_should_apply_step_variable()
         {
             ApiCache.DeleteVariableByProject(ProjectKey);
 
