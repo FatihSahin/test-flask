@@ -36,24 +36,7 @@ namespace TestFlask.API.Controllers
             return scenarioRepo.GetScenario(scenarioNo);
         }
 
-        [Route("api/scenario")]
-        public Scenario Post(Scenario scenario)
-        {
-            var result = scenarioRepo.Insert(scenario, autoGenerateNos: true);
-            return result;
-        }
-
-        [Route("api/scenario")]
-        public Scenario Put(Scenario scenario)
-        {
-            var result = scenarioRepo.Update(scenario);
-
-            ApiCache.DeleteScenario(result.ScenarioNo);
-
-            return result;
-        }
-
-        [Route("api/scenario/clone")]
+        [Route("api/scenario/clone/{scenarioNo}")]
         public Scenario PostCloneScenario(long scenarioNo)
         {
             Scenario scenario = scenarioRepo.GetScenario(scenarioNo);
@@ -71,7 +54,7 @@ namespace TestFlask.API.Controllers
                 step.CreatedOn = DateTime.UtcNow;
 
                 step.StepNo = counterRepo.GetNextCounter("step").CounterValue;
-                foreach (Invocation invocation in step.Invocations)
+                foreach (Invocation invocation in step.Invocations.OrderBy(i => i.Depth))
                 {
                     invocation.StepNo = step.StepNo;
                     invocation.ScenarioNo = step.ScenarioNo;
@@ -84,17 +67,33 @@ namespace TestFlask.API.Controllers
                     string oldInstanceHashCode = invocation.InstanceHashCode;
                     invocation.InstanceHashCode = invocation.GetInvocationInstanceHashCode();
                     //update parent instance hash code to preserve tree strucuture for new instance hash codes
-                    step.Invocations.Where(s => s.ParentInstanceHashCode == oldInstanceHashCode).Select(i =>
+                    foreach(var child in step.Invocations.Where(s => s.ParentInstanceHashCode == oldInstanceHashCode))
                     {
-                        i.ParentInstanceHashCode = invocation.InstanceHashCode;
-                        return i;
-                    });
+                        child.ParentInstanceHashCode = invocation.InstanceHashCode;
+                    };
                 }
             }
 
             var inserted = scenarioRepo.Insert(scenario, autoGenerateNos: false);
 
             return inserted;
+        }
+
+        [Route("api/scenario")]
+        public Scenario Post(Scenario scenario)
+        {
+            var result = scenarioRepo.Insert(scenario, autoGenerateNos: true);
+            return result;
+        }
+
+        [Route("api/scenario")]
+        public Scenario Put(Scenario scenario)
+        {
+            var result = scenarioRepo.Update(scenario);
+
+            ApiCache.DeleteScenario(result.ScenarioNo);
+
+            return result;
         }
     }
 }
