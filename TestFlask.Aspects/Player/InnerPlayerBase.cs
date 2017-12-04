@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -71,7 +73,7 @@ namespace TestFlask.Aspects.Player
             requestedInvocation.Request = JsonConvert.SerializeObject(requestArgs, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
-                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
             });
 
             //set hash codes
@@ -141,7 +143,7 @@ namespace TestFlask.Aspects.Player
                 rootInvocation.AssertionResult = JsonConvert.SerializeObject(result, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All,
-                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
                 api.PutInvocation(rootInvocation); //persist assertion result
             }
@@ -221,11 +223,11 @@ namespace TestFlask.Aspects.Player
         protected void RecordException(Exception ex, long duration, params object[] requestArgs)
         {
             requestedInvocation.IsFaulted = true;
-            requestedInvocation.ExceptionType = ex.GetType().ToString();
-            requestedInvocation.Exception = JsonConvert.SerializeObject(ex, new JsonSerializerSettings
+            requestedInvocation.ExceptionType = typeNameSimplifierRegex.Replace(ex.GetType().AssemblyQualifiedName, string.Empty);
+            requestedInvocation.Exception = JsonConvert.SerializeObject(ex, Type.GetType(requestedInvocation.ExceptionType), new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
-                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
             });
 
             requestedInvocation.Duration = duration;
