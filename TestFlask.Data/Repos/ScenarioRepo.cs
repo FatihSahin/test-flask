@@ -10,7 +10,7 @@ namespace TestFlask.Data.Repos
 {
     public interface IScenarioRepo : IMongoRepo<Scenario>
     {
-        Scenario Insert(Scenario scenario);
+        Scenario Insert(Scenario scenario, bool autoGenerateNos);
         Step GetStep(long stepNo);
         void InsertInvocationsForStep(Step step);
         IEnumerable<Scenario> GetScenariosFlatByProject(string projectKey);
@@ -91,16 +91,24 @@ namespace TestFlask.Data.Repos
             return step;
         }
 
-        public Scenario Insert(Scenario scenario)
+        public Scenario Insert(Scenario scenario, bool autoGenerateNos)
         {
-            scenario.ScenarioNo = counterRepo.GetNextCounter("scenario").CounterValue;
+            if (autoGenerateNos)
+            {
+                scenario.ScenarioNo = counterRepo.GetNextCounter("scenario").CounterValue;
+            }
+
             scenario.CreatedOn = DateTime.UtcNow;
 
             if (scenario.Steps != null)
             {
                 foreach (var step in scenario.Steps)
                 {
-                    step.StepNo = counterRepo.GetNextCounter("step").CounterValue;
+                    if (autoGenerateNos)
+                    {
+                        step.StepNo = counterRepo.GetNextCounter("step").CounterValue;
+                    }
+
                     step.ScenarioNo = scenario.ScenarioNo;
 
                     if (step.Invocations == null)
