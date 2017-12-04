@@ -37,7 +37,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
                 }
             });
 
-            scenarioRepo.Insert(scenario);
+            scenarioRepo.Insert(scenario, autoGenerateNos: true);
 
             long stepNo = scenario.Steps[0].StepNo;
 
@@ -68,7 +68,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
                         StepName = "bStepName"
                     }
                 }
-            });
+            }, autoGenerateNos: true);
 
             var aStep = scenario.Steps.First();
 
@@ -95,7 +95,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
             var scenario = scenarioRepo.Insert(new Scenario
             {
                 ScenarioName = "stepfulScenarioName",
-            });
+            }, autoGenerateNos: true);
 
             Step dummyStep = new Step
             {
@@ -115,7 +115,7 @@ namespace TestFlask.API.Tests.IntegrationTests.Data
             var scenario = scenarioRepo.Insert(new Scenario
             {
                 ScenarioName = "stepfulScenarioName",
-            });
+            }, autoGenerateNos: true);
 
             Step dummyStep = new Step
             {
