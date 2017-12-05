@@ -91,19 +91,18 @@ namespace ");
                     "y, item });\r\n\t\t\tt.InvokeMember(\"MakeReadOnly\", BindingFlags.InvokeMethod | Bindi" +
                     "ngFlags.NonPublic | BindingFlags.Instance, null, headers, null);\r\n\t\t}\r\n\r\n\t\tpriva" +
                     "te Invocation GetRootInvocationFromApi(long stepNo)\r\n\t\t{\r\n\t\t\tTestFlaskApi api = " +
-                    "new TestFlaskApi();\r\n\t\t\tStep step = api.LoadStep(stepNo);\r\n\t\t\treturn step.Invoca" +
-                    "tions.SingleOrDefault(inv => inv.Depth == 1);\r\n\t\t}\r\n\r\n\t\tprivate void HandleAsser" +
-                    "tion(Invocation rootInvocation, object responseObject, Exception exception, Acti" +
-                    "on stepAssertion)\r\n\t\t{\r\n\t\t\tif ((!rootInvocation.IsFaulted && exception == null) " +
-                    "|| (rootInvocation.IsFaulted && exception != null))\r\n\t\t\t{\r\n\t\t\t\tstepAssertion();\r" +
-                    "\n\t\t\t}\r\n\t\t\telse if (exception != null)\r\n\t\t\t{\r\n\t\t\t\tstring exceptionStr = JsonConve" +
-                    "rt.SerializeObject(exception, jsonSerializerSettings);\r\n\t\t\t\tAssert.Fail($\"Expect" +
-                    "ed proper response of type {rootInvocation.ResponseType} but got exception =>{En" +
-                    "vironment.NewLine}{exceptionStr}\");\r\n\t\t\t}\r\n\t\t\telse\r\n\t\t\t{\r\n\t\t\t\tstring responseStr" +
-                    " = JsonConvert.SerializeObject(responseObject, jsonSerializerSettings);\r\n\t\t\t\tAss" +
-                    "ert.Fail($\"Expected exception of type {rootInvocation.ExceptionType} but got res" +
-                    "ponse =>{Environment.NewLine}{responseStr}\");\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\t#endregion\r\n\r\n\t\t#r" +
-                    "egion Scenarios\r\n\t\t\r\n");
+                    "new TestFlaskApi();\r\n\t\t\tStep step = api.LoadStep(stepNo);\r\n\t\t\treturn step.GetRoo" +
+                    "tInvocation();\r\n\t\t}\r\n\r\n\t\tprivate void HandleAssertion(Invocation rootInvocation," +
+                    " object responseObject, Exception exception, Action stepAssertion)\r\n\t\t{\r\n\t\t\tif (" +
+                    "(!rootInvocation.IsFaulted && exception == null) || (rootInvocation.IsFaulted &&" +
+                    " exception != null))\r\n\t\t\t{\r\n\t\t\t\tstepAssertion();\r\n\t\t\t}\r\n\t\t\telse if (exception !=" +
+                    " null)\r\n\t\t\t{\r\n\t\t\t\tstring exceptionStr = JsonConvert.SerializeObject(exception, j" +
+                    "sonSerializerSettings);\r\n\t\t\t\tAssert.Fail($\"Expected proper response of type {roo" +
+                    "tInvocation.ResponseType} but got exception =>{Environment.NewLine}{exceptionStr" +
+                    "}\");\r\n\t\t\t}\r\n\t\t\telse\r\n\t\t\t{\r\n\t\t\t\tstring responseStr = JsonConvert.SerializeObject(" +
+                    "responseObject, jsonSerializerSettings);\r\n\t\t\t\tAssert.Fail($\"Expected exception o" +
+                    "f type {rootInvocation.ExceptionType} but got response =>{Environment.NewLine}{r" +
+                    "esponseStr}\");\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\t#endregion\r\n\r\n\t\t#region Scenarios\r\n\t\t\r\n");
             
             #line 102 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
 
@@ -150,7 +149,7 @@ foreach (Scenario scenario in Scenarios) {
             #line 118 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
 
 	foreach (Step step in deepScenario.Steps) {
-		var rootInvocation = step.Invocations.Single(i=> i.Depth == 1);
+		var rootInvocation = step.GetRootInvocation();
 		signatureMatch = signatureRegex.Match(rootInvocation.InvocationSignature);
 
             

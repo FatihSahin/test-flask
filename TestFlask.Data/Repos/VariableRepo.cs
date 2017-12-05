@@ -27,17 +27,17 @@ namespace TestFlask.Data.Repos
 
         public IEnumerable<Variable> GetByProject(string projectKey)
         {
-            return Collection.Find(Builders<Variable>.Filter.Eq(a => a.ProjectKey, projectKey)).ToList();
+            return Collection.Find(Builders<Variable>.Filter.Eq(a => a.ProjectKey, projectKey)).ToEnumerable();
         }
 
         public IEnumerable<Variable> GetByScenario(long scenarioNo)
         {
-            return Collection.Find(Builders<Variable>.Filter.Eq(a => a.ScenarioNo, scenarioNo)).ToList();
+            return Collection.Find(Builders<Variable>.Filter.Eq(a => a.ScenarioNo, scenarioNo)).ToEnumerable();
         }
 
         public IEnumerable<Variable> GetByStep(long stepNo)
         {
-            return Collection.Find(Builders<Variable>.Filter.Eq(a => a.StepNo, stepNo)).ToList();
+            return Collection.Find(Builders<Variable>.Filter.Eq(a => a.StepNo, stepNo)).ToEnumerable();
         }
 
 

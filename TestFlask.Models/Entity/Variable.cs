@@ -23,7 +23,7 @@ namespace TestFlask.Models.Entity
         }
         public string GetStepKey()
         {
-            return CreateKey(ProjectKey, ScenarioNo, StepNo, "");
+            return CreateKey(ProjectKey, ScenarioNo, StepNo, string.Empty);
         }
 
         public static string CreateKey(string projectKey, long ScenarioNo, long StepNo, string Name)

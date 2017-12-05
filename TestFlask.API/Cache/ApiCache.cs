@@ -84,15 +84,15 @@ namespace TestFlask.API.Cache
             Delete(key);
         }
 
-        public static List<Variable> GetVariableByProject(string projectKey)
+        public static IEnumerable<Variable> GetVariablesByProject(string projectKey)
         {
-            return Get<List<Variable>>($"{variablePrefix}-{projectKey}");
+            return Get<IEnumerable<Variable>>($"{variablePrefix}-{projectKey}");
         }
 
 
-        public static void AddVariableByProject(string projectKey, List<Variable> variables)
+        public static void AddVariableByProject(string projectKey, IEnumerable<Variable> variables)
         {
-            Add($"{variablePrefix}-{projectKey}", variables);
+            Add($"{variablePrefix}-{projectKey}", variables.ToList());
         }
 
         public static void DeleteVariableByProject(string projectKey)

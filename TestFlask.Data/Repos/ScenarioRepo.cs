@@ -144,7 +144,7 @@ namespace TestFlask.Data.Repos
         public void InsertInvocationsForStep(Step step)
         {
             //set rootinvocation container type info in step level
-            var root = step.Invocations.SingleOrDefault(i => i.Depth == 1);
+            var root = step.GetRootInvocation();
             if (root != null)
             {
                 step.RootInvocationReflectedType = root.ReflectedType;

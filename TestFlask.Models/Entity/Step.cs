@@ -29,5 +29,10 @@ namespace TestFlask.Models.Entity
         public InvocationMatch InvocationMatchStrategy { get; set; }
 
         public string RootInvocationReflectedType { get; set; }
+
+        public Invocation GetRootInvocation()
+        {
+            return Invocations.SingleOrDefault(i => i.Depth == 1);
+        }
     }
 }

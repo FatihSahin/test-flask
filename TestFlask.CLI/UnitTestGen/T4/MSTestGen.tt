@@ -74,7 +74,7 @@ namespace <#=options.Namespace #>
 		{
 			TestFlaskApi api = new TestFlaskApi();
 			Step step = api.LoadStep(stepNo);
-			return step.Invocations.SingleOrDefault(inv => inv.Depth == 1);
+			return step.GetRootInvocation();
 		}
 
 		private void HandleAssertion(Invocation rootInvocation, object responseObject, Exception exception, Action stepAssertion)
@@ -117,7 +117,7 @@ foreach (Scenario scenario in Scenarios) {
 
 <#
 	foreach (Step step in deepScenario.Steps) {
-		var rootInvocation = step.Invocations.Single(i=> i.Depth == 1);
+		var rootInvocation = step.GetRootInvocation();
 		signatureMatch = signatureRegex.Match(rootInvocation.InvocationSignature);
 #>
 		private void <#= GetStepAssertMethodName(deepScenario, step)#>() {

@@ -12,9 +12,9 @@ namespace TestFlask.API.InvocationVariable
 {
     public class InvocationVariableProcessor : IInvocationVariableProcessor
     {
-        private const string variableRegexPattern = @"{{\s*[\w\.]+\s*}}";
         private const string variableOpeningTag = "{{";
         private const string variableClosingTag = "}}";
+        private string variableRegexPattern = $@"{variableOpeningTag}\s*[\w\.]+\s*{variableClosingTag}";
 
         private readonly IVariableRepo variableRepo;
 
@@ -25,20 +25,15 @@ namespace TestFlask.API.InvocationVariable
 
         public void ResolveVariables(Step step)
         {
-            var invocation = step.Invocations.SingleOrDefault(p => p.Depth == 1);
+            var invocation = step.GetRootInvocation();
             var inputVariables = FindVariables(invocation.RequestRaw, variableRegexPattern);
 
-            if (inputVariables != null)
+            foreach (var inputVariable in inputVariables)
             {
-                foreach (var inputVariable in inputVariables)
+                string value = GetVariable(step, inputVariable)?.Value;
+
+                if (!string.IsNullOrWhiteSpace(value))
                 {
-                    string value = GetVariable(step, inputVariable)?.Value;
-
-                    if (string.IsNullOrEmpty(value))
-                    {
-                        continue;
-                    }
-
                     invocation.RequestRaw = invocation.RequestRaw.Replace(inputVariable, value);
                 }
             }
@@ -48,93 +43,101 @@ namespace TestFlask.API.InvocationVariable
         {
             var variables = GetStepVariables(step).Where(p => !string.IsNullOrEmpty(p.GeneratorRegex));
 
-            if (variables != null)
+            foreach (var variable in variables)
             {
-                foreach (var variable in variables)
+                var rootInvocation = step.GetRootInvocation();
+                Regex genRegex = new Regex(variable.GeneratorRegex, RegexOptions.Singleline);
+
+                string replacement = $"{variableOpeningTag}{variable.Name}{variableClosingTag}";
+
+                var groupNames = genRegex.GetGroupNames();
+                bool hasContentGroup = groupNames.Contains("wrapStart") && groupNames.Contains("wrapEnd");
+
+                if (hasContentGroup)
                 {
-                    var invocation = step.Invocations.SingleOrDefault(p => p.Depth == 1);
-                    invocation.RequestRaw = Regex.Replace(invocation.RequestRaw, variable.GeneratorRegex, $"{variableOpeningTag}{variable.Name}{variableClosingTag}");
+                    replacement = $"${{wrapStart}}{replacement}${{wrapEnd}}";
                 }
+
+                rootInvocation.RequestRaw = Regex.Replace(rootInvocation.RequestRaw, variable.GeneratorRegex, replacement);
             }
         }
 
         private Variable GetVariable(Step step, string name)
         {
-            var variables = GetVariableByProject(step.ProjectKey);
+            var variables = GetVariablesByProject(step.ProjectKey);
+            Variable variable = null;
 
-            if (variables == null)
+            if (variables.Any())
             {
-                return null;
-            }
+                name = name.Replace(variableOpeningTag, string.Empty).Replace(variableClosingTag, string.Empty);
+                string variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, step.StepNo, name);
 
-            name = name.Replace(variableOpeningTag, "").Replace(variableClosingTag, "");
-            string variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, step.StepNo, name);
-
-            var variable = variables.SingleOrDefault(p => p.GetKey() == variableKey);
-            if (variable == null)
-            {
-                variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, 0, name);
                 variable = variables.SingleOrDefault(p => p.GetKey() == variableKey);
                 if (variable == null)
                 {
-                    variableKey = Variable.CreateKey(step.ProjectKey, 0, 0, name);
+                    variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, 0, name);
                     variable = variables.SingleOrDefault(p => p.GetKey() == variableKey);
+                    if (variable == null)
+                    {
+                        variableKey = Variable.CreateKey(step.ProjectKey, 0, 0, name);
+                        variable = variables.SingleOrDefault(p => p.GetKey() == variableKey);
+                    }
                 }
             }
 
             return variable;
         }
 
-        private IList<Variable> GetStepVariables(Step step)
+        private IEnumerable<Variable> GetStepVariables(Step step)
         {
-            var variables = GetVariableByProject(step.ProjectKey);
-
-            if (variables == null)
-            {
-                return null;
-            }
+            var variables = GetVariablesByProject(step.ProjectKey);
 
             var result = new List<Variable>();
 
-            string variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, step.StepNo, "");
-            result.AddRange(variables.Where(p => p.GetStepKey() == variableKey));
+            if (variables.Any())
+            {
+                string variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, step.StepNo, string.Empty);
+                result.AddRange(variables.Where(p => p.GetStepKey() == variableKey));
 
-            variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, 0, "");
-            result.AddRange(variables.Where(p => p.GetStepKey() == variableKey));
+                variableKey = Variable.CreateKey(step.ProjectKey, step.ScenarioNo, 0, string.Empty);
+                result.AddRange(variables.Where(p => p.GetStepKey() == variableKey));
 
-            variableKey = Variable.CreateKey(step.ProjectKey, 0, 0, "");
-            result.AddRange(variables.Where(p => p.GetStepKey() == variableKey));
+                variableKey = Variable.CreateKey(step.ProjectKey, 0, 0, string.Empty);
+                result.AddRange(variables.Where(p => p.GetStepKey() == variableKey));
+            }
 
             return result;
         }
 
-        private IList<Variable> GetVariableByProject(string projectKey)
+        private IEnumerable<Variable> GetVariablesByProject(string projectKey)
         {
-            var variables = ApiCache.GetVariableByProject(projectKey);
+            var variables = ApiCache.GetVariablesByProject(projectKey);
             if (variables == null)
             {
-                variables = variableRepo.GetByProject(projectKey).Where(p => p.IsEnabled == true).ToList();
+                variables = variableRepo.GetByProject(projectKey).Where(p => p.IsEnabled);
 
-                ApiCache.AddVariableByProject(projectKey, variables.ToList());
+                if (variables.Any())
+                {
+                    ApiCache.AddVariableByProject(projectKey, variables);
+                }
             }
 
             return variables;
         }
 
 
-        private IList<string> FindVariables(string input, string regexPattern)
+        private IEnumerable<string> FindVariables(string input, string regexPattern)
         {
-            var variables = new List<string>();
-            var matches = Regex.Matches(input, regexPattern);
+            var variables = new HashSet<string>();
 
-            if (matches == null || matches.Count == 0)
-            {
-                return null;
-            }
+            var matches = Regex.Matches(input, regexPattern);
 
             foreach (Match m in matches)
             {
-                variables.Add(m.Value);
+                if (!variables.Contains(m.Value))
+                {
+                    variables.Add(m.Value);
+                }
             }
 
             return variables;

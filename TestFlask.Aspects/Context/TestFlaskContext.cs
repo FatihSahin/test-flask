@@ -198,7 +198,7 @@ namespace TestFlask.Aspects.Context
 
         internal static Invocation GetRootInvocation()
         {
-            return LoadedStep.Invocations.SingleOrDefault(inv => inv.Depth == 1);
+            return LoadedStep.GetRootInvocation();
         }
 
         private static Step GetLoadedStep()
