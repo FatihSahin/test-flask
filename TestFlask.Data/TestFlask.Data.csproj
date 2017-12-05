@@ -62,6 +62,7 @@
     <Compile Include="Repos\MongoRepo.cs" />
     <Compile Include="Repos\ProjectRepo.cs" />
     <Compile Include="Repos\ScenarioRepo.cs" />
+    <Compile Include="Repos\VariableRepo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

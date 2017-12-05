@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using TestFlask.API.Cache;
 using TestFlask.API.InvocationMatcher;
+using TestFlask.API.InvocationVariable;
 using TestFlask.Data.Repos;
 using TestFlask.Models.Entity;
 using TestFlask.Models.Enums;
@@ -19,11 +20,13 @@ namespace TestFlask.API.Controllers
     {
         private readonly IScenarioRepo scenarioRepo;
         private readonly IProjectRepo projectRepo;
+        private readonly IInvocationVariableProcessor variableProcessor;
 
-        public StepController(IScenarioRepo pScenarioRepo, IProjectRepo pProjectRepo)
+        public StepController(IScenarioRepo pScenarioRepo, IProjectRepo pProjectRepo, IInvocationVariableProcessor pVariableProcessor)
         {
             scenarioRepo = pScenarioRepo;
             projectRepo = pProjectRepo;
+            variableProcessor = pVariableProcessor;
         }
 
         [Route("api/step/{stepNo}")]
@@ -48,6 +51,8 @@ namespace TestFlask.API.Controllers
 
             Matcher matcher = new MatcherProvider(project, scenario, step).Provide();
             matcher.Match();
+
+            variableProcessor.ResolveVariables(step);
 
             return step;
         }
@@ -88,7 +93,7 @@ namespace TestFlask.API.Controllers
 
         [Route("api/step/invocations/complete")]
         public void PutCompletedInvocations(Step step)
-        {            
+        {
             var dbStep = scenarioRepo.GetStep(step.StepNo);
  
             dbStep.Invocations.AddRange(step.Invocations.OrderBy(i => i.Depth).ThenBy(i => i.InvocationIndex).ThenBy(i => i.RecordedOn));

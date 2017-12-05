@@ -5,6 +5,7 @@ using System.Web.Http;
 using TestFlask.API.Controllers;
 using TestFlask.API.Unity;
 using TestFlask.Data.Repos;
+using TestFlask.API.InvocationVariable;
 
 namespace TestFlask.API
 {
@@ -30,6 +31,7 @@ namespace TestFlask.API
 
             container.RegisterType<IMongoClient, MongoClient>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connStr));
             container.RegisterType<IMongoDatabase>(new ContainerControlledLifetimeManager(), new InjectionFactory(con => con.Resolve<IMongoClient>().GetDatabase(dbName)));
+            container.RegisterType<IInvocationVariableProcessor, InvocationVariableProcessor>();
         }
 
         private static void RegisterRepos(IUnityContainer container)
@@ -38,6 +40,7 @@ namespace TestFlask.API
             container.RegisterType<ICounterRepo, CounterRepo>();
             container.RegisterType<IScenarioRepo, ScenarioRepo>();
             container.RegisterType<IAssertionRepo, AssertionRepo>();
+            container.RegisterType<IVariableRepo, VariableRepo>();
         }
 
     }
