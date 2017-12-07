@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-[assembly: InternalsVisibleTo("TestFlask.Aspects.Tests")]
+[assembly: InternalsVisibleTo("TestFlask.Aspects.Tests, PublicKey=002400000480000094000000060200000024000052534131000400000100010035a2c3f67fd308dad606315c8458478f77fc0b5d6d69a209210aa6c5d6bad39122ae1422e640310cc4b453602f90da9f70b180b3fe6fe104dd8d50e62e527f052b2ed5ad1c8e8758ab96cfefca5cb5800d44af00cd49f9f688a863c5c23007127352e613c606b684461d5162bdff56d5fee572b4293db6cbf4e6a7c35a984a9d")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("ba64cdc3-47bd-4987-9e9e-fc1a61ddf070")]

@@ -11,7 +11,7 @@ namespace TestFlask.CLI.Options
     public class UnitTestGenOptions
     {
         [Option('t', "testfw", Default = "mstest", HelpText = "Unit test framework [mstest|nunit]")]
-        public string UnitTestFramework { get; set; }
+        public string TestFramework { get; set; }
 
         [Option('a', "api", Required = true, HelpText = "TestFlask api host url that holds scenarios for which unit test will be generated")]
         public string ApiUrl { get; set; }
@@ -24,5 +24,9 @@ namespace TestFlask.CLI.Options
 
         [Option('n', "namespace", Default = "TestFlaskAutoTests", HelpText="Namespace for your generated test class")]
         public string Namespace { get; set; }
+
+        [Option('m', "mode", Default = "aot", HelpText = "Test generation mode. Use aot to embed test data into test files, and use jit to fetch test data on execution time")]
+        public string TestGenMode { get; set; }
+        
     }
 }

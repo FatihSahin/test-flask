@@ -1,7 +1,7 @@
 ﻿<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
   <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
   <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
-    <section name="testFlaskAssistant" type="TestFlask.Assistant.Core.Config.TestFlaskAssistantConfigSection, TestFlask.Assistant.Core, PublicKeyToken=null, Version=1.0.0.0" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+    <section name="testFlaskAssistant" type="TestFlask.Assistant.Core.Config.TestFlaskAssistantConfigSection, TestFlask.Assistant.Core, PublicKeyToken=5b9114f222369bea, Version=1.0.0.0" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
   </configSections>
   <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
   <testFlaskAssistant enabled="true" xdt:Transform="InsertIfMissing">

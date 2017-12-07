@@ -2,20 +2,24 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TestFlask.Aspects.ApiClient;
 using TestFlask.Aspects.Config;
+using TestFlask.Aspects.Enums;
 using TestFlask.CLI.Options;
 using TestFlask.Models.Entity;
+using TestFlask.Models.Utils;
 
 namespace TestFlask.CLI.UnitTestGen.T4
 {
     public partial class MSTestGen
     {
         private readonly UnitTestGenOptions options;
+
         public TestFlaskApi Api { get; set; }
 
         public Dictionary<string, string> Subjects { get; set; }
@@ -26,21 +30,31 @@ namespace TestFlask.CLI.UnitTestGen.T4
         public MSTestGen(UnitTestGenOptions pOptions)
         {
             options = pOptions;
+
             Subjects = new Dictionary<string, string>();
 
             TestFlaskConfig.Instance = new TestFlaskConfig
             {
-                Api = new ApiConfig
-                {
-                    Url = pOptions.ApiUrl
-                },
-                Project = new ProjectConfig
-                {
-                    Key = pOptions.ProjectKey
-                }
+                Api = new ApiConfig { Url = pOptions.ApiUrl },
+                Project = new ProjectConfig { Key = pOptions.ProjectKey }
             };
 
             Api = new TestFlaskApi();
+
+            ResetEmbedFile();
+        }
+
+        private void ResetEmbedFile()
+        {
+            if (options.TestGenMode == "aot")
+            {
+                string embedFile = GetEmbedFileName();
+
+                if (File.Exists(embedFile))
+                {
+                    File.Delete(embedFile);
+                }
+            }
         }
 
         private IEnumerable<Scenario> scenarios;
@@ -69,7 +83,7 @@ namespace TestFlask.CLI.UnitTestGen.T4
 
         public Scenario GetScenarioDeep(long scenarioNo)
         {
-            Scenario scenario = Api.GetScenarioDeep(scenarioNo); 
+            Scenario scenario = Api.GetScenarioDeep(scenarioNo);
 
             foreach (var step in scenario.Steps)
             {
@@ -80,7 +94,25 @@ namespace TestFlask.CLI.UnitTestGen.T4
                 }
             }
 
+            if (options.TestGenMode == "aot")
+            {
+                EmbedScenario(scenario);
+            }
+
             return scenario;
+        }
+
+        private void EmbedScenario(Scenario scenario)
+        {
+            string embedFileName = GetEmbedFileName();
+            var scenarioJson = JsonConvert.SerializeObject(scenario);
+            string compressed = CompressUtil.CompressString(scenarioJson);
+            File.AppendAllLines(embedFileName, new string[] { compressed });
+        }
+
+        private string GetEmbedFileName()
+        {
+            return $"{Path.GetFileNameWithoutExtension(options.FileName)}_Embed.txt";
         }
 
         public string GetScenarioTestMethodName(Scenario scenario)
@@ -115,8 +147,15 @@ namespace TestFlask.CLI.UnitTestGen.T4
         }
 
         public string GetRootMethodName()
-        { 
+        {
             return signatureMatch.Groups["methodName"].Value;
+        }
+
+        public string GetTestMode()
+        {
+            // aot mode is designed to run entirely offline
+            // therefor we set test mode to play because assert mode calls TestFlask api to save last assertion result.
+            return options.TestGenMode == "aot" ? TestModes.Play.ToString() : TestModes.Assert.ToString();
         }
     }
 }
