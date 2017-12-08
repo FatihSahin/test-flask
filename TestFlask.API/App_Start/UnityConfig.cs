@@ -9,39 +9,39 @@ using TestFlask.API.InvocationVariable;
 
 namespace TestFlask.API
 {
-    public static class UnityConfig
-    {
-        public static void Register(HttpConfiguration config)
-        {
+	public static class UnityConfig
+	{
+		public static void Register(HttpConfiguration config)
+		{
 			var container = new UnityContainer();
 
-            // register all your components with the container here
-            // it is NOT necessary to register your controllers
-            RegisterMongo(container);
+			// register all your components with the container here
+			// it is NOT necessary to register your controllers
+			RegisterMongo(container);
 
-            RegisterRepos(container);
+			RegisterRepos(container);
 
-            config.DependencyResolver = new UnityDependencyResolver(container);
-        }
+			config.DependencyResolver = new UnityDependencyResolver(container);
+		}
 
-        private static void RegisterMongo(IUnityContainer container)
-        {
-            string connStr = ConfigurationManager.AppSettings["testFlaskMongoDbServer"];
-            string dbName = ConfigurationManager.AppSettings["testFlaskMongoDbName"];
+		private static void RegisterMongo(IUnityContainer container)
+		{
+			string connStr = ConfigurationManager.AppSettings["testFlaskMongoDbServer"];
+			string dbName = ConfigurationManager.AppSettings["testFlaskMongoDbName"];
 
-            container.RegisterType<IMongoClient, MongoClient>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connStr));
-            container.RegisterType<IMongoDatabase>(new ContainerControlledLifetimeManager(), new InjectionFactory(con => con.Resolve<IMongoClient>().GetDatabase(dbName)));
-            container.RegisterType<IInvocationVariableProcessor, InvocationVariableProcessor>();
-        }
+			container.RegisterType<IMongoClient, MongoClient>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connStr));
+			container.RegisterType<IMongoDatabase>(new ContainerControlledLifetimeManager(), new InjectionFactory(con => con.Resolve<IMongoClient>().GetDatabase(dbName)));
+			container.RegisterType<IInvocationVariableProcessor, InvocationVariableProcessor>();
+		}
 
-        private static void RegisterRepos(IUnityContainer container)
-        {
-            container.RegisterType<IProjectRepo, ProjectRepo>();
-            container.RegisterType<ICounterRepo, CounterRepo>();
-            container.RegisterType<IScenarioRepo, ScenarioRepo>();
-            container.RegisterType<IAssertionRepo, AssertionRepo>();
-            container.RegisterType<IVariableRepo, VariableRepo>();
-        }
+		private static void RegisterRepos(IUnityContainer container)
+		{
+			container.RegisterType<IProjectRepo, ProjectRepo>();
+			container.RegisterType<ICounterRepo, CounterRepo>();
+			container.RegisterType<IScenarioRepo, ScenarioRepo>();
+			container.RegisterType<IAssertionRepo, AssertionRepo>();
+			container.RegisterType<IVariableRepo, VariableRepo>();
+		}
 
-    }
+	}
 }
