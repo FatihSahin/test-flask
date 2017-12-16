@@ -21,10 +21,19 @@ namespace TestFlask.Assistant.Mvc.WcfExtensions
             var config = TestFlaskAssistantConfig.Instance;
             var sessionContext = AssistantSessionContext.Current;
 
+            HttpRequestMessageProperty property = null;
+            if (request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
+            {
+                property = request.Properties[HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
+            }
+            else
+            {
+                property = new HttpRequestMessageProperty();
+                request.Properties.Add(HttpRequestMessageProperty.Name, property);
+            }
+
             if (config.Enabled && sessionContext != null && sessionContext.IsInRecordMode) 
             {
-                HttpRequestMessageProperty property = request.Properties[HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
-               
                 property.Headers[ContextKeys.ProjectKey] = config.Project.Key;
                 property.Headers[ContextKeys.ScenarioNo] = sessionContext.CurrentScenarioNo.ToString();
 
