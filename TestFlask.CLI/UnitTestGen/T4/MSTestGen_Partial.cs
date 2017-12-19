@@ -78,7 +78,12 @@ namespace TestFlask.CLI.UnitTestGen.T4
 
         public string GetTypeName(string simpleTypeName)
         {
-            return simpleTypeName.Split(',')[0].Trim();
+            if (!string.IsNullOrWhiteSpace(simpleTypeName))
+            {
+                return simpleTypeName.Split(',')[0].Trim();
+            }
+
+            return string.Empty;
         }
 
         public Scenario GetScenarioDeep(long scenarioNo)
@@ -155,7 +160,9 @@ namespace TestFlask.CLI.UnitTestGen.T4
         {
             // aot mode is designed to run entirely offline
             // therefor we set test mode to play because assert mode calls TestFlask api to save last assertion result.
-            return options.TestGenMode == "aot" ? TestModes.Play.ToString() : TestModes.Assert.ToString();
+            TestModes mode = options.TestGenMode == "aot" ? TestModes.Play : TestModes.Assert;
+
+            return $"{mode.GetType()}.{mode}.ToString()";
         }
     }
 }

@@ -77,15 +77,24 @@ namespace TestFlask.Data.Repos
 
         public Step UpdateStepShallow(Step step)
         {
+            UpdateDefinition<Scenario> combinedUpdate = Builders<Scenario>.Update.Combine(
+                   Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName));
+
+            //maybe there can be a simpler way
+            if (!string.IsNullOrWhiteSpace(step.RootInvocationReflectedType))
+            {
+                combinedUpdate = Builders<Scenario>.Update.Combine(
+                  Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName),
+                  Builders<Scenario>.Update.Set("Steps.$.RootInvocationReflectedType", step.RootInvocationReflectedType));
+
+            }
+
             Collection.FindOneAndUpdate(
                Builders<Scenario>.Filter.And(
                     Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, step.ScenarioNo),
                     Builders<Scenario>.Filter.Eq("Steps.StepNo", step.StepNo)
                ),
-               Builders<Scenario>.Update.Combine(
-                   Builders<Scenario>.Update.Set("Steps.$.StepName", step.StepName),
-                   Builders<Scenario>.Update.Set("Steps.$.RootInvocationReflectedType", step.RootInvocationReflectedType)
-               )
+               combinedUpdate
             );
 
             return step;

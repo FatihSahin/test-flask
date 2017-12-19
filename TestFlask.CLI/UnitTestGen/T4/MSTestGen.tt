@@ -58,7 +58,7 @@ namespace <#=options.Namespace #>
 
 		private static IEnumerable<Scenario> ReadEmbeddedScenarios()
 		{
-			string fileName = "<#= GetEmbedFileName() #>"";
+			string fileName = "<#= GetEmbedFileName() #>";
 
 			if (!File.Exists(fileName))
 			{

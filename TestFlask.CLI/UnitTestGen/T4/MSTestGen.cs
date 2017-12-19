@@ -103,7 +103,7 @@ namespace ");
             
             #line default
             #line hidden
-            this.Write(@""""";
+            this.Write(@""";
 
 			if (!File.Exists(fileName))
 			{
