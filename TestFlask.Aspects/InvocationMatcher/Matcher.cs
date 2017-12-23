@@ -19,6 +19,11 @@ namespace TestFlask.Aspects.InvocationMatcher
 
         private void GenerateMatches(Step step)
         {
+            if (KeyFunc == null)
+            {
+                return;
+            }
+
             matches = new Dictionary<string, string>();
             
             foreach (var invocation in step.Invocations)
@@ -34,6 +39,11 @@ namespace TestFlask.Aspects.InvocationMatcher
 
         public string Match(Invocation requestedInvocation)
         {
+            if (KeyFunc == null)
+            {
+                return requestedInvocation.InstanceHashCode;
+            }
+
             string key = KeyFunc(requestedInvocation);
 
             if (matches.ContainsKey(key))
