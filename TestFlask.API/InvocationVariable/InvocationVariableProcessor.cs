@@ -10,6 +10,12 @@ using TestFlask.Models.Enums;
 
 namespace TestFlask.API.InvocationVariable
 {
+    public interface IInvocationVariableProcessor
+    {
+        void ResolveVariables(Step step);
+        void GenerateVariables(Step step);
+    }
+
     public class InvocationVariableProcessor : IInvocationVariableProcessor
     {
         private const string variableOpeningTag = "{{";
@@ -142,11 +148,5 @@ namespace TestFlask.API.InvocationVariable
 
             return variables;
         }
-    }
-
-    public interface IInvocationVariableProcessor
-    {
-        void ResolveVariables(Step step);
-        void GenerateVariables(Step step);
     }
 }

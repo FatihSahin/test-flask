@@ -202,12 +202,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="InvocationMatcher\MatcherProvider.cs" />
-    <Compile Include="InvocationMatcher\RequestMatcher.cs" />
-    <Compile Include="InvocationMatcher\SiblingMatcher.cs" />
-    <Compile Include="InvocationMatcher\Matcher.cs" />
-    <Compile Include="InvocationMatcher\DepthMatcher.cs" />
-    <Compile Include="InvocationMatcher\SignatureMatcher.cs" />
     <Compile Include="InvocationVariable\InvocationVariableProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unity\UnityDependencyResolver.cs" />
