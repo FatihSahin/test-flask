@@ -70,6 +70,12 @@
     <Compile Include="Enums\TestModes.cs" />
     <Compile Include="Identifiers\IRequestIdentifier.cs" />
     <Compile Include="Identifiers\IResponseIdentifier.cs" />
+    <Compile Include="InvocationMatcher\DepthMatcher.cs" />
+    <Compile Include="InvocationMatcher\Matcher.cs" />
+    <Compile Include="InvocationMatcher\MatcherFactory.cs" />
+    <Compile Include="InvocationMatcher\RequestMatcher.cs" />
+    <Compile Include="InvocationMatcher\SiblingMatcher.cs" />
+    <Compile Include="InvocationMatcher\SignatureMatcher.cs" />
     <Compile Include="Player\InnerPlayerBase.cs" />
     <Compile Include="Player\InnerActionPlayer.cs" />
     <Compile Include="PlaybackAttribute.cs" />

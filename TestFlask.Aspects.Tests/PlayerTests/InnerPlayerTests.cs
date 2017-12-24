@@ -17,14 +17,15 @@ using TestFlask.Aspects.Identifiers;
 using TestFlask.Aspects.Player;
 using TestFlask.Models.Context;
 using TestFlask.Models.Entity;
+using TestFlask.Models.Enums;
 
 namespace TestFlask.Aspects.Tests.PlayerTests
 {
     [TestFixture]
     public class InnerPlayerTests : PlayerTestsBase
     {
-        private FooIdIdentifier customerIdIdentifier;
-        private FooResponseIdentifier customerResponseIdentifier;
+        private FooIdIdentifier fooIdIdentifier;
+        private FooResponseIdentifier fooResponseIdentifier;
         private FuncPlayer<int, Foo> funcPlayer;
 
         [SetUp]
@@ -32,12 +33,12 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         {
             base.SetUp();
 
-            customerIdIdentifier = new FooIdIdentifier();
-            customerResponseIdentifier = new FooResponseIdentifier();
+            fooIdIdentifier = new FooIdIdentifier();
+            fooResponseIdentifier = new FooResponseIdentifier();
 
             funcPlayer = new FuncPlayer<int, Foo>
                 ("SomeAssembly.Foo SomeAssembly.FooBiz::GetFoo(System.Int32)",
-                customerIdIdentifier, customerResponseIdentifier);
+                fooIdIdentifier, fooResponseIdentifier);
         }
 
         [Test]
@@ -47,8 +48,8 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
 
             Assert.AreEqual("{\"$type\":\"System.Object[], mscorlib\",\"$values\":[1]}", invocation.Request);
-            Assert.AreEqual(customerIdIdentifier.ResolveIdentifierKey(1) , invocation.RequestIdentifierKey);
-            Assert.AreEqual(customerIdIdentifier.ResolveDisplayInfo(1), invocation.RequestDisplayInfo);
+            Assert.AreEqual(fooIdIdentifier.ResolveIdentifierKey(1), invocation.RequestIdentifierKey);
+            Assert.AreEqual(fooIdIdentifier.ResolveDisplayInfo(1), invocation.RequestDisplayInfo);
 
         }
 
@@ -245,7 +246,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
             invocation.IsReplayable = true;
 
-            Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { invocation } };
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
 
             TestFlaskContext.LoadedStep = dummyLoadedStep;
 
@@ -263,7 +268,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
             invocation.IsReplayable = false;
 
-            Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { invocation } };
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
 
             TestFlaskContext.LoadedStep = dummyLoadedStep;
 
@@ -281,7 +290,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
             invocation.IsReplayable = true;
 
-            Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { invocation } };
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
 
             TestFlaskContext.LoadedStep = dummyLoadedStep;
 
@@ -299,7 +312,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
             invocation.IsReplayable = true;
 
-            Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { } };
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { }
+            };
 
             TestFlaskContext.LoadedStep = dummyLoadedStep;
 
@@ -342,7 +359,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             funcPlayer.BeginInvocation(1);
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
 
-            Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { invocation } };
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
             mockTestFlaskApi.Setup(api => api.LoadStep(44L)).Returns(dummyLoadedStep);
 
             var testMode = funcPlayer.DetermineTestMode(1);
@@ -360,7 +381,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             funcPlayer.BeginInvocation(1);
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
 
-            Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { invocation } };
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
             mockTestFlaskApi.Setup(api => api.LoadStep(44L)).Returns(dummyLoadedStep);
 
             var testMode = funcPlayer.DetermineTestMode(1);
@@ -378,7 +403,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             funcPlayer.BeginInvocation(1);
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
 
-            Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { invocation } };
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
             TestFlaskContext.LoadedStep = dummyLoadedStep; ;
 
             var testMode = funcPlayer.DetermineTestMode(1);
@@ -397,7 +426,11 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             funcPlayer.BeginInvocation(1);
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
 
-            Step dummyLoadedStep = new Step { Invocations = new List<Invocation> { invocation } };
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
             TestFlaskContext.LoadedStep = dummyLoadedStep; ;
 
             var testMode = funcPlayer.DetermineTestMode(1);

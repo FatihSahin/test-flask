@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using TestFlask.Aspects.Config;
 using TestFlask.Aspects.Enums;
+using TestFlask.Aspects.InvocationMatcher;
 using TestFlask.Models.Context;
 using TestFlask.Models.Entity;
 
@@ -88,6 +89,12 @@ namespace TestFlask.Aspects.Context
         public static bool IsInitialDepth => CallerDepth > 0 && CurrentDepth == (CallerDepth + 1);
 
         public static bool IsOverwriteStep => bool.Parse(HttpContextFactory.Current.Items["TestFlask_OverwriteStep"].ToString() ?? "false");
+
+        public static Invocation GetMatchedInvocation(Invocation requestedInvocation)
+        {
+            var matchedInstanceHashCode = GetMatcher().Match(requestedInvocation);
+            return LoadedStep.Invocations.FirstOrDefault(i => i.InstanceHashCode == matchedInstanceHashCode);
+        }
 
         #region NotPublic
 
@@ -217,7 +224,21 @@ namespace TestFlask.Aspects.Context
             if (HttpContextFactory.Current != null)
             {
                 HttpContextFactory.Current.Items["TestFlask_LoadedStep"] = step;
+
+                var matcher = MatcherFactory.CreateMatcher(step);
+
+                HttpContextFactory.Current.Items["TestFlask_InvocationMatcher"] = matcher;
             }
+        }
+
+        private static Matcher GetMatcher()
+        {
+            if (HttpContextFactory.Current != null)
+            {
+                return HttpContextFactory.Current.Items["TestFlask_InvocationMatcher"] as Matcher;
+            }
+
+            return null;
         }
 
         private static int GetDepth()
@@ -326,11 +347,6 @@ namespace TestFlask.Aspects.Context
             {
                 return default(long); //no step no provided, (possibly a nomock mode call)
             }
-        }
-
-        public static Invocation GetLoadedInvocation(string instanceHashCode)
-        {
-            return LoadedStep.Invocations.SingleOrDefault(inv => inv.InstanceHashCode == instanceHashCode);
         }
 
         private static int GetCallerDepth()

@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using TestFlask.API.Cache;
-using TestFlask.API.InvocationMatcher;
 using TestFlask.API.InvocationVariable;
 using TestFlask.Data.Repos;
 using TestFlask.Models.Entity;
@@ -49,12 +48,30 @@ namespace TestFlask.API.Controllers
             //get cached scenario instance, if not cached fetch and cache
             Scenario scenario = GetCachedScenario(step);
 
-            Matcher matcher = new MatcherProvider(project, scenario, step).Provide();
-            matcher.Match();
+            InvocationMatch stepMatchStrategy = DetermineMatchStrategy(step, project, scenario);
+            step.LoadedMatchStrategy = stepMatchStrategy;
 
             variableProcessor.ResolveVariables(step);
 
             return step;
+        }
+
+        private static InvocationMatch DetermineMatchStrategy(Step step, Project project, Scenario scenario)
+        {
+            InvocationMatch scenarioMatchStrategy = scenario.InvocationMatchStrategy != InvocationMatch.Inherit
+                ? scenario.InvocationMatchStrategy
+                : project.InvocationMatchStrategy;
+
+            InvocationMatch stepMatchStrategy = step.InvocationMatchStrategy != InvocationMatch.Inherit
+                ? step.InvocationMatchStrategy
+                : scenarioMatchStrategy;
+
+            if (stepMatchStrategy == InvocationMatch.Inherit)
+            {
+                stepMatchStrategy = InvocationMatch.Exact; //Exact is the default strategy if not set in any level
+            }
+
+            return stepMatchStrategy;
         }
 
         private Scenario GetCachedScenario(Step step)

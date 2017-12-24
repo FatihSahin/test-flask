@@ -169,20 +169,20 @@ namespace TestFlask.Aspects.Player
                     TestFlaskContext.LoadedStep = api.LoadStep(requestedInvocation.StepNo);
                 }
 
-                Invocation existingInvocation = TestFlaskContext.GetLoadedInvocation(requestedInvocation.InstanceHashCode);
+                Invocation matchedInvocation = TestFlaskContext.GetMatchedInvocation(requestedInvocation);
 
-                if (existingInvocation != null)
+                if (matchedInvocation != null)
                 {
                     if (requestedMode == TestModes.Assert)
                     {
                         mustPersistAssertionResult = TestFlaskContext.IsRootDepth;
                     }
-                    //lookup existing invocation and determine test mode
-                    return existingInvocation.IsReplayable ? TestModes.Play : TestModes.NoMock;
+                    //lookup matched invocation and determine test mode
+                    return matchedInvocation.IsReplayable ? TestModes.Play : TestModes.NoMock;
                 }
                 else
                 {
-                    //cannot find same invocation
+                    //cannot find matching invocation
                     return TestModes.NoMock;
                 }
             }
@@ -243,7 +243,7 @@ namespace TestFlask.Aspects.Player
         }
 
         /// <summary>
-        /// This method obtains the interface that declared the weaved method, and if ther is no interface it returns class that the method is declared
+        /// This method obtains the interface that declared the weaved method, and if there is no interface it returns class that the method is declared
         /// Reflected type is persisted in invocation entity to increase the flexibilty of the tool. 
         /// It is actually used in unit test generation to declare SUT type.
         /// </summary>

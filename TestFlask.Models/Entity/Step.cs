@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using TestFlask.Models.Enums;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace TestFlask.Models.Entity
 {
@@ -29,6 +30,9 @@ namespace TestFlask.Models.Entity
         public InvocationMatch InvocationMatchStrategy { get; set; }
 
         public string RootInvocationReflectedType { get; set; }
+
+        [BsonIgnore]
+        public InvocationMatch LoadedMatchStrategy { get; set; }
 
         public Invocation GetRootInvocation()
         {

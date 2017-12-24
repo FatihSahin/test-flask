@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="PlayerTestsBase.cs" />
     <Compile Include="PlayerTests\InnerPlayerTests.cs" />
+    <Compile Include="PlayerTests\MatcherTests.cs" />
     <Compile Include="PlayerTests\TestModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WeavingTests\SampleScenarioTests.cs" />

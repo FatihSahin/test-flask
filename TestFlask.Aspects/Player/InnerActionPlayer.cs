@@ -78,15 +78,15 @@ namespace TestFlask.Aspects.Player
 
         public void Play(params object[] requestArgs)
         {
-            var loadedInvocation = TestFlaskContext.GetLoadedInvocation(requestedInvocation.InstanceHashCode);
+            Invocation matchedInvocation = TestFlaskContext.GetMatchedInvocation(requestedInvocation);
 
-            if (!loadedInvocation.IsFaulted)
+            if (!matchedInvocation.IsFaulted)
             {
                 EndInvocation();
             }
             else
             {
-                var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType), new JsonSerializerSettings
+                var exception = (Exception)JsonConvert.DeserializeObject(matchedInvocation.Exception, Type.GetType(matchedInvocation.ExceptionType), new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.None,
                     TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple

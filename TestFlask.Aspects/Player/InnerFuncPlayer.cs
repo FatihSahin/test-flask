@@ -95,11 +95,11 @@ namespace TestFlask.Aspects.Player
 
         public TRes Play(params object[] requestArgs)
         {
-            var loadedInvocation = TestFlaskContext.GetLoadedInvocation(requestedInvocation.InstanceHashCode);
+            Invocation matchedInvocation = TestFlaskContext.GetMatchedInvocation(requestedInvocation);
 
-            if (!loadedInvocation.IsFaulted)
+            if (!matchedInvocation.IsFaulted)
             {
-                var response = (TRes)JsonConvert.DeserializeObject(loadedInvocation.Response, Type.GetType(loadedInvocation.ResponseType), new JsonSerializerSettings
+                var response = (TRes)JsonConvert.DeserializeObject(matchedInvocation.Response, Type.GetType(matchedInvocation.ResponseType), new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All,
                     TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
@@ -109,7 +109,7 @@ namespace TestFlask.Aspects.Player
             }
             else
             {
-                var exception = (Exception)JsonConvert.DeserializeObject(loadedInvocation.Exception, Type.GetType(loadedInvocation.ExceptionType), new JsonSerializerSettings
+                var exception = (Exception)JsonConvert.DeserializeObject(matchedInvocation.Exception, Type.GetType(matchedInvocation.ExceptionType), new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.None,
                     TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
