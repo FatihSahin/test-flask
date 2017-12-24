@@ -24,8 +24,8 @@ namespace TestFlask.Aspects.Tests.PlayerTests
     [TestFixture]
     public class InnerPlayerTests : PlayerTestsBase
     {
-        private FooIdIdentifier customerIdIdentifier;
-        private FooResponseIdentifier customerResponseIdentifier;
+        private FooIdIdentifier fooIdIdentifier;
+        private FooResponseIdentifier fooResponseIdentifier;
         private FuncPlayer<int, Foo> funcPlayer;
 
         [SetUp]
@@ -33,12 +33,12 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         {
             base.SetUp();
 
-            customerIdIdentifier = new FooIdIdentifier();
-            customerResponseIdentifier = new FooResponseIdentifier();
+            fooIdIdentifier = new FooIdIdentifier();
+            fooResponseIdentifier = new FooResponseIdentifier();
 
             funcPlayer = new FuncPlayer<int, Foo>
                 ("SomeAssembly.Foo SomeAssembly.FooBiz::GetFoo(System.Int32)",
-                customerIdIdentifier, customerResponseIdentifier);
+                fooIdIdentifier, fooResponseIdentifier);
         }
 
         [Test]
@@ -48,8 +48,8 @@ namespace TestFlask.Aspects.Tests.PlayerTests
             Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
 
             Assert.AreEqual("{\"$type\":\"System.Object[], mscorlib\",\"$values\":[1]}", invocation.Request);
-            Assert.AreEqual(customerIdIdentifier.ResolveIdentifierKey(1), invocation.RequestIdentifierKey);
-            Assert.AreEqual(customerIdIdentifier.ResolveDisplayInfo(1), invocation.RequestDisplayInfo);
+            Assert.AreEqual(fooIdIdentifier.ResolveIdentifierKey(1), invocation.RequestIdentifierKey);
+            Assert.AreEqual(fooIdIdentifier.ResolveDisplayInfo(1), invocation.RequestDisplayInfo);
 
         }
 
