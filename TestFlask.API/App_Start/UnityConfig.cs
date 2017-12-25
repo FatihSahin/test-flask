@@ -6,6 +6,8 @@ using TestFlask.API.Controllers;
 using TestFlask.API.Unity;
 using TestFlask.Data.Repos;
 using TestFlask.API.InvocationVariable;
+using TestFlask.API.Cache;
+using TestFlask.API.Loader;
 
 namespace TestFlask.API
 {
@@ -32,6 +34,8 @@ namespace TestFlask.API
 			container.RegisterType<IMongoClient, MongoClient>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connStr));
 			container.RegisterType<IMongoDatabase>(new ContainerControlledLifetimeManager(), new InjectionFactory(con => con.Resolve<IMongoClient>().GetDatabase(dbName)));
 			container.RegisterType<IInvocationVariableProcessor, InvocationVariableProcessor>();
+            container.RegisterType<IApiCacheManager, ApiCacheManager>();
+            container.RegisterType<IStepLoader, StepLoader>();
 		}
 
 		private static void RegisterRepos(IUnityContainer container)

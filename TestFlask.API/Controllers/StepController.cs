@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using TestFlask.API.Cache;
 using TestFlask.API.InvocationVariable;
+using TestFlask.API.Loader;
 using TestFlask.Data.Repos;
 using TestFlask.Models.Entity;
 using TestFlask.Models.Enums;
@@ -18,14 +19,12 @@ namespace TestFlask.API.Controllers
     public class StepController : ApiController
     {
         private readonly IScenarioRepo scenarioRepo;
-        private readonly IProjectRepo projectRepo;
-        private readonly IInvocationVariableProcessor variableProcessor;
+        private readonly IStepLoader stepLoader;
 
-        public StepController(IScenarioRepo pScenarioRepo, IProjectRepo pProjectRepo, IInvocationVariableProcessor pVariableProcessor)
+        public StepController(IScenarioRepo pScenarioRepo, IStepLoader pStepLoader)
         {
             scenarioRepo = pScenarioRepo;
-            projectRepo = pProjectRepo;
-            variableProcessor = pVariableProcessor;
+            stepLoader = pStepLoader;
         }
 
         [Route("api/step/{stepNo}")]
@@ -35,77 +34,13 @@ namespace TestFlask.API.Controllers
         }
 
         /// <summary>
-        /// Loads a step and mainpulates invocation responses using a matching strategy
+        /// Loads a step and deternines matching strategy to properly load matching invocation on the player
         /// It also caches scenario to optimize assertion performance
         /// </summary>
         [Route("api/step/load/{stepNo}")]
         public Step GetLoad(long stepNo)
         {
-            var step = scenarioRepo.GetStep(stepNo);
-
-            //get cached project instance, if not cached fetch and cache
-            Project project = GetCachedProject(step);
-            //get cached scenario instance, if not cached fetch and cache
-            Scenario scenario = GetCachedScenario(step);
-
-            InvocationMatch stepMatchStrategy = DetermineMatchStrategy(step, project, scenario);
-            step.LoadedMatchStrategy = stepMatchStrategy;
-
-            variableProcessor.ResolveVariables(step);
-
-            return step;
-        }
-
-        private static InvocationMatch DetermineMatchStrategy(Step step, Project project, Scenario scenario)
-        {
-            InvocationMatch scenarioMatchStrategy = scenario.InvocationMatchStrategy != InvocationMatch.Inherit
-                ? scenario.InvocationMatchStrategy
-                : project.InvocationMatchStrategy;
-
-            InvocationMatch stepMatchStrategy = step.InvocationMatchStrategy != InvocationMatch.Inherit
-                ? step.InvocationMatchStrategy
-                : scenarioMatchStrategy;
-
-            if (stepMatchStrategy == InvocationMatch.Inherit)
-            {
-                stepMatchStrategy = InvocationMatch.Exact; //Exact is the default strategy if not set in any level
-            }
-
-            return stepMatchStrategy;
-        }
-
-        private Scenario GetCachedScenario(Step step)
-        {
-            var scenario = ApiCache.GetScenario(step.ScenarioNo);
-
-            if (scenario == null)
-            {
-                scenario = scenarioRepo.GetScenarioFlat(step.ScenarioNo);
-
-                if (scenario != null)
-                {
-                    ApiCache.AddScenario(scenario);
-                }
-            }
-
-            return scenario;
-        }
-
-        private Project GetCachedProject(Step step)
-        {
-            var project = ApiCache.GetProject(step.ProjectKey);
-
-            if (project == null)
-            {
-                project = projectRepo.Get(step.ProjectKey);
-
-                if (project != null)
-                {
-                    ApiCache.AddProject(project);
-                }
-            }
-
-            return project;
+            return stepLoader.Load(stepNo);     
         }
 
         [Route("api/step/invocations/complete")]

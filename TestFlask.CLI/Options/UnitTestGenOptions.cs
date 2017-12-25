@@ -19,8 +19,8 @@ namespace TestFlask.CLI.Options
         [Option('p', "project", Required = true, HelpText = "TestFlask project key that owns the scenarios")]
         public string ProjectKey { get; set; }
 
-        [Option('f', "filename", Default = "TestFlaskTests_Auto.cs", HelpText= "Output file name")]
-        public string FileName { get; set; }
+        [Option('c', "classname", Default = "TestFlaskTests_Auto.cs", HelpText= "Output class name. Output file name will be [classname]_Auto.cs")]
+        public string ClassName { get; set; }
 
         [Option('n', "namespace", Default = "TestFlaskAutoTests", HelpText="Namespace for your generated test class")]
         public string Namespace { get; set; }

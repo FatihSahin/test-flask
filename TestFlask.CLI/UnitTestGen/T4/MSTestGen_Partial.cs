@@ -86,9 +86,9 @@ namespace TestFlask.CLI.UnitTestGen.T4
             return string.Empty;
         }
 
-        public Scenario GetScenarioDeep(long scenarioNo)
+        public Scenario LoadScenario(long scenarioNo)
         {
-            Scenario scenario = Api.GetScenarioDeep(scenarioNo);
+            Scenario scenario = Api.LoadScenario(scenarioNo);
 
             foreach (var step in scenario.Steps)
             {
@@ -117,7 +117,7 @@ namespace TestFlask.CLI.UnitTestGen.T4
 
         private string GetEmbedFileName()
         {
-            return $"{Path.GetFileNameWithoutExtension(options.FileName)}_Embed.txt";
+            return $"{options.ClassName}_Auto_Embed.txt";
         }
 
         public string GetScenarioTestMethodName(Scenario scenario)

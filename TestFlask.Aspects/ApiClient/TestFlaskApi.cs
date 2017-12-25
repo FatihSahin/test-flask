@@ -134,10 +134,10 @@ namespace TestFlask.Aspects.ApiClient
             return null;
         }
 
-        public Scenario GetScenarioDeep(long scenarioNo)
+        public Scenario LoadScenario(long scenarioNo)
         {
             var httpClient = PrepareClient();
-            var response = httpClient.GetAsync($"api/scenario/deep/{scenarioNo}").Result;
+            var response = httpClient.GetAsync($"api/scenario/load/{scenarioNo}").Result;
 
             if (response.IsSuccessStatusCode)
             {

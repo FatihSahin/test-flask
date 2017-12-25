@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using TestFlask.API.Cache;
+using TestFlask.API.Loader;
 using TestFlask.Data.Repos;
 using TestFlask.Models.Entity;
 
@@ -17,11 +18,13 @@ namespace TestFlask.API.Controllers
     {
         private readonly IScenarioRepo scenarioRepo;
         private readonly ICounterRepo counterRepo;
+        private readonly IStepLoader stepLoader;
 
-        public ScenarioController(IScenarioRepo pScenarioRepo, ICounterRepo pCounterRepo)
+        public ScenarioController(IScenarioRepo pScenarioRepo, ICounterRepo pCounterRepo, IStepLoader pStepLoader)
         {
             scenarioRepo = pScenarioRepo;
             counterRepo = pCounterRepo;
+            stepLoader = pStepLoader;
         }
 
         [Route("api/scenario/{scenarioNo}")]
@@ -30,16 +33,28 @@ namespace TestFlask.API.Controllers
             return scenarioRepo.GetScenarioFlat(scenarioNo);
         }
 
-        [Route("api/scenario/deep/{scenarioNo}")]
-        public Scenario GetDeep(long scenarioNo)
+        [Route("api/scenario/load/{scenarioNo}")]
+        public Scenario GetLoadScenario(long scenarioNo)
         {
-            return scenarioRepo.GetScenario(scenarioNo);
+            var scenario = scenarioRepo.GetScenarioFlat(scenarioNo);
+
+            List<Step> loadedSteps = new List<Step>();
+
+            foreach (var rawStep in scenario.Steps)
+            {
+                loadedSteps.Add(stepLoader.Load(rawStep.StepNo));
+            }
+
+            //override steps with loaded ones
+            scenario.Steps = loadedSteps;
+
+            return scenario;
         }
 
         [Route("api/scenario/clone/{scenarioNo}")]
         public Scenario PostCloneScenario(long scenarioNo)
         {
-            Scenario scenario = scenarioRepo.GetScenario(scenarioNo);
+            Scenario scenario = scenarioRepo.GetScenarioDeep(scenarioNo);
 
             long oldScenarioNo = scenario.ScenarioNo;
 

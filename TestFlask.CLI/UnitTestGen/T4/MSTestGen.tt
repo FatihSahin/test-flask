@@ -28,10 +28,12 @@ using TestFlask.Aspects.ApiClient;
 using TestFlask.Aspects.Enums;
 using TestFlask.Models.Context;
 using TestFlask.Models.Entity;
+using TestFlask.Aspects.Context;
 
 namespace <#=options.Namespace #>
 {
-	public partial class TestFlaskTests
+    [TestClass]
+	public partial class <#=options.ClassName#>
 	{
 		#region Conventional
 
@@ -97,7 +99,7 @@ namespace <#=options.Namespace #>
 			AddHeaderToRequest(HttpContext.Current.Request, ContextKeys.StepNo, invocation.StepNo.ToString());
 			AddHeaderToRequest(HttpContext.Current.Request, ContextKeys.TestMode, <#= GetTestMode() #>);
 
-			HttpContext.Current.Items.Add("TestFlask_LoadedStep", step);
+            TestFlaskContext.LoadedStep = step;
 		}
 
 		private void AddHeaderToRequest(HttpRequest request, string key, string value)
@@ -152,7 +154,7 @@ namespace <#=options.Namespace #>
 		
 <#
 foreach (Scenario scenario in Scenarios) {
-	Scenario deepScenario = GetScenarioDeep(scenario.ScenarioNo);
+	Scenario deepScenario = LoadScenario(scenario.ScenarioNo);
 #>
 		[TestMethod]
 		[TestCategory("TestFlask")]

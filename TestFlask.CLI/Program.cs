@@ -26,7 +26,7 @@ namespace TestFlask.CLI
 
             string contents = testGenerator.TransformText();
 
-            File.WriteAllText(options.FileName, contents);
+            File.WriteAllText($"{options.ClassName}_Auto.cs", contents);
 
             Console.WriteLine("Tests are generated successfully! Press any key to exit...");
             Console.ReadLine();

@@ -63,7 +63,7 @@ namespace TestFlask.API.Cache
         internal static Project GetProject(string projectKey)
         {
             string key = GetProjectKey(projectKey);
-            return Get<Project>(key); ;
+            return Get<Project>(key);
         }
 
         public static Scenario GetScenario(long scenarioNo)

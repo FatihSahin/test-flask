@@ -23,7 +23,7 @@ namespace TestFlask.Data.Repos
         Invocation GetInvocation(string instanceHashCode);
         void AppendInvocationsForStep(Step step);
         void DeleteInvocationsForStep(long scenarioNo, long stepNo);
-        Scenario GetScenario(long scenarioNo);
+        Scenario GetScenarioDeep(long scenarioNo);
     }
 
     public class ScenarioRepo : MongoRepo<Scenario>, IScenarioRepo
@@ -207,6 +207,11 @@ namespace TestFlask.Data.Repos
                 .ToEnumerable();
         }
 
+        /// <summary>
+        /// Retrieves a scenario with steps without invocations
+        /// </summary>
+        /// <param name="scenarioNo"></param>
+        /// <returns></returns>
         public Scenario GetScenarioFlat(long scenarioNo)
         {
             return Collection
@@ -215,7 +220,7 @@ namespace TestFlask.Data.Repos
                .SingleOrDefault();
         }
 
-        public Scenario GetScenario(long scenarioNo)
+        public Scenario GetScenarioDeep(long scenarioNo)
         {
             return Collection
                .Find(Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, scenarioNo))
