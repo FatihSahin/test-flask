@@ -134,6 +134,36 @@ namespace TestFlask.Aspects.ApiClient
             return null;
         }
 
+        public IEnumerable<Scenario> SearchScenarios(Scenario searchObj)
+        {
+            var httpClient = PrepareClient();
+
+            string searchQuery = PrepareSearchQueryForScenario(searchObj);
+
+            var response = httpClient.GetAsync($"api/project/scenarios/search?{searchQuery}").Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<Scenario[]>().Result;
+            }
+
+            return null;
+        }
+
+        private string PrepareSearchQueryForScenario(Scenario searchObj)
+        {
+            StringBuilder sb = new StringBuilder($"ProjectKey={searchObj.ProjectKey}");
+
+            if (searchObj.Labels != null && searchObj.Labels.Any())
+            {
+                foreach (var label in searchObj.Labels) {
+                    sb.Append($"&Labels={label}");
+                }
+            }
+
+            return sb.ToString();
+        }
+
         public Scenario LoadScenario(long scenarioNo)
         {
             var httpClient = PrepareClient();

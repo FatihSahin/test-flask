@@ -27,6 +27,8 @@ namespace TestFlask.CLI.Options
 
         [Option('m', "mode", Default = "aot", HelpText = "Test generation mode. Use aot to embed test data into test files, and use jit to fetch test data on execution time")]
         public string TestGenMode { get; set; }
-        
+
+        [Option('l', "labels", HelpText = "Comma seperated list of labels of scenarios for which to generate unit tests")]
+        public string Labels { get; set; }
     }
 }

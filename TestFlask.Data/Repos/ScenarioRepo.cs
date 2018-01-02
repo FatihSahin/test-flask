@@ -24,6 +24,7 @@ namespace TestFlask.Data.Repos
         void AppendInvocationsForStep(Step step);
         void DeleteInvocationsForStep(long scenarioNo, long stepNo);
         Scenario GetScenarioDeep(long scenarioNo);
+        IEnumerable<Scenario> SearchScenariosFlat(Scenario searchObj);
     }
 
     public class ScenarioRepo : MongoRepo<Scenario>, IScenarioRepo
@@ -143,7 +144,8 @@ namespace TestFlask.Data.Repos
                 Builders<Scenario>.Update.Combine(
                     Builders<Scenario>.Update.Set(s => s.ScenarioName, scenario.ScenarioName),
                     Builders<Scenario>.Update.Set(s => s.ScenarioDescription, scenario.ScenarioDescription),
-                    Builders<Scenario>.Update.Set(s => s.InvocationMatchStrategy, scenario.InvocationMatchStrategy)
+                    Builders<Scenario>.Update.Set(s => s.InvocationMatchStrategy, scenario.InvocationMatchStrategy),
+                    Builders<Scenario>.Update.Set(s => s.Labels, scenario.Labels)
                 )
             );
 
@@ -247,6 +249,31 @@ namespace TestFlask.Data.Repos
             var scenarioFilter = Builders<Scenario>.Filter.Eq("Steps.Invocations.InstanceHashCode", instanceHashCode);
             var scenario = Collection.Find(scenarioFilter).SingleOrDefault();
             return scenario?.Steps.SelectMany(st => st.Invocations).FirstOrDefault(i => i.InstanceHashCode == instanceHashCode);
+        }
+
+        public IEnumerable<Scenario> SearchScenariosFlat(Scenario searchObj)
+        {
+            List<FilterDefinition<Scenario>> rootFilters = new List<FilterDefinition<Scenario>>();
+
+            //project key
+            rootFilters.Add(Builders<Scenario>.Filter.Eq(sc => sc.ProjectKey, searchObj.ProjectKey));
+
+            //labels (with OR)
+            if (searchObj.Labels != null && searchObj.Labels.Any())
+            {
+                List<FilterDefinition<Scenario>> labelFilters = new List<FilterDefinition<Scenario>>();
+                foreach (var label in searchObj.Labels)
+                {
+                    labelFilters.Add(Builders<Scenario>.Filter.AnyEq(sc => sc.Labels, label));
+                }
+                rootFilters.Add(Builders<Scenario>.Filter.Or(labelFilters));
+            }
+
+            //can add additional root filters (like scenarioNo, dateTime range etc.)
+
+            return Collection.Find(Builders<Scenario>.Filter.And(rootFilters))
+                    .Project<Scenario>(Builders<Scenario>.Projection.Exclude(sc => sc.Steps))
+                    .ToEnumerable();
         }
     }
 }

@@ -23,5 +23,7 @@ namespace TestFlask.Models.Entity
         public DateTime CreatedOn { get; set; }
         
         public InvocationMatch InvocationMatchStrategy { get; set; }
+
+        public List<string> Labels { get; set; }
     }
 }

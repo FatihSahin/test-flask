@@ -71,9 +71,30 @@ namespace TestFlask.CLI.UnitTestGen.T4
             }
         }
 
+        private List<string> GenerateLabelsList()
+        {
+            if (!string.IsNullOrWhiteSpace(options.Labels))
+            {
+                List<string> labels = new List<string>();
+
+                foreach(var label in options.Labels.Split(',')
+                    .Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)))
+                {
+                    labels.Add(label);
+                }
+
+                return labels;
+            }
+
+            return null;
+        }
+
         private IEnumerable<Scenario> GetScenarios()
         {
-            return Api.GetScenarios();
+            Scenario searchObj = new Scenario();
+            searchObj.ProjectKey = options.ProjectKey;
+            searchObj.Labels = GenerateLabelsList();
+            return Api.SearchScenarios(searchObj);
         }
 
         public string GetTypeName(string simpleTypeName)

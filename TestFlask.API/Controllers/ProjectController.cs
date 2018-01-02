@@ -37,10 +37,17 @@ namespace TestFlask.API.Controllers
         }
 
         [Route("api/project/scenarios/{projectKey}")]
-        
+
         public IEnumerable<Scenario> GetScenarios(string projectKey)
         {
             return scenarioRepo.GetScenariosFlatByProject(projectKey);
+        }
+
+        [Route("api/project/scenarios/search")]
+
+        public IEnumerable<Scenario> GetSearchScenarios([FromUri] Scenario searchObj)
+        {
+            return scenarioRepo.SearchScenariosFlat(searchObj);
         }
 
         [Route("api/project")]
