@@ -25,6 +25,7 @@ namespace TestFlask.Data.Repos
         void DeleteInvocationsForStep(long scenarioNo, long stepNo);
         Scenario GetScenarioDeep(long scenarioNo);
         IEnumerable<Scenario> SearchScenariosFlat(Scenario searchObj);
+        IEnumerable<string> GetLabels(string projectKey);
     }
 
     public class ScenarioRepo : MongoRepo<Scenario>, IScenarioRepo
@@ -274,6 +275,15 @@ namespace TestFlask.Data.Repos
             return Collection.Find(Builders<Scenario>.Filter.And(rootFilters))
                     .Project<Scenario>(Builders<Scenario>.Projection.Exclude(sc => sc.Steps))
                     .ToEnumerable();
+        }
+
+        public IEnumerable<string> GetLabels(string projectKey)
+        {
+            return Collection.AsQueryable()
+                .Where(sc => sc.ProjectKey == projectKey)
+                .SelectMany(sc => sc.Labels)
+                .ToList()
+                .Distinct();
         }
     }
 }

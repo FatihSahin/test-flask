@@ -91,10 +91,21 @@ namespace TestFlask.CLI.UnitTestGen.T4
 
         private IEnumerable<Scenario> GetScenarios()
         {
-            Scenario searchObj = new Scenario();
-            searchObj.ProjectKey = options.ProjectKey;
-            searchObj.Labels = GenerateLabelsList();
-            return Api.SearchScenarios(searchObj);
+            List<string> labels = GenerateLabelsList();
+
+            if (labels != null && labels.Any())
+            {
+                Scenario searchObj = new Scenario
+                {
+                    ProjectKey = options.ProjectKey,
+                    Labels = labels
+                };
+                return Api.SearchScenarios(searchObj);
+            }
+            else
+            {
+                return Api.GetScenarios();
+            }
         }
 
         public string GetTypeName(string simpleTypeName)

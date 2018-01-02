@@ -50,6 +50,13 @@ namespace TestFlask.API.Controllers
             return scenarioRepo.SearchScenariosFlat(searchObj);
         }
 
+        [Route("api/project/labels/{projectKey}")]
+        public IEnumerable<string> GetLabels(string projectKey)
+        {
+            var results = scenarioRepo.GetLabels(projectKey);
+            return results;
+        }
+
         [Route("api/project")]
         public Project Post(Project project)
         {
