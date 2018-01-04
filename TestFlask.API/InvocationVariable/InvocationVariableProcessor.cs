@@ -32,15 +32,21 @@ namespace TestFlask.API.InvocationVariable
         public void ResolveVariables(Step step)
         {
             var invocation = step.GetRootInvocation();
-            var inputVariables = FindVariables(invocation.RequestRaw, variableRegexPattern);
 
-            foreach (var inputVariable in inputVariables)
+            //can be null on intellirecord mode on cross domain requests.
+            //A more complete solution is required to be able to process inner cross requests' variables too.
+            if (invocation != null) 
             {
-                string value = GetVariable(step, inputVariable)?.Value;
+                var inputVariables = FindVariables(invocation.RequestRaw, variableRegexPattern);
 
-                if (!string.IsNullOrWhiteSpace(value))
+                foreach (var inputVariable in inputVariables)
                 {
-                    invocation.RequestRaw = invocation.RequestRaw.Replace(inputVariable, value);
+                    string value = GetVariable(step, inputVariable)?.Value;
+
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        invocation.RequestRaw = invocation.RequestRaw.Replace(inputVariable, value);
+                    }
                 }
             }
         }

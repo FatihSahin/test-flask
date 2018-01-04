@@ -17,6 +17,7 @@ using TestFlask.Aspects.Context;
 using TestFlask.Aspects.Enums;
 using TestFlask.Aspects.Identifiers;
 using TestFlask.Models.Entity;
+using TestFlask.Models.Enums;
 
 namespace TestFlask.Aspects.Player
 {
@@ -28,16 +29,7 @@ namespace TestFlask.Aspects.Player
 
         public void CallOriginal(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
         {
-            try
-            {
-                originalMethodInfo.Invoke(target, requestArgs);
-                EndInvocation();
-            }
-            catch (Exception ex)
-            {
-                EndInvocation(ex.InnerException); //outer exception is TargetInvocationException (System.Reflection)
-                throw ex.InnerException;
-            }
+            Record(target, originalMethodInfo, requestArgs); 
         }
 
         public void Record(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
@@ -49,18 +41,7 @@ namespace TestFlask.Aspects.Player
             try
             {
                 originalMethodInfo.Invoke(target, requestArgs);
-                requestedInvocation.Duration = sw.ElapsedMilliseconds;
-
-                requestedInvocation.ResponseType = "System.Void";
-
-                ResolveReflectedInterfaceType(originalMethodInfo);
-
-                if (requestedInvocation.Depth == 1)    //root invocation
-                {
-                    requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;
-                }
-
-                TryPersistStepInvocations();
+                SetResponse(InvocationMode.Call, sw.ElapsedMilliseconds);
 
                 EndInvocation();
             }
@@ -76,12 +57,26 @@ namespace TestFlask.Aspects.Player
             }
         }
 
+        private void SetResponse(InvocationMode invocationMode, long callDuration)
+        {
+            requestedInvocation.Duration = callDuration;
+            requestedInvocation.InvocationMode = invocationMode;
+
+            requestedInvocation.ResponseType = "System.Void";
+
+            if (requestedInvocation.Depth == 1)    //root invocation
+            {
+                requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;
+            }
+        }
+
         public void Play(params object[] requestArgs)
         {
             Invocation matchedInvocation = TestFlaskContext.GetMatchedInvocation(requestedInvocation);
 
             if (!matchedInvocation.IsFaulted)
             {
+                SetResponse(InvocationMode.Replay, -1);
                 EndInvocation();
             }
             else
@@ -91,7 +86,10 @@ namespace TestFlask.Aspects.Player
                     TypeNameHandling = TypeNameHandling.None,
                     TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
+
+                SetException(InvocationMode.Replay, -1L, exception);
                 EndInvocation(exception);
+
                 throw exception;
             }
         }
