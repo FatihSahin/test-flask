@@ -34,11 +34,19 @@ namespace TestFlask.Aspects.Context
             HttpContext context = application.Context;
             HttpRequest request = context.Request;
 
-            //if backend is called with record mode
-            if (request.Headers[ContextKeys.TestMode] == TestModes.Record.ToString())
-            {
-                CaptureRawRequest(request);
+            string testMode = request.Headers[ContextKeys.TestMode];
 
+            //if in no mock mode dont bother to do anything
+            if (testMode == TestModes.NoMock.ToString())
+            {
+                return;
+            }
+
+            CaptureRawRequest(request);
+
+            //if backend is called with record mode (do not create an auto step for intellirecord, intellirecord is meant to be called upon an early recorded step that is already provided)
+            if (testMode == TestModes.Record.ToString())
+            {
                 if (request.Headers[ContextKeys.StepNo] == null)
                 {
                     CreateAutoStep(request);

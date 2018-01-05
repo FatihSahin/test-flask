@@ -60,6 +60,7 @@
     <Compile Include="Context\ContextKeys.cs" />
     <Compile Include="Entity\Variable.cs" />
     <Compile Include="Enums\AssertionStatus.cs" />
+    <Compile Include="Enums\InvocationMode.cs" />
     <Compile Include="Enums\VariableLevel.cs" />
     <Compile Include="Enums\InvocationMatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

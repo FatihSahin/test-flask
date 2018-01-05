@@ -326,12 +326,97 @@ namespace TestFlask.Aspects.Tests.PlayerTests
         }
 
         [Test]
+        public void InnerPlayer_DetermineTestMode_ReturnsRecordMode_WhenIntelliRecordRequested_But_MatchingInvocationIsNotFound()
+        {
+            requestHeaders[ContextKeys.TestMode] = TestModes.IntelliRecord.ToString();
+
+            funcPlayer.BeginInvocation(1);
+            Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
+
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { }
+            };
+
+            TestFlaskContext.LoadedStep = dummyLoadedStep;
+
+            var testMode = funcPlayer.DetermineTestMode(1);
+
+            Assert.AreEqual(TestModes.Record, testMode);
+        }
+
+        [Test]
+        public void InnerPlayer_DetermineTestMode_ReturnsPlayMode_WhenIntelliRecordRequested_And_MatchingReplayableInvocationIsFound()
+        {
+            requestHeaders[ContextKeys.TestMode] = TestModes.IntelliRecord.ToString();
+
+            funcPlayer.BeginInvocation(1);
+            Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
+            invocation.IsReplayable = true;
+
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
+
+            TestFlaskContext.LoadedStep = dummyLoadedStep;
+
+            var testMode = funcPlayer.DetermineTestMode(1);
+
+            Assert.AreEqual(TestModes.Play, testMode);
+        }
+
+        [Test]
+        public void InnerPlayer_DetermineTestMode_ReturnsRecordMode_WhenIntelliRecordRequested_And_MatchingNotReplayableInvocationIsFound()
+        {
+            requestHeaders[ContextKeys.TestMode] = TestModes.IntelliRecord.ToString();
+
+            funcPlayer.BeginInvocation(1);
+            Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
+            invocation.IsReplayable = false;
+
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
+
+            TestFlaskContext.LoadedStep = dummyLoadedStep;
+
+            var testMode = funcPlayer.DetermineTestMode(1);
+
+            Assert.AreEqual(TestModes.Record, testMode);
+        }
+
+        [Test]
         public void InnerPlayer_CallsApiDeleteInvocation_WhenOverwritingStepOnRecordMode_And_InRootDepth()
         {
             requestHeaders[ContextKeys.TestMode] = TestModes.Record.ToString();
             requestHeaders.Add(ContextKeys.StepNo, "66");
 
             funcPlayer.BeginInvocation(1);
+            var testMode = funcPlayer.DetermineTestMode(1);
+
+            mockTestFlaskApi.Verify(api => api.DeleteStepInvocations(TestFlaskContext.RequestedStep), Times.Once);
+        }
+
+        [Test]
+        public void InnerPlayer_CallsApiDeleteInvocation_WhenOverwritingStepOnIntelliRecordMode_And_InRootDepth()
+        {
+            requestHeaders[ContextKeys.TestMode] = TestModes.IntelliRecord.ToString();
+            requestHeaders.Add(ContextKeys.StepNo, "66");
+
+            funcPlayer.BeginInvocation(1);
+            Invocation invocation = funcPlayer.innerPlayer.requestedInvocation;
+
+            Step dummyLoadedStep = new Step
+            {
+                LoadedMatchStrategy = InvocationMatch.Exact,
+                Invocations = new List<Invocation> { invocation }
+            };
+            mockTestFlaskApi.Setup(api => api.LoadStep(66L)).Returns(dummyLoadedStep);
             var testMode = funcPlayer.DetermineTestMode(1);
 
             mockTestFlaskApi.Verify(api => api.DeleteStepInvocations(TestFlaskContext.RequestedStep), Times.Once);

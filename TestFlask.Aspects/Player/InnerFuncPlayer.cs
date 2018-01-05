@@ -17,6 +17,7 @@ using TestFlask.Aspects.Context;
 using TestFlask.Aspects.Enums;
 using TestFlask.Aspects.Identifiers;
 using TestFlask.Models.Entity;
+using TestFlask.Models.Enums;
 
 namespace TestFlask.Aspects.Player
 {
@@ -32,17 +33,7 @@ namespace TestFlask.Aspects.Player
 
         public TRes CallOriginal(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
         {
-            try
-            {
-                TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
-                EndInvocation(response);
-                return response;
-            }
-            catch (Exception ex)
-            {
-                EndInvocation(ex.InnerException); //outer exception is TargetInvocationException (System.Reflection)
-                throw ex.InnerException;
-            }
+            return Record(target, originalMethodInfo, requestArgs);
         }
 
         public TRes Record(object target, MethodInfo originalMethodInfo, params object[] requestArgs)
@@ -55,28 +46,8 @@ namespace TestFlask.Aspects.Player
             try
             {
                 TRes response = (TRes)(originalMethodInfo.Invoke(target, requestArgs));
-                requestedInvocation.Duration = sw.ElapsedMilliseconds;
 
-                //if response is not null, use its type (as it may me a derived type, if null we have no choice to use declared generic type
-                //Does not support proxified entities
-                var responseType = response != null ? response.GetType() : typeof(TRes);
-
-                requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
-                requestedInvocation.Response = JsonConvert.SerializeObject(response, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All,
-                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
-                });
-                
-                requestedInvocation.ResponseType = typeNameSimplifierRegex.Replace(responseType.AssemblyQualifiedName, string.Empty); //save without version, public key token, culture
-
-                if (requestedInvocation.Depth == 1)    //root invocation
-                {
-                    requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;
-                }
-
-                TryPersistStepInvocations();
-
+                SetResponse(InvocationMode.Call, sw.ElapsedMilliseconds, response);
                 EndInvocation(response);
 
                 return response;
@@ -93,6 +64,29 @@ namespace TestFlask.Aspects.Player
             }
         }
 
+        private void SetResponse(InvocationMode invocationMode, long callDuration, TRes response)
+        {
+            requestedInvocation.Duration = callDuration;
+
+            //if response is not null, use its type (as it may me a derived type, if null we have no choice to use declared generic type
+            //Does not support proxified entities
+            var responseType = response != null ? response.GetType() : typeof(TRes);
+
+            requestedInvocation.ResponseDisplayInfo = responseIdentifier?.ResolveDisplayInfo(response);
+            requestedInvocation.Response = JsonConvert.SerializeObject(response, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
+            });
+
+            requestedInvocation.ResponseType = typeNameSimplifierRegex.Replace(responseType.AssemblyQualifiedName, string.Empty); //save without version, public key token, culture
+
+            if (requestedInvocation.Depth == 1)    //root invocation
+            {
+                requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;
+            }
+        }
+
         public TRes Play(params object[] requestArgs)
         {
             Invocation matchedInvocation = TestFlaskContext.GetMatchedInvocation(requestedInvocation);
@@ -104,7 +98,10 @@ namespace TestFlask.Aspects.Player
                     TypeNameHandling = TypeNameHandling.All,
                     TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
+
+                SetResponse(InvocationMode.Replay, -1L, response);
                 EndInvocation(response);
+
                 return response;
             }
             else
@@ -114,7 +111,10 @@ namespace TestFlask.Aspects.Player
                     TypeNameHandling = TypeNameHandling.None,
                     TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
                 });
+
+                SetException(InvocationMode.Replay, -1L, exception);
                 EndInvocation(exception);
+
                 throw exception;
             }
         }

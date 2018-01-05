@@ -10,6 +10,7 @@ namespace TestFlask.Aspects.Enums
         NoMock = 0,
         Record = 1,
         Play = 2,
-        Assert = 3
+        Assert = 3,
+        IntelliRecord = 4
     }
 }

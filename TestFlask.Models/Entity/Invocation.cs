@@ -55,6 +55,8 @@ namespace TestFlask.Models.Entity
 
         public int InvocationIndex { get; set; }
 
+        public InvocationMode InvocationMode { get; set; }
+
         public string SignatureHashCode { get; set; }
 
         public string RequestHashCode { get; set; }

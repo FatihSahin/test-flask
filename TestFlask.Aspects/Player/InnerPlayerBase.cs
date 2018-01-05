@@ -18,6 +18,7 @@ using TestFlask.Aspects.Context;
 using TestFlask.Aspects.Enums;
 using TestFlask.Aspects.Identifiers;
 using TestFlask.Models.Entity;
+using TestFlask.Models.Enums;
 
 namespace TestFlask.Aspects.Player
 {
@@ -129,6 +130,8 @@ namespace TestFlask.Aspects.Player
 
         protected void EndInvocation(object result = null)
         {
+            TryPersistStepInvocations();
+
             TestFlaskContext.CurrentDepth--;
 
             //if it is back to initial for a cross request
@@ -164,9 +167,11 @@ namespace TestFlask.Aspects.Player
             }
             else
             {
-                if (TestFlaskContext.LoadedStep == null && (TestFlaskContext.IsRootDepth || TestFlaskContext.IsInitialDepth))
+                TryLoadStep();
+
+                if (requestedMode == TestModes.IntelliRecord)
                 {
-                    TestFlaskContext.LoadedStep = api.LoadStep(requestedInvocation.StepNo);
+                    TryCleanStepInvocations();
                 }
 
                 Invocation matchedInvocation = TestFlaskContext.GetMatchedInvocation(requestedInvocation);
@@ -177,14 +182,38 @@ namespace TestFlask.Aspects.Player
                     {
                         mustPersistAssertionResult = TestFlaskContext.IsRootDepth;
                     }
-                    //lookup matched invocation and determine test mode
-                    return matchedInvocation.IsReplayable ? TestModes.Play : TestModes.NoMock;
+
+                    if (requestedMode == TestModes.IntelliRecord)
+                    {
+                        //lookup matched invocation and determine test mode
+                        return matchedInvocation.IsReplayable ? TestModes.Play : TestModes.Record;
+                    }
+                    else
+                    {
+                        //lookup matched invocation and determine test mode
+                        return matchedInvocation.IsReplayable ? TestModes.Play : TestModes.NoMock;
+                    }
                 }
                 else
                 {
                     //cannot find matching invocation
-                    return TestModes.NoMock;
+                    if (requestedMode == TestModes.IntelliRecord)
+                    {
+                        return TestModes.Record;
+                    }
+                    else
+                    {
+                        return TestModes.NoMock;
+                    }
                 }
+            }
+        }
+
+        private void TryLoadStep()
+        {
+            if (TestFlaskContext.LoadedStep == null && (TestFlaskContext.IsRootDepth || TestFlaskContext.IsInitialDepth))
+            {
+                TestFlaskContext.LoadedStep = api.LoadStep(requestedInvocation.StepNo);
             }
         }
 
@@ -198,7 +227,7 @@ namespace TestFlask.Aspects.Player
             }
         }
 
-        protected void TryPersistStepInvocations()
+        private void TryPersistStepInvocations()
         {
             var step = TestFlaskContext.RequestedStep;
 
@@ -209,37 +238,45 @@ namespace TestFlask.Aspects.Player
 
             step.Invocations.Add(requestedInvocation);
 
-            if (TestFlaskContext.IsInitialDepth)
-            {
-                api.AppendStepInvocations(step);
-            }
+            var requestedMode = TestFlaskContext.RequestedMode;
 
-            if (TestFlaskContext.IsRootDepth)
+            if (requestedMode == TestModes.Record || requestedMode == TestModes.IntelliRecord)
             {
-                api.CompleteStepInvocations(step);
+                if (TestFlaskContext.IsInitialDepth)
+                {
+                    api.AppendStepInvocations(step);
+                }
+
+                if (TestFlaskContext.IsRootDepth)
+                {
+                    api.CompleteStepInvocations(step);
+                }
             }
         }
 
         protected void RecordException(Exception ex, long duration, params object[] requestArgs)
         {
+            SetException(InvocationMode.Call, duration, ex);
+            EndInvocation(ex);
+        }
+
+        protected void SetException(InvocationMode invocationMode, long duration, Exception exception)
+        {
             requestedInvocation.IsFaulted = true;
-            requestedInvocation.ExceptionType = typeNameSimplifierRegex.Replace(ex.GetType().AssemblyQualifiedName, string.Empty);
-            requestedInvocation.Exception = JsonConvert.SerializeObject(ex, Type.GetType(requestedInvocation.ExceptionType), new JsonSerializerSettings
+            requestedInvocation.ExceptionType = typeNameSimplifierRegex.Replace(exception.GetType().AssemblyQualifiedName, string.Empty);
+            requestedInvocation.Exception = JsonConvert.SerializeObject(exception, Type.GetType(requestedInvocation.ExceptionType), new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple
             });
 
             requestedInvocation.Duration = duration;
+            requestedInvocation.InvocationMode = invocationMode;
 
             if (requestedInvocation.Depth == 1)    //root invocation
             {
                 requestedInvocation.RequestRaw = TestFlaskContext.RawRequest;
             }
-
-            TryPersistStepInvocations();
-
-            EndInvocation(ex);
         }
 
         /// <summary>
