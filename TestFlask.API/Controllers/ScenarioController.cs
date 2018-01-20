@@ -110,5 +110,12 @@ namespace TestFlask.API.Controllers
 
             return result;
         }
+
+        [Route("api/scenario/{scenarioNo}")]
+        public bool Delete(long scenarioNo)
+        {
+            ApiCache.DeleteScenario(scenarioNo);
+            return scenarioRepo.Delete(scenarioNo);
+        }
     }
 }

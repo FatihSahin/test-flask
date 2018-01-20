@@ -16,6 +16,7 @@ namespace TestFlask.Data.Repos
         IEnumerable<Scenario> GetScenariosFlatByProject(string projectKey);
         Scenario GetScenarioFlat(long scenarioNo);
         Step InsertStep(Step step);
+        void DeleteStep(long stepNo);
         Step UpdateStep(Step step);
         Step UpdateStepShallow(Step step);
         Scenario Update(Scenario scenario);
@@ -26,6 +27,7 @@ namespace TestFlask.Data.Repos
         Scenario GetScenarioDeep(long scenarioNo);
         IEnumerable<Scenario> SearchScenariosFlat(Scenario searchObj);
         IEnumerable<string> GetLabels(string projectKey);
+        bool Delete(long scenarioNo);
     }
 
     public class ScenarioRepo : MongoRepo<Scenario>, IScenarioRepo
@@ -75,6 +77,16 @@ namespace TestFlask.Data.Repos
             Collection.FindOneAndUpdate(scenarioStepFilter, updateStep);
 
             return step;
+        }
+
+        public void DeleteStep(long stepNo)
+        {
+            var step = GetStep(stepNo);
+
+            var scenarioFilter = Builders<Scenario>.Filter.Eq(sc => sc.ScenarioNo, step.ScenarioNo);
+            var pullStep = Builders<Scenario>.Update.PullFilter(sce => sce.Steps, s => s.StepNo == step.StepNo);
+
+            Collection.FindOneAndUpdate(scenarioFilter, pullStep);
         }
 
         public Step UpdateStepShallow(Step step)
@@ -284,6 +296,12 @@ namespace TestFlask.Data.Repos
                 .SelectMany(sc => sc.Labels)
                 .ToList()
                 .Distinct();
+        }
+
+        public bool Delete(long scenarioNo)
+        {
+            var deleteResult = Collection.DeleteOne(Builders<Scenario>.Filter.Eq(s => s.ScenarioNo, scenarioNo));
+            return deleteResult.DeletedCount > 0;
         }
     }
 }

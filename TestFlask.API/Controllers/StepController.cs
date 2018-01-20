@@ -33,6 +33,13 @@ namespace TestFlask.API.Controllers
             return scenarioRepo.GetStep(stepNo);
         }
 
+        [Route("api/step/{stepNo}")]
+        public bool Delete(long stepNo)
+        {
+            scenarioRepo.DeleteStep(stepNo);
+            return true;
+        }
+
         /// <summary>
         /// Loads a step and deternines matching strategy to properly load matching invocation on the player
         /// It also caches scenario to optimize assertion performance
