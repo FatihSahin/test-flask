@@ -36,7 +36,7 @@ namespace TestFlask.Models.Entity
 
         public Invocation GetRootInvocation()
         {
-            return Invocations.SingleOrDefault(i => i.Depth == 1);
+            return Invocations.FirstOrDefault(i => i.Depth == 1);
         }
     }
 }
