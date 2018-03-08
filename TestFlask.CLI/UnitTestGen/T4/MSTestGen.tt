@@ -130,23 +130,48 @@ namespace <#=options.Namespace #>
 			return step;
 		}
 
-		private void HandleAssertion(Invocation rootInvocation, object responseObject, Exception exception, Action stepAssertion)
-		{
-			if ((!rootInvocation.IsFaulted && exception == null) || (rootInvocation.IsFaulted && exception != null))
-			{
-				stepAssertion();
-			}
-			else if (exception != null)
-			{
-				string exceptionStr = JsonConvert.SerializeObject(exception, jsonSerializerSettings);
-				Assert.Fail($"Expected proper response of type {rootInvocation.ResponseType} but got exception =>{Environment.NewLine}{exceptionStr}");
-			}
-			else
-			{
-				string responseStr = JsonConvert.SerializeObject(responseObject, jsonSerializerSettings);
-				Assert.Fail($"Expected exception of type {rootInvocation.ExceptionType} but got response =>{Environment.NewLine}{responseStr}");
-			}
-		}
+        private void HandleAssertion(Invocation rootInvocation, object responseObject, Exception exception, Action stepAssertion)
+        {
+            if ((!rootInvocation.IsFaulted && exception == null) || (rootInvocation.IsFaulted && exception != null))
+            {
+                stepAssertion();
+            }
+            else if (exception != null)
+            {
+                string exceptionStr = JToken.Parse(JsonConvert.SerializeObject(exception, jsonSerializerSettings)).ToString(Formatting.Indented);
+                Assert.Fail($"Expected proper response of type {rootInvocation.ResponseType} but got exception =>{Environment.NewLine}{exceptionStr}{Environment.NewLine}{GetExceptionStackOutput()}");
+            }
+            else
+            {
+                string responseStr = JToken.Parse(JsonConvert.SerializeObject(responseObject, jsonSerializerSettings)).ToString(Formatting.Indented);
+                Assert.Fail($"Expected exception of type {rootInvocation.ExceptionType} but got response =>{Environment.NewLine}{responseStr}");
+            }
+        }
+
+        private string GetExceptionStackOutput()
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            IEnumerable<Invocation> exceptionalInvocations = TestFlaskContext.InvocationStack.ExceptionStack;
+
+            strBuilder.AppendLine("**** TestFlask Exception Stack Snapshot ****");
+            foreach (var excInv in exceptionalInvocations)
+            {
+                strBuilder.AppendLine("\t**** Faulty Invocation ****");
+                strBuilder.AppendLine($"\t\tMethod => {excInv.InvocationSignature}");
+                strBuilder.AppendLine($"\t\tInvocation Mode => {excInv.InvocationMode}");
+                if (!string.IsNullOrWhiteSpace(excInv.RequestDisplayInfo))
+                {
+                    strBuilder.AppendLine($"\t\tRequest Info => {excInv.RequestDisplayInfo}");
+                }
+                strBuilder.AppendLine($"\t\tRequest => ");
+                strBuilder.AppendLine(JToken.Parse(excInv.Request).ToString(Formatting.Indented));
+                strBuilder.AppendLine($"\t\tExceptionType => {excInv.ExceptionType}");
+                strBuilder.AppendLine($"\t\tException => ");
+                strBuilder.AppendLine(JToken.Parse(excInv.Exception).ToString(Formatting.Indented));
+            }
+
+            return strBuilder.ToString();
+        }
 
 		#endregion
 

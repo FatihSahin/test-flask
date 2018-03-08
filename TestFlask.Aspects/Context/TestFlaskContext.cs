@@ -90,6 +90,8 @@ namespace TestFlask.Aspects.Context
 
         public static bool IsOverwriteStep => bool.Parse(HttpContextFactory.Current.Items["TestFlask_OverwriteStep"].ToString() ?? "false");
 
+        public static InvocationStack InvocationStack => GetInvocationStack(); 
+
         public static Invocation GetMatchedInvocation(Invocation requestedInvocation)
         {
             var matchedInstanceHashCode = GetMatcher().Match(requestedInvocation);
@@ -362,6 +364,24 @@ namespace TestFlask.Aspects.Context
             }
 
             return 0;
+        }
+
+        private static InvocationStack GetInvocationStack()
+        {
+            if (HttpContextFactory.Current != null)
+            {
+                var invocationStack = HttpContextFactory.Current.Items["TestFlask_InvocationStack"] as InvocationStack;
+
+                if (invocationStack == null)
+                {
+                    invocationStack = new InvocationStack();
+                    HttpContextFactory.Current.Items["TestFlask_InvocationStack"] = invocationStack;
+                }
+
+                return invocationStack;
+            }
+
+            return null;
         }
 
         #endregion

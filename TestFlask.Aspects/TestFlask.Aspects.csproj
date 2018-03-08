@@ -65,6 +65,7 @@
     <Compile Include="Config\TestFlaskConfig.cs" />
     <Compile Include="Config\TestFlaskConfigSection.cs" />
     <Compile Include="Context\HttpContextFactory.cs" />
+    <Compile Include="Context\InvocationStack.cs" />
     <Compile Include="Context\TestFlaskContext.cs" />
     <Compile Include="Context\TestFlaskHttpModule.cs" />
     <Compile Include="Enums\TestModes.cs" />

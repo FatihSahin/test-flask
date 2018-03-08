@@ -90,6 +90,10 @@ namespace TestFlask.Aspects.Player
 
             //make this invocation latest parent for the current depth
             TestFlaskContext.InvocationParentTable[TestFlaskContext.CurrentDepth] = requestedInvocation.InstanceHashCode;
+
+            //add this invocation to InvocationStack
+            //TODO: make this optional to reduce memory peformance issues
+            TestFlaskContext.InvocationStack.Push(requestedInvocation);
         }
 
         private void SetInstanceHashCode()
