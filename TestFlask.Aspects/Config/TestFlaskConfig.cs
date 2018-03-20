@@ -28,11 +28,11 @@ namespace TestFlask.Aspects.Config
                     {
                         Api = new ApiConfig
                         {
-                            Url = section.Api.Url
+                            Url = section?.Api?.Url
                         },
                         Project = new ProjectConfig
                         {
-                            Key = section.Project.Key
+                            Key = section?.Project?.Key
                         }
                     };
                 }

@@ -31,18 +31,18 @@ namespace TestFlask.Assistant.Core.Config
 
                     instance = new TestFlaskAssistantConfig
                     {
-                        Enabled = section.Enabled,
+                        Enabled = section != null ? section.Enabled : false,
                         Api = new ApiConfig
                         {
-                            Url = section.Api?.Url
+                            Url = section?.Api?.Url
                         },
                         Manager = new ManagerConfig
                         {
-                            Url = section.Manager?.Url
+                            Url = section?.Manager?.Url
                         },
                         Project = new ProjectConfig
                         {
-                            Key = section.Project.Key
+                            Key = section?.Project?.Key
                         }
                     };
                 }
