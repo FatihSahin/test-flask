@@ -24,6 +24,7 @@ using System.Text;
 using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TestFlask.Aspects.ApiClient;
 using TestFlask.Aspects.Enums;
 using TestFlask.Models.Context;
@@ -119,7 +120,7 @@ namespace <#=options.Namespace #>
 
 		private Step GetLoadedStep(long stepNo)
 		{
-			Step step = embeddedScenarios.SelectMany(sc => sc.Steps).SingleOrDefault(st => st.StepNo == stepNo);
+			Step step = embeddedScenarios?.SelectMany(sc => sc.Steps).SingleOrDefault(st => st.StepNo == stepNo);
 
 			if (step == null)
 			{
