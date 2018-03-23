@@ -174,14 +174,23 @@ namespace <#=options.Namespace #>
             return strBuilder.ToString();
         }
 
-		#endregion
+        private Invocation PrepareStep(long stepNo) 
+        {
+            Step loadedStep = GetLoadedStep(stepNo);
+			var rootInvocation = loadedStep.GetRootInvocation();
+			ProvideTestFlaskHttpContext(loadedStep);
+			ProvideOperationContext(rootInvocation);
+            return rootInvocation;
+        }
 
-		#region Scenarios
+		#endregion
 		
 <#
 foreach (Scenario scenario in Scenarios) {
 	Scenario deepScenario = LoadScenario(scenario.ScenarioNo);
 #>
+        #region <#= GetScenarioTestMethodName(deepScenario)#>
+
 		[TestMethod]
 		[TestCategory("TestFlask")]
 		public void <#= GetScenarioTestMethodName(deepScenario)#>() {
@@ -199,37 +208,29 @@ foreach (Scenario scenario in Scenarios) {
 		var rootInvocation = step.GetRootInvocation();
 		signatureMatch = signatureRegex.Match(rootInvocation.InvocationSignature);
 #>
-		private void <#= GetStepAssertMethodName(deepScenario, step)#>() {
-			
-			long stepNo = <#=step.StepNo #>;
-			Step loadedStep = GetLoadedStep(stepNo);
+		private void <#= GetStepAssertMethodName(deepScenario, step)#>() 
+        {			
+            var rootInvocation = PrepareStep(<#=step.StepNo #>);	
+			var requestObject = JsonConvert.DeserializeObject<object[]>(rootInvocation.Request, jsonSerializerSettings).First() as <#=GetRequestTypeName()#>;
 
-			var rootInvocation = loadedStep.GetRootInvocation();
-
-			ProvideTestFlaskHttpContext(loadedStep);
-			ProvideOperationContext(rootInvocation);
-
-			var requestObject = JsonConvert.DeserializeObject<object[]>(rootInvocation.Request, jsonSerializerSettings).First()
-				as <#=GetRequestTypeName()#>;
+            //Set up additional behaviour for method args
+            SetUp_<#= GetStepAssertMethodName(deepScenario, step)#>(requestObject);
 
 			<#=GetResponseTypeName()#> responseObject = null;
 			Exception exception = null;
 			
-			try
-			{
-				responseObject = subject<#= GetSubjectValue(step)#>.<#= GetRootMethodName() #>(requestObject);
-			}
-			catch (Exception ex)
-			{
-				exception = ex;
-			}
+			try { responseObject = subject<#= GetSubjectValue(step)#>.<#= GetRootMethodName() #>(requestObject); }
+			catch (Exception ex) { exception = ex; }
 
-			HandleAssertion(rootInvocation, responseObject, exception, () => Assert<#= GetStepAssertMethodName(deepScenario, step)#>(responseObject, exception));
+			HandleAssertion(rootInvocation, responseObject, exception, 
+                () => Assert_<#= GetStepAssertMethodName(deepScenario, step)#>(responseObject, exception));
 		}
 
 <#
 	}
 #>
+        #endregion
+
 <# 
 } 
 
@@ -238,8 +239,5 @@ foreach (Scenario scenario in Scenarios) {
 <#
 	}
 #>
-
-		#endregion
-
 	}
 }

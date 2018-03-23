@@ -199,10 +199,13 @@ namespace ");
                     "tExceptionType => {excInv.ExceptionType}\");\r\n                strBuilder.AppendLi" +
                     "ne($\"\\t\\tException => \");\r\n                strBuilder.AppendLine(JToken.Parse(ex" +
                     "cInv.Exception).ToString(Formatting.Indented));\r\n            }\r\n\r\n            re" +
-                    "turn strBuilder.ToString();\r\n        }\r\n\r\n\t\t#endregion\r\n\r\n\t\t#region Scenarios\r\n\t" +
-                    "\t\r\n");
+                    "turn strBuilder.ToString();\r\n        }\r\n\r\n        private Invocation PrepareStep" +
+                    "(long stepNo) \r\n        {\r\n            Step loadedStep = GetLoadedStep(stepNo);\r" +
+                    "\n\t\t\tvar rootInvocation = loadedStep.GetRootInvocation();\r\n\t\t\tProvideTestFlaskHtt" +
+                    "pContext(loadedStep);\r\n\t\t\tProvideOperationContext(rootInvocation);\r\n            " +
+                    "return rootInvocation;\r\n        }\r\n\r\n\t\t#endregion\r\n\t\t\r\n");
             
-            #line 181 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 188 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
 
 foreach (Scenario scenario in Scenarios) {
 	Scenario deepScenario = LoadScenario(scenario.ScenarioNo);
@@ -210,16 +213,23 @@ foreach (Scenario scenario in Scenarios) {
             
             #line default
             #line hidden
-            this.Write("\t\t[TestMethod]\r\n\t\t[TestCategory(\"TestFlask\")]\r\n\t\tpublic void ");
+            this.Write("        #region ");
             
-            #line 187 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 192 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetScenarioTestMethodName(deepScenario)));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n\r\n\t\t[TestMethod]\r\n\t\t[TestCategory(\"TestFlask\")]\r\n\t\tpublic void ");
+            
+            #line 196 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetScenarioTestMethodName(deepScenario)));
             
             #line default
             #line hidden
             this.Write("() {\r\n");
             
-            #line 188 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 197 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
 
 	foreach (Step step in deepScenario.Steps) {
 
@@ -228,14 +238,14 @@ foreach (Scenario scenario in Scenarios) {
             #line hidden
             this.Write("\t\t\t");
             
-            #line 191 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 200 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetStepAssertMethodName(deepScenario, step)));
             
             #line default
             #line hidden
             this.Write("();\r\n");
             
-            #line 192 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 201 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
 
 	}
 
@@ -244,7 +254,7 @@ foreach (Scenario scenario in Scenarios) {
             #line hidden
             this.Write("\t\t} \r\n\r\n");
             
-            #line 197 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 206 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
 
 	foreach (Step step in deepScenario.Steps) {
 		var rootInvocation = step.GetRootInvocation();
@@ -255,75 +265,76 @@ foreach (Scenario scenario in Scenarios) {
             #line hidden
             this.Write("\t\tprivate void ");
             
-            #line 202 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 211 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetStepAssertMethodName(deepScenario, step)));
             
             #line default
             #line hidden
-            this.Write("() {\r\n\t\t\t\r\n\t\t\tlong stepNo = ");
+            this.Write("() \r\n        {\t\t\t\r\n            var rootInvocation = PrepareStep(");
             
-            #line 204 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 213 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(step.StepNo));
             
             #line default
             #line hidden
-            this.Write(@";
-			Step loadedStep = GetLoadedStep(stepNo);
-
-			var rootInvocation = loadedStep.GetRootInvocation();
-
-			ProvideTestFlaskHttpContext(loadedStep);
-			ProvideOperationContext(rootInvocation);
-
-			var requestObject = JsonConvert.DeserializeObject<object[]>(rootInvocation.Request, jsonSerializerSettings).First()
-				as ");
+            this.Write(");\t\r\n\t\t\tvar requestObject = JsonConvert.DeserializeObject<object[]>(rootInvocatio" +
+                    "n.Request, jsonSerializerSettings).First() as ");
             
-            #line 213 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 214 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRequestTypeName()));
             
             #line default
             #line hidden
-            this.Write(";\r\n\r\n\t\t\t");
+            this.Write(";\r\n\r\n            //Set up additional behaviour for method args\r\n            SetUp" +
+                    "_");
             
-            #line 215 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 217 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetStepAssertMethodName(deepScenario, step)));
+            
+            #line default
+            #line hidden
+            this.Write("(requestObject);\r\n\r\n\t\t\t");
+            
+            #line 219 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetResponseTypeName()));
             
             #line default
             #line hidden
-            this.Write(" responseObject = null;\r\n\t\t\tException exception = null;\r\n\t\t\t\r\n\t\t\ttry\r\n\t\t\t{\r\n\t\t\t\tr" +
-                    "esponseObject = subject");
+            this.Write(" responseObject = null;\r\n\t\t\tException exception = null;\r\n\t\t\t\r\n\t\t\ttry { responseOb" +
+                    "ject = subject");
             
-            #line 220 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 222 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetSubjectValue(step)));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 220 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 222 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRootMethodName()));
             
             #line default
             #line hidden
-            this.Write("(requestObject);\r\n\t\t\t}\r\n\t\t\tcatch (Exception ex)\r\n\t\t\t{\r\n\t\t\t\texception = ex;\r\n\t\t\t}\r" +
-                    "\n\r\n\t\t\tHandleAssertion(rootInvocation, responseObject, exception, () => Assert");
+            this.Write("(requestObject); }\r\n\t\t\tcatch (Exception ex) { exception = ex; }\r\n\r\n\t\t\tHandleAsser" +
+                    "tion(rootInvocation, responseObject, exception, \r\n                () => Assert_");
             
-            #line 227 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 226 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetStepAssertMethodName(deepScenario, step)));
             
             #line default
             #line hidden
             this.Write("(responseObject, exception));\r\n\t\t}\r\n\r\n");
             
-            #line 230 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 229 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
 
 	}
 
             
             #line default
             #line hidden
+            this.Write("        #endregion\r\n\r\n");
             
-            #line 233 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 234 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
  
 } 
 
@@ -333,28 +344,28 @@ foreach (Scenario scenario in Scenarios) {
             #line hidden
             this.Write("\t\tprivate ");
             
-            #line 237 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 238 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(subject.Key));
             
             #line default
             #line hidden
             this.Write(" subject");
             
-            #line 237 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 238 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(subject.Value));
             
             #line default
             #line hidden
             this.Write(";\t\r\n");
             
-            #line 238 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
+            #line 239 "D:\github\test-flask\TestFlask.CLI\UnitTestGen\T4\MSTestGen.tt"
 
 	}
 
             
             #line default
             #line hidden
-            this.Write("\r\n\t\t#endregion\r\n\r\n\t}\r\n}\r\n");
+            this.Write("\t}\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
