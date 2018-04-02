@@ -84,7 +84,7 @@ namespace <#=options.Namespace #>
 			return embeddedScenarios;
 		}
 
-		private void ProvideTestFlaskHttpContext(Step step)
+		private void ProvideTestFlaskHttpContext(Step step, TestModes testMode)
 		{
 			HttpContext.Current = new HttpContext(
 				new HttpRequest("", "http://tempuri.org", ""),
@@ -98,7 +98,7 @@ namespace <#=options.Namespace #>
 			AddHeaderToRequest(HttpContext.Current.Request, ContextKeys.ProjectKey, invocation.ProjectKey);
 			AddHeaderToRequest(HttpContext.Current.Request, ContextKeys.ScenarioNo, invocation.ScenarioNo.ToString());
 			AddHeaderToRequest(HttpContext.Current.Request, ContextKeys.StepNo, invocation.StepNo.ToString());
-			AddHeaderToRequest(HttpContext.Current.Request, ContextKeys.TestMode, <#= GetTestMode() #>);
+			AddHeaderToRequest(HttpContext.Current.Request, ContextKeys.TestMode, testMode.ToString());
 
             TestFlaskContext.LoadedStep = step;
 		}
@@ -118,18 +118,23 @@ namespace <#=options.Namespace #>
 			t.InvokeMember("MakeReadOnly", BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Instance, null, headers, null);
 		}
 
-		private Step GetLoadedStep(long stepNo)
-		{
-			Step step = embeddedScenarios?.SelectMany(sc => sc.Steps).SingleOrDefault(st => st.StepNo == stepNo);
+        private Step GetLoadedStep(long stepNo, bool isEmbedded)
+        {
+            Step step = null;
 
-			if (step == null)
-			{
-				TestFlaskApi api = new TestFlaskApi();
-				step = api.LoadStep(stepNo);
-			}
+            if (isEmbedded)
+            {
+                step = embeddedScenarios?.SelectMany(sc => sc.Steps).SingleOrDefault(st => st.StepNo == stepNo);
+            }
 
-			return step;
-		}
+            if (step == null)
+            {
+                TestFlaskApi api = new TestFlaskApi();
+                step = api.LoadStep(stepNo);
+            }
+
+            return step;
+        }
 
         private void HandleAssertion(Invocation rootInvocation, object responseObject, Exception exception, Action stepAssertion)
         {
@@ -174,11 +179,11 @@ namespace <#=options.Namespace #>
             return strBuilder.ToString();
         }
 
-        private Invocation PrepareStep(long stepNo) 
+        private Invocation PrepareStep(long stepNo, TestModes testMode, bool isEmbedded) 
         {
-            Step loadedStep = GetLoadedStep(stepNo);
+            Step loadedStep = GetLoadedStep(stepNo, isEmbedded);
 			var rootInvocation = loadedStep.GetRootInvocation();
-			ProvideTestFlaskHttpContext(loadedStep);
+			ProvideTestFlaskHttpContext(loadedStep, testMode);
 			ProvideOperationContext(rootInvocation);
             return rootInvocation;
         }
@@ -210,7 +215,7 @@ foreach (Scenario scenario in Scenarios) {
 #>
 		private void <#= GetStepAssertMethodName(deepScenario, step)#>() 
         {			
-            var rootInvocation = PrepareStep(<#=step.StepNo #>);	
+            var rootInvocation = PrepareStep(<#=step.StepNo #>, <#= GetTestMode() #>, isEmbedded: <#= GetIsEmbedded() #>);	
 			var requestObject = JsonConvert.DeserializeObject<object[]>(rootInvocation.Request, jsonSerializerSettings).First() as <#=GetRequestTypeName()#>;
 
             //Set up additional behaviour for method args

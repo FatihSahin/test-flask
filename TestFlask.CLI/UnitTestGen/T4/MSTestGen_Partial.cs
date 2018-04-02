@@ -194,7 +194,12 @@ namespace TestFlask.CLI.UnitTestGen.T4
             // therefor we set test mode to play because assert mode calls TestFlask api to save last assertion result.
             TestModes mode = options.TestGenMode == "aot" ? TestModes.Play : TestModes.Assert;
 
-            return $"{mode.GetType()}.{mode}.ToString()";
+            return $"{mode.GetType()}.{mode}";
+        }
+
+        public string GetIsEmbedded()
+        {
+            return options.TestGenMode == "aot" ? "true" : "false";
         }
     }
 }
