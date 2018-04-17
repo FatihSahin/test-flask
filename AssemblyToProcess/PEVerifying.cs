@@ -162,6 +162,12 @@ namespace AssemblyToProcess
             }
         }
 
+        [Playback]
+        public static FooResponse GetStaticFooResponse(FooRequest request)
+        {
+            return new FooResponse();
+        }
+
         #region IL Copy
 
         public SomeResponse GetSome_ExampleClone(SomeRequest req)
@@ -187,6 +193,11 @@ namespace AssemblyToProcess
         public void DoNoArgsNoResponse_ExampleClone()
         {
             Console.WriteLine("Anooo");
+        }
+
+        public static SomeResponse GetStaticSomeResponse_ExampleClone(SomeRequest request)
+        {
+            return new SomeResponse();
         }
 
         public SomeResponse RecorderWrapper_Example(SomeRequest req)
@@ -222,6 +233,25 @@ namespace AssemblyToProcess
                     return player.Record(i, s, f, GetFooWithTooManyArgs_ExampleClone);
                 case TestModes.Play:
                     return player.Play(i, s, f);
+                default:
+                    return null;
+            }
+        }
+
+        public static SomeResponse RecorderStatic_Example(SomeRequest req)
+        {
+            FuncPlayer<SomeRequest, SomeResponse> player = new FuncPlayer<SomeRequest, SomeResponse>("SomeResponse RecorderWrapper(SomeRequest)", new SomeRequestIdentifier(), null);
+
+            player.BeginInvocation(req);
+
+            switch (player.DetermineTestMode(req))
+            {
+                case TestModes.NoMock:
+                    return player.CallOriginal(req, GetStaticSomeResponse_ExampleClone);
+                case TestModes.Record:
+                    return player.Record(req, GetStaticSomeResponse_ExampleClone);
+                case TestModes.Play:
+                    return player.Play(req);
                 default:
                     return null;
             }

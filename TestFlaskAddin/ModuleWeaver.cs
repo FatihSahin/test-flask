@@ -259,17 +259,19 @@ public class ModuleWeaver
             responseIdentifierCtorRef = responseIdentifier != null ? ModuleDefinition.ImportReference(responseIdentifier.GetConstructors().First()) : null;
         }
 
+        bool isStatic = playableMethod.IsStatic;
+
         if (isFunc)
         {
             DecorateFunc(playableMethod, originalMethod, playerTypeRef,
                 testModesDef, responseType, requestIdentifierCtorRef, responseIdentifierCtorRef, playerCtorRef, startInvocationMethodRef,
-                determineTestModeMethodRef, orgMethodCtorRef, callOriginalMethodRef, recordMethodRef, playMethodRef);
+                determineTestModeMethodRef, orgMethodCtorRef, callOriginalMethodRef, recordMethodRef, playMethodRef, isStatic);
         }
         else
         {
             DecorateAction(playableMethod, originalMethod, playerTypeRef,
                 testModesDef, responseType, requestIdentifierCtorRef, responseIdentifierCtorRef, playerCtorRef, startInvocationMethodRef,
-                determineTestModeMethodRef, orgMethodCtorRef, callOriginalMethodRef, recordMethodRef, playMethodRef);
+                determineTestModeMethodRef, orgMethodCtorRef, callOriginalMethodRef, recordMethodRef, playMethodRef, isStatic);
         }
     }
 
@@ -277,7 +279,7 @@ public class ModuleWeaver
         TypeReference playerTypeRef, TypeDefinition testModesDef, TypeReference responseType,
         MethodReference requestIdentifierCtorRef, MethodReference responseIdentifierCtorRef,
         MethodReference playerCtorRef, MethodReference startInvocationMethodRef, MethodReference determineTestModeMethodRef,
-        MethodReference orgMethodCtorRef, MethodReference callOriginalMethodRef, MethodReference recordMethodRef, MethodReference playMethodRef)
+        MethodReference orgMethodCtorRef, MethodReference callOriginalMethodRef, MethodReference recordMethodRef, MethodReference playMethodRef, bool isStatic)
     {
         //Start re-writing body
         MethodBody body = new MethodBody(playableMethod.Body.Method);
@@ -305,7 +307,6 @@ public class ModuleWeaver
 
         var endOfMethod = il.Create(OpCodes.Ldloc_2);
 
-        
         body.Instructions.Add(il.Create(OpCodes.Nop));
 
         //create player
@@ -334,13 +335,13 @@ public class ModuleWeaver
 
         //start invocation
         body.Instructions.Add(il.Create(OpCodes.Ldloc_0)); //player
-        LoadAllArgs(playableMethod, body, il);
+        LoadAllArgs(playableMethod, body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Callvirt, startInvocationMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Nop));
 
         //determine mode
         body.Instructions.Add(il.Create(OpCodes.Ldloc_0)); //player
-        LoadAllArgs(playableMethod, body, il);
+        LoadAllArgs(playableMethod, body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Callvirt, determineTestModeMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Stloc_1)); //test mode
 
@@ -351,8 +352,8 @@ public class ModuleWeaver
 
         //noMockClause
         body.Instructions.Add(noMockClause);
-        LoadAllArgs(playableMethod, body, il);
-        body.Instructions.Add(il.Create(OpCodes.Ldarg_0)); //this
+        LoadAllArgs(playableMethod, body, il, isStatic);
+        LoadThis(body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethod));
         body.Instructions.Add(il.Create(OpCodes.Newobj, orgMethodCtorRef));
         body.Instructions.Add(il.Create(OpCodes.Callvirt, callOriginalMethodRef));
@@ -361,8 +362,8 @@ public class ModuleWeaver
 
         //recordClause
         body.Instructions.Add(recordClause);
-        LoadAllArgs(playableMethod, body, il);
-        body.Instructions.Add(il.Create(OpCodes.Ldarg_0)); //this
+        LoadAllArgs(playableMethod, body, il, isStatic);
+        LoadThis(body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethod));
         body.Instructions.Add(il.Create(OpCodes.Newobj, orgMethodCtorRef));
         body.Instructions.Add(il.Create(OpCodes.Callvirt, recordMethodRef));
@@ -371,7 +372,7 @@ public class ModuleWeaver
 
         //playClause
         body.Instructions.Add(playClause);
-        LoadAllArgs(playableMethod, body, il);
+        LoadAllArgs(playableMethod, body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Callvirt, playMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Stloc_2));
         body.Instructions.Add(il.Create(OpCodes.Br_S, endOfMethod));
@@ -396,7 +397,7 @@ public class ModuleWeaver
         TypeReference playerTypeRef, TypeDefinition testModesDef, TypeReference responseType,
         MethodReference requestIdentifierCtorRef, MethodReference responseIdentifierCtorRef,
         MethodReference playerCtorRef, MethodReference startInvocationMethodRef, MethodReference determineTestModeMethodRef,
-        MethodReference orgMethodCtorRef, MethodReference callOriginalMethodRef, MethodReference recordMethodRef, MethodReference playMethodRef)
+        MethodReference orgMethodCtorRef, MethodReference callOriginalMethodRef, MethodReference recordMethodRef, MethodReference playMethodRef, bool isStatic)
     {
         //Start re-writing body
         MethodBody body = new MethodBody(playableMethod.Body.Method);
@@ -441,13 +442,13 @@ public class ModuleWeaver
 
         //start invocation
         body.Instructions.Add(il.Create(OpCodes.Ldloc_0)); //player
-        LoadAllArgs(playableMethod, body, il);
+        LoadAllArgs(playableMethod, body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Callvirt, startInvocationMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Nop));
 
         //determine mode
         body.Instructions.Add(il.Create(OpCodes.Ldloc_0)); //player
-        LoadAllArgs(playableMethod, body, il);
+        LoadAllArgs(playableMethod, body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Callvirt, determineTestModeMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Stloc_1)); //test mode
 
@@ -458,8 +459,8 @@ public class ModuleWeaver
 
         //noMockClause
         body.Instructions.Add(noMockClause);
-        LoadAllArgs(playableMethod, body, il);
-        body.Instructions.Add(il.Create(OpCodes.Ldarg_0)); //this
+        LoadAllArgs(playableMethod, body, il, isStatic);
+        LoadThis(body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethod));
         body.Instructions.Add(il.Create(OpCodes.Newobj, orgMethodCtorRef));
         body.Instructions.Add(il.Create(OpCodes.Callvirt, callOriginalMethodRef));
@@ -468,8 +469,8 @@ public class ModuleWeaver
 
         //recordClause
         body.Instructions.Add(recordClause);
-        LoadAllArgs(playableMethod, body, il);
-        body.Instructions.Add(il.Create(OpCodes.Ldarg_0)); //this
+        LoadAllArgs(playableMethod, body, il, isStatic);
+        LoadThis(body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethod));
         body.Instructions.Add(il.Create(OpCodes.Newobj, orgMethodCtorRef));
         body.Instructions.Add(il.Create(OpCodes.Callvirt, recordMethodRef));
@@ -478,7 +479,7 @@ public class ModuleWeaver
 
         //playClause
         body.Instructions.Add(playClause);
-        LoadAllArgs(playableMethod, body, il);
+        LoadAllArgs(playableMethod, body, il, isStatic);
         body.Instructions.Add(il.Create(OpCodes.Callvirt, playMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Nop));
         body.Instructions.Add(il.Create(OpCodes.Br_S, returnMethod));
@@ -494,13 +495,25 @@ public class ModuleWeaver
         playableMethod.Body = body;
     }
 
-    private static void LoadAllArgs(MethodDefinition playableMethod, MethodBody body, ILProcessor il)
+    private static void LoadThis(MethodBody body, ILProcessor il, bool isStatic)
+    {
+        if (!isStatic) //static methods do not have 'this' as first arg
+        {
+            body.Instructions.Add(il.Create(OpCodes.Ldarg_0)); //this
+        }
+        else
+        {
+            body.Instructions.Add(il.Create(OpCodes.Ldnull));
+        }
+    }
+
+    private static void LoadAllArgs(MethodDefinition playableMethod, MethodBody body, ILProcessor il, bool isStatic)
     {
         for (int i = 0; i < playableMethod.Parameters.Count; i++)
         {
-            body.Instructions.Add(il.Create(OpCodes.Ldarg, i + 1));
+            body.Instructions.Add(il.Create(OpCodes.Ldarg, i + (isStatic ? 0 : 1)));
         }
-    } 
+    }
 
     MethodDefinition CloneOriginalMethod(MethodDefinition playableMethod)
     {
