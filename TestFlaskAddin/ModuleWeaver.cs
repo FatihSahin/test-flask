@@ -115,10 +115,14 @@ public class ModuleWeaver
 
         typeSystem = ModuleDefinition.TypeSystem;
 
+        var genethodDef = ModuleDefinition.GetType("AssemblyToProcess.SomeClient").Methods.Single(md => md.Name == "RecorderWrapperGeneric_Example");
+
         var playableMethods = ModuleDefinition.GetAllTypes().SelectMany(
             t => t.Methods.Where(
                 md => md.CustomAttributes.Any(ca => ca.AttributeType.Name.Equals("PlaybackAttribute")))
         ).ToList();
+
+
 
         foreach (var playableMethod in playableMethods)
         {
@@ -210,7 +214,15 @@ public class ModuleWeaver
 
         if (isPlayerGeneric)
         {
-            playerCtorRef = ModuleDefinition.ImportReference(playerTypeDef.GetConstructors().First().MakeHostInstanceGeneric(reqResArray));
+            var mCtorRef = playerTypeDef.GetConstructors().First();
+            var reqIden = mCtorRef.Parameters[1].ParameterType as GenericInstanceType;
+            var reqIden2 = reqIden.Resolve().MakeGenericInstanceType(reqResArray[0], reqResArray[1]);
+            mCtorRef.Parameters[1].ParameterType = reqIden2;
+            var resIden = mCtorRef.Parameters[2].ParameterType as GenericInstanceType;
+            var resIden2 = resIden.Resolve().MakeGenericInstanceType(reqResArray[2]);
+            mCtorRef.Parameters[2].ParameterType = resIden2;
+
+            playerCtorRef = ModuleDefinition.ImportReference(mCtorRef.MakeHostInstanceGeneric(reqResArray));
             startInvocationMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "BeginInvocation").MakeHostInstanceGeneric(reqResArray));
             determineTestModeMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "DetermineTestMode").MakeHostInstanceGeneric(reqResArray));
             playMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "Play").MakeHostInstanceGeneric(reqResArray));
@@ -524,6 +536,11 @@ public class ModuleWeaver
         foreach (var parameterDefinition in playableMethod.Parameters)
         {
             clonePlayable.Parameters.Add(parameterDefinition);
+        }
+
+        foreach (var genericParameterDef in playableMethod.GenericParameters)
+        {
+            clonePlayable.GenericParameters.Add(genericParameterDef);
         }
 
         foreach (var variable in playableMethod.Body.Variables)
