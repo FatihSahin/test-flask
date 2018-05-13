@@ -9,7 +9,6 @@ var testFlask = {};
 
     //testFlask.js must be initialized in a razor page script right after testFlask.js is included in document
     $this.initialize = function(options) {
-
         $this.recordMode = options.recordMode;
         $this.currentScenarioNo = options.scenarioNo;
         $this.overwriteStepNo = options.overwriteStepNo;
@@ -20,7 +19,6 @@ var testFlask = {};
     };
 
     $this.prepareRequest = function (action) {
-
         var httpRequest = new XMLHttpRequest();
 
         httpRequest.onreadystatechange = () => {
@@ -45,7 +43,6 @@ var testFlask = {};
     }
 
     $this.toggleView = function () {
-
         var httpRequest = $this.prepareRequest(() => {
             var elem = document.getElementById("testFlaskAssistantBody");
             elem.style.display = elem.style.display !== 'block' ? 'block' : 'none';
@@ -74,7 +71,6 @@ var testFlask = {};
     };
 
     $this.saveNewScenario = function () {
-
         var httpRequest = $this.prepareRequest(() => {
             $this.cancelNewScenario(); //hide new scenario view
             $this.loadScenarios();
@@ -93,7 +89,6 @@ var testFlask = {};
 
             $this.removeOptions(elem);
 
-
             var scenarios = JSON.parse(httpRequest.responseText);
             scenarios.forEach(sce => {
                 var option = document.createElement("option");
@@ -109,7 +104,6 @@ var testFlask = {};
             else if (elem.options.length > 0) {
                 $this.loadSteps(elem.options[0].value);
             }
-
         });
 
         httpRequest.open("GET", $this.actions["getScenarios"], true);
@@ -124,7 +118,6 @@ var testFlask = {};
     };
 
     $this.loadSteps = function (scenarioNo) {
-
         var httpRequest = $this.prepareRequest(() => {
             $this.currentScenarioNo = scenarioNo;
             var elem = document.getElementById("testFlaskSteps");

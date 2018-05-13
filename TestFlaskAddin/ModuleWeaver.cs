@@ -73,8 +73,6 @@ public class ModuleWeaver
 
     private List<ModuleDefinition> ReferencedModules { get; set; }
 
-    TypeSystem typeSystem;
-
     // Init logging delegates to make testing easier
     public ModuleWeaver()
     {
@@ -113,12 +111,12 @@ public class ModuleWeaver
 
         TestFlaskAspectsModule = ResolveTestFlaskAspectsModuleDefinition();
 
-        typeSystem = ModuleDefinition.TypeSystem;
-
         var playableMethods = ModuleDefinition.GetAllTypes().SelectMany(
             t => t.Methods.Where(
                 md => md.CustomAttributes.Any(ca => ca.AttributeType.Name.Equals("PlaybackAttribute")))
         ).ToList();
+
+
 
         foreach (var playableMethod in playableMethods)
         {
@@ -155,7 +153,9 @@ public class ModuleWeaver
     }
 
     void DecorateMethod(MethodDefinition playableMethod, MethodDefinition originalMethod, TypeDefinition requestIdentifier, TypeDefinition responseIdentifier)
-    {
+    {        
+        var originalMethodRef = CreateOrgMethodInstanceRef(originalMethod);
+
         var reqResTypes = new List<TypeReference>();
 
         foreach (var pType in playableMethod.Parameters)
@@ -210,12 +210,12 @@ public class ModuleWeaver
 
         if (isPlayerGeneric)
         {
-            playerCtorRef = ModuleDefinition.ImportReference(playerTypeDef.GetConstructors().First().MakeHostInstanceGeneric(reqResArray));
-            startInvocationMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "BeginInvocation").MakeHostInstanceGeneric(reqResArray));
-            determineTestModeMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "DetermineTestMode").MakeHostInstanceGeneric(reqResArray));
-            playMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "Play").MakeHostInstanceGeneric(reqResArray));
-            recordMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "Record").MakeHostInstanceGeneric(reqResArray));
-            callOriginalMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "CallOriginal").MakeHostInstanceGeneric(reqResArray));
+            playerCtorRef = ModuleDefinition.ImportReference(playerTypeDef.GetConstructors().First().MakeHostInstanceGeneric(reqResArray), playableMethod);
+            startInvocationMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "BeginInvocation").MakeHostInstanceGeneric(reqResArray), playableMethod);
+            determineTestModeMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "DetermineTestMode").MakeHostInstanceGeneric(reqResArray), playableMethod);
+            playMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "Play").MakeHostInstanceGeneric(reqResArray), playableMethod);
+            recordMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "Record").MakeHostInstanceGeneric(reqResArray), playableMethod);
+            callOriginalMethodRef = ModuleDefinition.ImportReference(playerTypeDef.Methods.First(m => m.Name == "CallOriginal").MakeHostInstanceGeneric(reqResArray), playableMethod);
         }
         else //this is method with no args and no response (it is not generic at all)
         {
@@ -238,7 +238,7 @@ public class ModuleWeaver
 
             orgMethodCtorRef = ModuleDefinition.ImportReference(genericOrgMethodTypeDef.GetConstructors()
                 .Where(c => c.Parameters.Count == 2) //(object, IntPtr)
-                .First().MakeHostInstanceGeneric(reqResArray));
+                .First().MakeHostInstanceGeneric(reqResArray), playableMethod);
         }
         else
         {
@@ -250,32 +250,50 @@ public class ModuleWeaver
         MethodReference requestIdentifierCtorRef = null;
         if (requestIdentifier != null)
         {
-            requestIdentifierCtorRef = requestIdentifier != null ? ModuleDefinition.ImportReference(requestIdentifier.GetConstructors().First()) : null;
+            requestIdentifierCtorRef = requestIdentifier != null ? ModuleDefinition.ImportReference(requestIdentifier.GetConstructors().First(), playableMethod) : null;
         }
 
         MethodReference responseIdentifierCtorRef = null;
         if (responseIdentifier != null)
         {
-            responseIdentifierCtorRef = responseIdentifier != null ? ModuleDefinition.ImportReference(responseIdentifier.GetConstructors().First()) : null;
+            responseIdentifierCtorRef = responseIdentifier != null ? ModuleDefinition.ImportReference(responseIdentifier.GetConstructors().First(), playableMethod) : null;
         }
 
         bool isStatic = playableMethod.IsStatic;
 
         if (isFunc)
         {
-            DecorateFunc(playableMethod, originalMethod, playerTypeRef,
+            DecorateFunc(playableMethod, originalMethodRef, playerTypeRef,
                 testModesDef, responseType, requestIdentifierCtorRef, responseIdentifierCtorRef, playerCtorRef, startInvocationMethodRef,
                 determineTestModeMethodRef, orgMethodCtorRef, callOriginalMethodRef, recordMethodRef, playMethodRef, isStatic);
         }
         else
         {
-            DecorateAction(playableMethod, originalMethod, playerTypeRef,
+            DecorateAction(playableMethod, originalMethodRef, playerTypeRef,
                 testModesDef, responseType, requestIdentifierCtorRef, responseIdentifierCtorRef, playerCtorRef, startInvocationMethodRef,
                 determineTestModeMethodRef, orgMethodCtorRef, callOriginalMethodRef, recordMethodRef, playMethodRef, isStatic);
         }
     }
 
-    void DecorateFunc(MethodDefinition playableMethod, MethodDefinition originalMethod,
+    private MethodReference CreateOrgMethodInstanceRef(MethodDefinition originalMethod)
+    {
+        MethodReference originalMethodRef = originalMethod as MethodReference;
+
+        if (originalMethod.CallingConvention == MethodCallingConvention.Generic)
+        {
+            var genericInstanceMethod = new GenericInstanceMethod(originalMethod);
+            foreach (var genericParam in originalMethod.GenericParameters)
+            { 
+                genericInstanceMethod.GenericArguments.Add(genericParam);
+            }
+
+            originalMethodRef = genericInstanceMethod;
+        }
+
+        return originalMethodRef;
+    }
+
+    void DecorateFunc(MethodDefinition playableMethod, MethodReference originalMethodRef,
         TypeReference playerTypeRef, TypeDefinition testModesDef, TypeReference responseType,
         MethodReference requestIdentifierCtorRef, MethodReference responseIdentifierCtorRef,
         MethodReference playerCtorRef, MethodReference startInvocationMethodRef, MethodReference determineTestModeMethodRef,
@@ -354,7 +372,7 @@ public class ModuleWeaver
         body.Instructions.Add(noMockClause);
         LoadAllArgs(playableMethod, body, il, isStatic);
         LoadThis(body, il, isStatic);
-        body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethod));
+        body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Newobj, orgMethodCtorRef));
         body.Instructions.Add(il.Create(OpCodes.Callvirt, callOriginalMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Stloc_2));
@@ -364,7 +382,7 @@ public class ModuleWeaver
         body.Instructions.Add(recordClause);
         LoadAllArgs(playableMethod, body, il, isStatic);
         LoadThis(body, il, isStatic);
-        body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethod));
+        body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Newobj, orgMethodCtorRef));
         body.Instructions.Add(il.Create(OpCodes.Callvirt, recordMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Stloc_2));
@@ -393,7 +411,7 @@ public class ModuleWeaver
         playableMethod.Body = body;
     }
 
-    void DecorateAction(MethodDefinition playableMethod, MethodDefinition originalMethod,
+    void DecorateAction(MethodDefinition playableMethod, MethodReference originalMethodRef,
         TypeReference playerTypeRef, TypeDefinition testModesDef, TypeReference responseType,
         MethodReference requestIdentifierCtorRef, MethodReference responseIdentifierCtorRef,
         MethodReference playerCtorRef, MethodReference startInvocationMethodRef, MethodReference determineTestModeMethodRef,
@@ -461,7 +479,7 @@ public class ModuleWeaver
         body.Instructions.Add(noMockClause);
         LoadAllArgs(playableMethod, body, il, isStatic);
         LoadThis(body, il, isStatic);
-        body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethod));
+        body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Newobj, orgMethodCtorRef));
         body.Instructions.Add(il.Create(OpCodes.Callvirt, callOriginalMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Nop));
@@ -471,7 +489,7 @@ public class ModuleWeaver
         body.Instructions.Add(recordClause);
         LoadAllArgs(playableMethod, body, il, isStatic);
         LoadThis(body, il, isStatic);
-        body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethod));
+        body.Instructions.Add(il.Create(OpCodes.Ldftn, originalMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Newobj, orgMethodCtorRef));
         body.Instructions.Add(il.Create(OpCodes.Callvirt, recordMethodRef));
         body.Instructions.Add(il.Create(OpCodes.Nop));
@@ -519,11 +537,19 @@ public class ModuleWeaver
     {
         MethodDefinition clonePlayable = new MethodDefinition($"{playableMethod.Name}__Original", playableMethod.Attributes, playableMethod.ReturnType);
         clonePlayable.DeclaringType = playableMethod.DeclaringType;
+        clonePlayable.CallingConvention = playableMethod.CallingConvention;
+        clonePlayable.HasThis = playableMethod.HasThis;
+        clonePlayable.ExplicitThis = playableMethod.ExplicitThis;
         clonePlayable.Body.InitLocals = true;
 
         foreach (var parameterDefinition in playableMethod.Parameters)
         {
             clonePlayable.Parameters.Add(parameterDefinition);
+        }
+
+        foreach (var genericParameterDef in playableMethod.GenericParameters)
+        {
+            clonePlayable.GenericParameters.Add(new GenericParameter(genericParameterDef.Name, playableMethod));
         }
 
         foreach (var variable in playableMethod.Body.Variables)

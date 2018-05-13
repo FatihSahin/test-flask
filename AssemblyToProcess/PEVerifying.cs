@@ -75,7 +75,7 @@ namespace AssemblyToProcess
 
         public void Dispose()
         {
-            
+
         }
     }
 
@@ -98,6 +98,12 @@ namespace AssemblyToProcess
             };
 
             return response;
+        }
+
+        [Playback]
+        public TRes GetSomeGeneric<TReq, TRes>(TReq req, FooRequest fooReq) where TRes : new()
+        {
+            return new TRes();
         }
 
         [Playback]
@@ -175,6 +181,11 @@ namespace AssemblyToProcess
             return null;
         }
 
+        public TRes GetSomeGeneric_ExampleClone<TReq, TRes>(TReq req, FooRequest fooReq) where TRes : new()
+        {
+            return new TRes();
+        }
+
         public void DoSome_ExampleClone(SomeRequest req)
         {
             int a = 5 * 5;
@@ -216,6 +227,25 @@ namespace AssemblyToProcess
                     return player.Play(req);
                 default:
                     return null;
+            }
+        }
+
+        public TRes RecorderWrapperGeneric_Example<TReq, TRes>(TReq req1, FooRequest fooReq) where TRes: new()
+        {
+            FuncPlayer<TReq, FooRequest, TRes> player = new FuncPlayer<TReq, FooRequest, TRes>("Some generic signature", null, null);
+
+            player.BeginInvocation(req1, fooReq);
+
+            switch (player.DetermineTestMode(req1, fooReq))
+            {
+                case TestModes.NoMock:
+                    return player.CallOriginal(req1, fooReq, GetSomeGeneric_ExampleClone<TReq, TRes>);
+                case TestModes.Record:
+                    return player.Record(req1, fooReq, GetSomeGeneric_ExampleClone<TReq, TRes>);
+                case TestModes.Play:
+                    return player.Play(req1, fooReq);
+                default:
+                    throw new ApplicationException();
             }
         }
 
