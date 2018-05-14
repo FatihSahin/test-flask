@@ -84,11 +84,24 @@ namespace AssemblyToProcess
         public int SomeReqProperty { get; set; }
     }
 
+    public class GenericReqIdentifier<TReq1> : IRequestIdentifier<TReq1, FooRequest>
+    {
+        public string ResolveDisplayInfo(TReq1 arg0, FooRequest arg1)
+        {
+            return "yeah";
+        }
+
+        public string ResolveIdentifierKey(TReq1 arg0, FooRequest arg1)
+        {
+            return "cool";
+        }
+    }
+
 
     public class SomeClient
     {
 
-        [Playback(typeof(SomeRequestIdentifier))]
+        //[Playback(typeof(SomeRequestIdentifier))]
         public SomeResponse GetSome(SomeRequest req)
         {
             var response = new SomeResponse
@@ -100,13 +113,13 @@ namespace AssemblyToProcess
             return response;
         }
 
-        [Playback]
+        [Playback(typeof(GenericReqIdentifier<>))]
         public TRes GetSomeGeneric<TReq, TRes>(TReq req, FooRequest fooReq) where TRes : new()
         {
             return new TRes();
         }
 
-        [Playback]
+        //[Playback]
         public FooResponse GetFoo(FooRequest req)
         {
             var response = new FooResponse
@@ -118,13 +131,13 @@ namespace AssemblyToProcess
             return response;
         }
 
-        [Playback]
+        //[Playback]
         public FooResponse[] GetFoos(FooRequest req)
         {
             return new FooResponse[] { GetFoo(req) };
         }
 
-        [Playback]
+        //[Playback]
         public SomeResponse ReturnSome()
         {
             return new SomeResponse
@@ -134,14 +147,14 @@ namespace AssemblyToProcess
             };
         }
 
-        [Playback]
+        //[Playback]
         public void DoSome(SomeRequest req)
         {
             int a = 5 * 5;
             Console.WriteLine(a);
         }
 
-        [Playback(typeof(GetFooArgsIdentifier))]
+        //[Playback(typeof(GetFooArgsIdentifier))]
         public FooResponse GetFooWithTooManyArgs(int a, string str, float f)
         {
             var response = new FooResponse
@@ -153,13 +166,13 @@ namespace AssemblyToProcess
             return response;
         }
 
-        [Playback]
+        //[Playback]
         public void DoNoArgsNoResponse()
         {
             Console.WriteLine("Anooo");
         }
 
-        [Playback]
+        //[Playback]
         public FooResponse GetSomeResponseWithUsing()
         {
             using (var biz = new FooBiz())
@@ -168,7 +181,7 @@ namespace AssemblyToProcess
             }
         }
 
-        [Playback]
+        //[Playback]
         public static FooResponse GetStaticFooResponse(FooRequest request)
         {
             return new FooResponse();
