@@ -250,13 +250,32 @@ public class ModuleWeaver
         MethodReference requestIdentifierCtorRef = null;
         if (requestIdentifier != null)
         {
-            requestIdentifierCtorRef = requestIdentifier != null ? ModuleDefinition.ImportReference(requestIdentifier.GetConstructors().First(), playableMethod) : null;
+            if (requestIdentifier.HasGenericParameters)
+            {
+                // Supports left-padded generic identifer implementation like IRequestIdentifier<TReq, Concrete>, not IRequestIdentifier<Concrete, TReq>
+                requestIdentifierCtorRef = requestIdentifier != null ? ModuleDefinition.ImportReference(
+                    requestIdentifier.GetConstructors().First()
+                    .MakeHostInstanceGeneric(reqResArray.Take(requestIdentifier.GenericParameters.Count).ToArray()), playableMethod) : null;
+            }
+            else
+            {
+                requestIdentifierCtorRef = requestIdentifier != null ? ModuleDefinition.ImportReference(requestIdentifier.GetConstructors().First(), playableMethod) : null;
+            }
         }
 
         MethodReference responseIdentifierCtorRef = null;
         if (responseIdentifier != null)
         {
-            responseIdentifierCtorRef = responseIdentifier != null ? ModuleDefinition.ImportReference(responseIdentifier.GetConstructors().First(), playableMethod) : null;
+            if (responseIdentifier.HasGenericParameters)
+            {
+                responseIdentifierCtorRef = responseIdentifier != null ? ModuleDefinition.ImportReference(
+                    responseIdentifier.GetConstructors().First()
+                    .MakeHostInstanceGeneric(reqResArray.Last()), playableMethod) : null;
+            }
+            else
+            {
+                responseIdentifierCtorRef = responseIdentifier != null ? ModuleDefinition.ImportReference(responseIdentifier.GetConstructors().First(), playableMethod) : null;
+            }
         }
 
         bool isStatic = playableMethod.IsStatic;

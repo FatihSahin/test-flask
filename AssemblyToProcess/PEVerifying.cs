@@ -84,10 +84,21 @@ namespace AssemblyToProcess
         public int SomeReqProperty { get; set; }
     }
 
+    public class GenericReqIdentifier<TReq1> : IRequestIdentifier<TReq1, FooRequest>
+    {
+        public string ResolveDisplayInfo(TReq1 arg0, FooRequest arg1)
+        {
+            return "yeah";
+        }
+
+        public string ResolveIdentifierKey(TReq1 arg0, FooRequest arg1)
+        {
+            return "cool";
+        }
+    }
 
     public class SomeClient
     {
-
         [Playback(typeof(SomeRequestIdentifier))]
         public SomeResponse GetSome(SomeRequest req)
         {
@@ -100,7 +111,7 @@ namespace AssemblyToProcess
             return response;
         }
 
-        [Playback]
+        [Playback(typeof(GenericReqIdentifier<>))]
         public TRes GetSomeGeneric<TReq, TRes>(TReq req, FooRequest fooReq) where TRes : new()
         {
             return new TRes();
