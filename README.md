@@ -3,6 +3,7 @@
 ![Erlenmeyer](Icons/package_icon.png)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/iwmii0fmtpyopkgu?svg=true)](https://ci.appveyor.com/project/FatihSahin/test-flask)
+[![Nuget version](https://img.shields.io/nuget/v/TestFlask.Aspects.svg)](https://www.nuget.org/packages?q=TestFlask)
 [![Join the chat at https://gitter.im/test-flask/Lobby](https://badges.gitter.im/test-flask/Lobby.svg)](https://gitter.im/test-flask/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 TestFlask is a tool to create tests for your .net WCF Service or REST API. It is based on a very simple idea. 
@@ -61,7 +62,7 @@ TestFlask not just records your method invocations but also provides a way to cr
 
 ![assistant1](https://github.com/FatihSahin/test-flask-sample/blob/master/Docs/manager_2.png)
 
-Notice that little Replay checkbox? It gives you flexibility to mock or not to mock a .net method depending on your choice next time. Also you can alter the response of a method and replay as your method will now return that object the we way you modified. Test data is encapsulated in that scenario with a scenario number and will not affect your other recorded scenarios.
+This is the scenario view for the [Test Flask Manager](https://github.com/FatihSahin/test-flask-web) web app. Notice that little Replay checkbox? It gives you flexibility to mock or not to mock a .net method depending on your choice next time. Also you can alter the response of a method and replay as your method will now return that object the we way you modified. Test data is encapsulated in that scenario with a scenario number and will not affect your other recorded scenarios.
 
 Using the combination of these alterations, you can easily and flexibly develop a complex and highly integrated project without worrying about actual integration problems and test data. It is now all isolated for you and encapsulated in a TestFlask scenario. TestFlask is never a tool to replace your real unit tests, but complement them and provide you a hybrid testing power inside your IDE.
 
@@ -114,7 +115,9 @@ It persists all scenarios, steps and invocations in a MongoDB database.
 
 Lastly, TestFlask.Assistant.Mvc project (nuget package) is an ASP.NET MVC extension to ease integrating your ASP.NET MVC client to send proper headers to your TestFlask ready backend service.
 
-TestFlask still needs a lot of development and hopefully it will go on. It is close to v1 release now. I did not upload v1.0.0 packages to nuget.org yet, but as soon as I feel it is ready for v1, I will. Please feel free to contribute with PRs.
+TestFlask still needs a lot of development and hopefully it will go on. I did upload v1.0.0 packages to [nuget.org | TestFlask](https://www.nuget.org/packages?q=TestFlask).
+
+Please feel free to contribute with PRs. Thanks!
 
 
 

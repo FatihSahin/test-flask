@@ -15,7 +15,7 @@
     <description>TestFlask.Assistant.Mvc</description>
     <summary>This package contains TestFlask Assistant ASP.NET MVC controllers, WCF behaviors, Web API client message handlers specific to work inside MVC, scripts to ease plugging TestFlask capabilities into your existing ASP.NET MVC application.</summary>
     <language>en-US</language>
-    <tags>TestFlask, Testing, ASP.NET MVC, Fody, Cecil, Weaver</tags>
+    <tags>TestFlask, Testing, ASP.NET MVC, Fody, Cecil, Weaver </tags>
     <dependencies>
       <dependency id="TestFlask.Assistant.Core" version="1.0.0" />
     </dependencies>
