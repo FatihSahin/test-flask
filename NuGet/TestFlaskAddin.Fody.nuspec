@@ -11,11 +11,11 @@
     <projectUrl>http://github.com/FatihSahin/test-flask</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!-- Erlenmeyer Flask by Rockicon from the Noun Project -->
-    <iconUrl>https://raw.githubusercontent.com/FatihSahin/test-flask/master/Icons/package_icon.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/FatihSahin/test-flask/master/Icons/package_icon_green.png</iconUrl>
     <description>TestFlask Fody add-in.</description>
     <summary>This addin is all you need to use TestFlask aspects and weaving features.</summary>
     <language>en-US</language>
-    <tags>ILWeaving, Fody, Cecil, TestFlask, Testing</tags>
+    <tags>TestFlask, Testing, Fody, Cecil, Weaver</tags>
     <dependencies>
       <dependency id="Fody" version="2.0.0"/>
       <dependency id="TestFlask.Aspects" version="1.0.0" />

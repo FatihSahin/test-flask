@@ -36,6 +36,8 @@ namespace <#=options.Namespace #>
     [TestClass]
 	public partial class <#=options.ClassName#>
 	{
+        private bool isEmbedded = <#= GetIsEmbedded() #>;
+
 		#region Conventional
 
 		private static IEnumerable<Scenario> embeddedScenarios { get; set; }
@@ -215,7 +217,7 @@ foreach (Scenario scenario in Scenarios) {
 #>
 		private void <#= GetStepAssertMethodName(deepScenario, step)#>() 
         {			
-            var rootInvocation = PrepareStep(<#=step.StepNo #>, <#= GetTestMode() #>, isEmbedded: <#= GetIsEmbedded() #>);	
+            var rootInvocation = PrepareStep(<#=step.StepNo #>, <#= GetTestMode() #>, isEmbedded);	
 			var requestObject = JsonConvert.DeserializeObject<object[]>(rootInvocation.Request, jsonSerializerSettings).First() as <#=GetRequestTypeName()#>;
 
             //Set up additional behaviour for method args
