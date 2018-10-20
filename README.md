@@ -6,6 +6,8 @@
 [![Nuget version](https://img.shields.io/nuget/v/TestFlask.Aspects.svg)](https://www.nuget.org/packages?q=TestFlask)
 [![Join the chat at https://gitter.im/test-flask/Lobby](https://badges.gitter.im/test-flask/Lobby.svg)](https://gitter.im/test-flask/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+Visit [TestFlask GitHub Page](https://testflask.github.io) for more details
+
 TestFlask is a tool to create tests for your .net WCF Service or REST API. It is based on a very simple idea. 
 Record your any .net method invocation in runtime with arguments and the return type. After recording, replay the same method invocation without actually calling the real implementation when testing or debugging.
 
@@ -66,8 +68,8 @@ This is the scenario view for the [Test Flask Manager](https://github.com/FatihS
 
 Using the combination of these alterations, you can easily and flexibly develop a complex and highly integrated project without worrying about actual integration problems and test data. It is now all isolated for you and encapsulated in a TestFlask scenario. TestFlask is never a tool to replace your real unit tests, but complement them and provide you a hybrid testing power inside your IDE.
 
-Go check out [Movie Rental Sample App](https://github.com/FatihSahin/test-flask-sample) for a complete living demo. 
-I will also create to demonstrate a YouTube video asap.
+Go check out [Movie Rental Sample App](https://github.com/FatihSahin/test-flask-sample) for a complete demonstration. 
+I also created a [Quick Pay Demo](https://github.com/FatihSahin/test-flask-demo), a simpler demo version that is explained in the video [here](https://www.youtube.com/watch?v=zLx35V4BPQg).
 
 TestFlask also has built-in CLI tooling (checkout TestFlask.CLI) for auto creating unit-tests that trigger your recorded scenario, so that you can instantiate a testing scenario with mocks ready inside your IDE. MS Tests are supported right now, but I will add NUnit test support when requested.
 
@@ -118,8 +120,6 @@ Lastly, TestFlask.Assistant.Mvc project (nuget package) is an ASP.NET MVC extens
 TestFlask still needs a lot of development and hopefully it will go on. I did upload v1.0.0 packages to [nuget.org | TestFlask](https://www.nuget.org/packages?q=TestFlask).
 
 Please feel free to contribute with PRs. Thanks!
-
-
 
 ### Icon
 
