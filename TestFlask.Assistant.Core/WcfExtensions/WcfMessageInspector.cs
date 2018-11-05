@@ -34,7 +34,16 @@ namespace TestFlask.Assistant.Core.WcfExtensions
                 string parentInvocationInstance = OutgoingHeadersHelper.ResolveParentInvocationInstanceHashCode();
                 string contextId = OutgoingHeadersHelper.ResolveContextId();
 
-                HttpRequestMessageProperty property = request.Properties[HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
+                HttpRequestMessageProperty property = null;
+                if (request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
+                {
+                    property = request.Properties[HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
+                }
+                else
+                {
+                    property = new HttpRequestMessageProperty();
+                    request.Properties.Add(HttpRequestMessageProperty.Name, property);
+                }
 
                 property.Headers[ContextKeys.ProjectKey] = projectKey;
                 property.Headers[ContextKeys.ScenarioNo] = scenarioNo;
