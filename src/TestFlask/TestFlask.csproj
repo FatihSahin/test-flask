@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>2.0.0</Version>
+    <PackageIconUrl>https://raw.githubusercontent.com/FatihSahin/test-flask/master/Icons/package_icon.png</PackageIconUrl>
+    <PackageProjectUrl>http://github.com/FatihSahin/TestFlask</PackageProjectUrl>
+    <PackageTags>TestFlask, Testing, Fody, Cecil, Weaver, AOP</PackageTags>
+    <Description>This package contains TestFlask weaver and marker attributes.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fody" Version="3.3.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FodyPackaging" Version="3.3.5" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TestFlask.Models\TestFlask.Models.csproj" />
+  </ItemGroup>
+
+</Project>
